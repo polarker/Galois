@@ -27,13 +27,14 @@ namespace gs
         
         bool opaque;
         
-        Signal() : type{InnerSignal},
-                   dims{},
-                   data{nullptr},
-                   grad{nullptr},
-                   target{nullptr},
-                   loss{0},
-                   opaque{true} {}
+        Signal(SignalType t=InnerSignal)
+                : type{t}
+                , dims{}
+                , data{nullptr}
+                , grad{nullptr}
+                , target{nullptr}
+                , loss{0}
+                , opaque{true} {}
         Signal(const Signal& other) = delete;
         Signal& operator=(const Signal&) = delete;
     };

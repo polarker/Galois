@@ -27,8 +27,6 @@ namespace gs {
             pfilters.insert(p);
         }
         if (auto g = dynamic_pointer_cast<GFilter>(filter)) {
-            //for(auto e : g->get_pfilters())
-            //    pfilters.insert(e);
             auto s = g->get_pfilters();
             pfilters.insert(s.begin(), s.end());
         }
@@ -76,12 +74,62 @@ namespace gs {
         add_link({ins}, {outs}, filter);
     }
     
+    void Net::_remove_signal(string id) {
+        if (inner_signals.count(id) > 0) {
+            inner_signals.erase(id);
+        }
+    }
+    
     void Net::set_input_ids(const string id) {
+        assert(!Contains(input_ids, id));
         input_ids.push_back(id);
+        _remove_signal(id);
+    }
+    
+    void Net::set_input_ids(const initializer_list<string> ids) {
+        for (auto id : ids) {
+            assert(!Contains(input_ids, id));
+        }
+        input_ids.insert(input_ids.end(), ids.begin(), ids.end());
+        for (auto id : ids) {
+            _remove_signal(id);
+        }
+    }
+    
+    void Net::set_input_ids(const vector<string> ids) {
+        for (auto id : ids) {
+            assert(!Contains(input_ids, id));
+        }
+        input_ids.insert(input_ids.end(), ids.begin(), ids.end());
+        for (auto id : ids) {
+            _remove_signal(id);
+        }
     }
     
     void Net::set_output_ids(const string id) {
+        assert(!Contains(output_ids, id));
         output_ids.push_back(id);
+        _remove_signal(id);
+    }
+    
+    void Net::set_output_ids(const initializer_list<string> ids) {
+        for (auto id : ids) {
+            assert(!Contains(output_ids, id));
+        }
+        output_ids.insert(output_ids.end(), ids.begin(), ids.end());
+        for (auto id : ids) {
+            _remove_signal(id);
+        }
+    }
+    
+    void Net::set_output_ids(const vector<string> ids) {
+        for (auto id : ids) {
+            assert(!Contains(output_ids, id));
+        }
+        output_ids.insert(output_ids.end(), ids.begin(), ids.end());
+        for (auto id : ids) {
+            _remove_signal(id);
+        }
     }
     
     void Net::_set_fp_order(string out_id) {
@@ -133,6 +181,7 @@ namespace gs {
             _set_bp_order(in_id);
         }
     }
+    
     shared_ptr<Signal> Net::_get_signal(string id,
                                         const vector<shared_ptr<Signal>> in_signals,
                                         const vector<shared_ptr<Signal>> out_signals) {
@@ -149,10 +198,40 @@ namespace gs {
         return inner_signals[id];
     }
     
-    void Net::set_dims(const vector<shared_ptr<Signal>> in_signals,
-                  const vector<shared_ptr<Signal>> out_signals,
+    vector<shared_ptr<Signal>> Net::_get_signal(vector<string> ids,
+                                                const vector<shared_ptr<Signal>> in_signals,
+                                                const vector<shared_ptr<Signal>> out_signals) {
+        vector<shared_ptr<Signal>> res{};
+        for (auto id : ids) {
+            res.push_back(_get_signal(id, in_signals, out_signals));
+        }
+        return res;
+    }
+    
+    void Net::set_dims(const shared_ptr<Signal> in_signal,
+                       const shared_ptr<Signal> out_signal,
+                       int batch_size) {
+        set_dims({in_signal}, {out_signal}, batch_size);
+    }
+    
+    void Net::set_dims(const initializer_list<shared_ptr<Signal>> in_signals,
+                  const initializer_list<shared_ptr<Signal>> out_signals,
                   int batch_size) {
-        return;
+        set_dims(vector<shared_ptr<Signal>>(in_signals), vector<shared_ptr<Signal>>(out_signals), batch_size);
+    }
+    
+    void Net::set_dims(const vector<shared_ptr<Signal>> in_signals,
+                       const vector<shared_ptr<Signal>> out_signals,
+                       int batch_size) {
+        for (auto link_idx : fp_order) {
+            auto t = links[link_idx];
+            auto ins = get<0>(t);
+            auto outs = get<1>(t);
+            auto filter = get<2>(t);
+            filter->set_dims(_get_signal(ins, in_signals, out_signals),
+                             _get_signal(outs, in_signals, out_signals),
+                             batch_size);
+        }
     }
     
 }
