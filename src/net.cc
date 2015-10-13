@@ -5,7 +5,8 @@
 
 namespace gs {
     
-    Net::Net() : links{},
+    template<typename T>
+    Net<T>::Net() : links{},
             pfilters{},
             fp_graph{},
             bp_graph{},
@@ -16,17 +17,18 @@ namespace gs {
             output_ids{} {
     }
     
-    void Net::add_link(const initializer_list<string> ins, const initializer_list<string> outs, shared_ptr<Filter> filter){
+    template<typename T>
+    void Net<T>::add_link(const initializer_list<string> ins, const initializer_list<string> outs, SP_Filter<T> filter){
         // add to links
         auto idx = links.size();
-        links.push_back(tuple<const vector<string>,const vector<string>,shared_ptr<Filter>>
+        links.push_back(tuple<const vector<string>,const vector<string>,SP_Filter<T>>
                         (vector<string>{ins}, vector<string>{outs}, filter));
         
         // add to pfilters
-        if (auto p = dynamic_pointer_cast<PFilter>(filter)) {
+        if (auto p = dynamic_pointer_cast<PFilter<T>>(filter)) {
             pfilters.insert(p);
         }
-        if (auto g = dynamic_pointer_cast<GFilter>(filter)) {
+        if (auto g = dynamic_pointer_cast<GFilter<T>>(filter)) {
             auto s = g->get_pfilters();
             pfilters.insert(s.begin(), s.end());
         }
@@ -52,41 +54,47 @@ namespace gs {
         // initial signals
         for (auto s : ins) {
             if (!Contains(input_ids, s) && (inner_signals.count(s) == 0)) {
-                inner_signals[s] = make_shared<Signal>();
+                inner_signals[s] = make_shared<Signal<T>>();
             }
         }
         for (auto s : outs) {
             if (!Contains(output_ids, s) && (inner_signals.count(s) == 0)) {
-                inner_signals[s] = make_shared<Signal>();
+                inner_signals[s] = make_shared<Signal<T>>();
             }
         }
     }
     
-    void Net::add_link(const initializer_list<string> ins, const string outs, shared_ptr<Filter> filter){
+    template<typename T>
+    void Net<T>::add_link(const initializer_list<string> ins, const string outs, SP_Filter<T> filter){
         add_link(ins, {outs}, filter);
     }
     
-    void Net::add_link(const string ins, const initializer_list<string> outs, shared_ptr<Filter> filter){
+    template<typename T>
+    void Net<T>::add_link(const string ins, const initializer_list<string> outs, SP_Filter<T> filter){
         add_link({ins}, outs, filter);
     }
     
-    void Net::add_link(const string ins, const string outs, shared_ptr<Filter> filter){
+    template<typename T>
+    void Net<T>::add_link(const string ins, const string outs, SP_Filter<T> filter){
         add_link({ins}, {outs}, filter);
     }
     
-    void Net::_remove_signal(string id) {
+    template<typename T>
+    void Net<T>::_remove_signal(string id) {
         if (inner_signals.count(id) > 0) {
             inner_signals.erase(id);
         }
     }
     
-    void Net::set_input_ids(const string id) {
+    template<typename T>
+    void Net<T>::set_input_ids(const string id) {
         assert(!Contains(input_ids, id));
         input_ids.push_back(id);
         _remove_signal(id);
     }
     
-    void Net::set_input_ids(const initializer_list<string> ids) {
+    template<typename T>
+    void Net<T>::set_input_ids(const initializer_list<string> ids) {
         for (auto id : ids) {
             assert(!Contains(input_ids, id));
         }
@@ -96,7 +104,8 @@ namespace gs {
         }
     }
     
-    void Net::set_input_ids(const vector<string> ids) {
+    template<typename T>
+    void Net<T>::set_input_ids(const vector<string> ids) {
         for (auto id : ids) {
             assert(!Contains(input_ids, id));
         }
@@ -106,13 +115,15 @@ namespace gs {
         }
     }
     
-    void Net::set_output_ids(const string id) {
+    template<typename T>
+    void Net<T>::set_output_ids(const string id) {
         assert(!Contains(output_ids, id));
         output_ids.push_back(id);
         _remove_signal(id);
     }
     
-    void Net::set_output_ids(const initializer_list<string> ids) {
+    template<typename T>
+    void Net<T>::set_output_ids(const initializer_list<string> ids) {
         for (auto id : ids) {
             assert(!Contains(output_ids, id));
         }
@@ -122,7 +133,8 @@ namespace gs {
         }
     }
     
-    void Net::set_output_ids(const vector<string> ids) {
+    template<typename T>
+    void Net<T>::set_output_ids(const vector<string> ids) {
         for (auto id : ids) {
             assert(!Contains(output_ids, id));
         }
@@ -132,7 +144,8 @@ namespace gs {
         }
     }
     
-    void Net::_set_fp_order(string out_id) {
+    template<typename T>
+    void Net<T>::_set_fp_order(string out_id) {
         // input_ids should be non-empty
         assert(!input_ids.empty());
         if (Contains(input_ids, out_id)) {
@@ -153,7 +166,8 @@ namespace gs {
         }
     }
     
-    void Net::_set_bp_order(string in_id) {
+    template<typename T>
+    void Net<T>::_set_bp_order(string in_id) {
         assert(!output_ids.empty());
         if (Contains(output_ids, in_id)) {
             return;
@@ -173,7 +187,8 @@ namespace gs {
         }
     }
     
-    void Net::set_p_order() {
+    template<typename T>
+    void Net<T>::set_p_order() {
         for (auto out_id : output_ids) {
             _set_fp_order(out_id);
         }
@@ -182,9 +197,10 @@ namespace gs {
         }
     }
     
-    shared_ptr<Signal> Net::_get_signal(string id,
-                                        const vector<shared_ptr<Signal>> in_signals,
-                                        const vector<shared_ptr<Signal>> out_signals) {
+    template<typename T>
+    SP_Signal<T> Net<T>::_get_signal(string id,
+                                        const vector<SP_Signal<T>> in_signals,
+                                        const vector<SP_Signal<T>> out_signals) {
         auto in_idx = find(input_ids.begin(), input_ids.end(), id);
         if (in_idx != input_ids.end()) {
             auto idx = in_idx - input_ids.begin();
@@ -198,30 +214,34 @@ namespace gs {
         return inner_signals[id];
     }
     
-    vector<shared_ptr<Signal>> Net::_get_signal(vector<string> ids,
-                                                const vector<shared_ptr<Signal>> in_signals,
-                                                const vector<shared_ptr<Signal>> out_signals) {
-        vector<shared_ptr<Signal>> res{};
+    template<typename T>
+    vector<SP_Signal<T>> Net<T>::_get_signal(vector<string> ids,
+                                                const vector<SP_Signal<T>> in_signals,
+                                                const vector<SP_Signal<T>> out_signals) {
+        vector<SP_Signal<T>> res{};
         for (auto id : ids) {
             res.push_back(_get_signal(id, in_signals, out_signals));
         }
         return res;
     }
     
-    void Net::set_dims(const shared_ptr<Signal> in_signal,
-                       const shared_ptr<Signal> out_signal,
+    template<typename T>
+    void Net<T>::set_dims(const SP_Signal<T> in_signal,
+                       const SP_Signal<T> out_signal,
                        int batch_size) {
         set_dims({in_signal}, {out_signal}, batch_size);
     }
     
-    void Net::set_dims(const initializer_list<shared_ptr<Signal>> in_signals,
-                  const initializer_list<shared_ptr<Signal>> out_signals,
+    template<typename T>
+    void Net<T>::set_dims(const initializer_list<SP_Signal<T>> in_signals,
+                  const initializer_list<SP_Signal<T>> out_signals,
                   int batch_size) {
-        set_dims(vector<shared_ptr<Signal>>(in_signals), vector<shared_ptr<Signal>>(out_signals), batch_size);
+        set_dims(vector<SP_Signal<T>>(in_signals), vector<SP_Signal<T>>(out_signals), batch_size);
     }
     
-    void Net::set_dims(const vector<shared_ptr<Signal>> in_signals,
-                       const vector<shared_ptr<Signal>> out_signals,
+    template<typename T>
+    void Net<T>::set_dims(const vector<SP_Signal<T>> in_signals,
+                       const vector<SP_Signal<T>> out_signals,
                        int batch_size) {
         for (auto link_idx : fp_order) {
             auto t = links[link_idx];
@@ -233,5 +253,8 @@ namespace gs {
                              batch_size);
         }
     }
+    
+    template class Net<float>;
+    template class Net<double>;
     
 }

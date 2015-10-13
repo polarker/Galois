@@ -12,12 +12,12 @@ using namespace std;
 
 namespace gs
 {
-    
-    class Net : public GFilter
+    template<typename T>
+    class Net : public GFilter<T>
     {
     public:
-        vector<tuple<const vector <string>, const vector <string>, shared_ptr<Filter>>> links;
-        set<shared_ptr<PFilter>> pfilters;
+        vector<tuple<const vector <string>, const vector <string>, SP_Filter<T>>> links;
+        set<SP_PFilter<T>> pfilters;
         
         map<string, vector<tuple<string, int>>> fp_graph;
         map<string, vector<tuple<string, int>>> bp_graph;
@@ -25,7 +25,7 @@ namespace gs
         vector<int> fp_order;
         vector<int> bp_order;
         
-        map<string, shared_ptr<Signal>> inner_signals;
+        map<string, SP_Signal<T>> inner_signals;
         
         vector<string> input_ids;
         vector<string> output_ids;
@@ -35,12 +35,12 @@ namespace gs
         Net( const Net& other ) = delete;
         Net& operator=( const Net& ) = delete;
         
-        set<shared_ptr<PFilter>> get_pfilters() override { return pfilters; }
+        set<SP_PFilter<T>> get_pfilters() override { return pfilters; }
         
-        void add_link(const initializer_list<string>, const initializer_list<string>, shared_ptr<Filter>);
-        void add_link(const initializer_list<string>, const string, shared_ptr<Filter>);
-        void add_link(const string, const initializer_list<string>, shared_ptr<Filter>);
-        void add_link(const string, const string, shared_ptr<Filter>);
+        void add_link(const initializer_list<string>, const initializer_list<string>, SP_Filter<T>);
+        void add_link(const initializer_list<string>, const string, SP_Filter<T>);
+        void add_link(const string, const initializer_list<string>, SP_Filter<T>);
+        void add_link(const string, const string, SP_Filter<T>);
         void _remove_signal(string);
         void set_input_ids(const string);
         void set_input_ids(const initializer_list<string>);
@@ -51,29 +51,29 @@ namespace gs
         void _set_fp_order(const string);
         void _set_bp_order(const string);
         void set_p_order();
-        shared_ptr<Signal> _get_signal(string id,
-                                       const vector<shared_ptr<Signal>> in_signals,
-                                       const vector<shared_ptr<Signal>> out_signals);
-        vector<shared_ptr<Signal>> _get_signal(vector<string> id,
-                                               const vector<shared_ptr<Signal>> in_signals,
-                                               const vector<shared_ptr<Signal>> out_signals);
-        void set_dims(const shared_ptr<Signal> in_signal,
-                      const shared_ptr<Signal> out_signal,
+        SP_Signal<T> _get_signal(string id,
+                                       const vector<SP_Signal<T>> in_signals,
+                                       const vector<SP_Signal<T>> out_signals);
+        vector<SP_Signal<T>> _get_signal(vector<string> id,
+                                               const vector<SP_Signal<T>> in_signals,
+                                               const vector<SP_Signal<T>> out_signals);
+        void set_dims(const SP_Signal<T> in_signal,
+                      const SP_Signal<T> out_signal,
                       int batch_size);
-        void set_dims(const initializer_list<shared_ptr<Signal>> in_signals,
-                      const initializer_list<shared_ptr<Signal>> out_signals,
+        void set_dims(const initializer_list<SP_Signal<T>> in_signals,
+                      const initializer_list<SP_Signal<T>> out_signals,
                       int batch_size);
-        void set_dims(const vector<shared_ptr<Signal>> in_signals,
-                      const vector<shared_ptr<Signal>> out_signals,
+        void set_dims(const vector<SP_Signal<T>> in_signals,
+                      const vector<SP_Signal<T>> out_signals,
                       int batch_size) override;
         
-        void Forward(shared_ptr<Signal> inputs, shared_ptr<Signal> outputs) override {
+        void Forward(SP_Signal<T> inputs, SP_Signal<T> outputs) override {
             inputs->opaque = true;
             outputs->opaque = true;
             cout << "forward" << endl;
         }
             
-        void Backward(shared_ptr<Signal> inputs, shared_ptr<Signal> outputs) override {
+        void Backward(SP_Signal<T> inputs, SP_Signal<T> outputs) override {
             inputs->opaque = true;
             outputs->opaque = true;
             cout << "backward" << endl;
