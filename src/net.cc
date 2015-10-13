@@ -5,17 +5,28 @@
 
 namespace gs {
     
-    void Net::add_link(const initializer_list<string> ins, const initializer_list<string> outs, Filter *filter){
+    Net::Net() : links{},
+            pfilters{},
+            fp_graph{},
+            bp_graph{},
+            fp_order{},
+            bp_order{},
+            inner_signals{},
+            input_ids{},
+            output_ids{} {
+    }
+    
+    void Net::add_link(const initializer_list<string> ins, const initializer_list<string> outs, shared_ptr<Filter> filter){
         // add to links
         auto idx = links.size();
-        links.push_back(tuple<const vector<string>,const vector<string>,Filter*>
+        links.push_back(tuple<const vector<string>,const vector<string>,shared_ptr<Filter>>
                         (vector<string>{ins}, vector<string>{outs}, filter));
         
         // add to pfilters
-        if (auto p = dynamic_cast<PFilter*>(filter)) {
+        if (auto p = dynamic_pointer_cast<PFilter>(filter)) {
             pfilters.insert(p);
         }
-        if (auto g = dynamic_cast<GFilter*>(filter)) {
+        if (auto g = dynamic_pointer_cast<GFilter>(filter)) {
             //for(auto e : g->get_pfilters())
             //    pfilters.insert(e);
             auto s = g->get_pfilters();
@@ -39,17 +50,29 @@ namespace gs {
                 bp_graph[s2].push_back(tuple<string,int>(s1, idx));
             }
         }
+        
+        // initial signals
+        for (auto s : ins) {
+            if (!Contains(input_ids, s) && (inner_signals.count(s) == 0)) {
+                inner_signals[s] = make_shared<Signal>();
+            }
+        }
+        for (auto s : outs) {
+            if (!Contains(output_ids, s) && (inner_signals.count(s) == 0)) {
+                inner_signals[s] = make_shared<Signal>();
+            }
+        }
     }
     
-    void Net::add_link(const initializer_list<string> ins, const string outs, Filter *filter){
+    void Net::add_link(const initializer_list<string> ins, const string outs, shared_ptr<Filter> filter){
         add_link(ins, {outs}, filter);
     }
     
-    void Net::add_link(const string ins, const initializer_list<string> outs, Filter *filter){
+    void Net::add_link(const string ins, const initializer_list<string> outs, shared_ptr<Filter> filter){
         add_link({ins}, outs, filter);
     }
     
-    void Net::add_link(const string ins, const string outs, Filter *filter){
+    void Net::add_link(const string ins, const string outs, shared_ptr<Filter> filter){
         add_link({ins}, {outs}, filter);
     }
     
@@ -109,6 +132,27 @@ namespace gs {
         for (auto in_id : input_ids) {
             _set_bp_order(in_id);
         }
+    }
+    shared_ptr<Signal> Net::_get_signal(string id,
+                                        const vector<shared_ptr<Signal>> in_signals,
+                                        const vector<shared_ptr<Signal>> out_signals) {
+        auto in_idx = find(input_ids.begin(), input_ids.end(), id);
+        if (in_idx != input_ids.end()) {
+            auto idx = in_idx - input_ids.begin();
+            return in_signals[idx];
+        }
+        auto out_idx = find(output_ids.begin(), output_ids.end(), id);
+        if (out_idx != output_ids.end()) {
+            auto idx = out_idx - output_ids.begin();
+            return out_signals[idx];
+        }
+        return inner_signals[id];
+    }
+    
+    void Net::set_dims(const vector<shared_ptr<Signal>> in_signals,
+                  const vector<shared_ptr<Signal>> out_signals,
+                  int batch_size) {
+        return;
     }
     
 }
