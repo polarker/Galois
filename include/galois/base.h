@@ -14,28 +14,21 @@ namespace gs
 //    template<typename T>
 //    using NArray = vector<T>;
     
-    enum SignalType { InnerSignal, InputSignal, OutputSignal };
+//    enum SignalType { InnerSignal, InputSignal, OutputSignal };
     
     template<typename T>
     class Signal
     {
     public:
-        SignalType type;
-        
         vector<int> dims = {};
         UP_NArray<T> data = nullptr;
-        UP_NArray<T> grad = nullptr;
+
+        bool opaque = true;
         
-        UP_NArray<T> target = nullptr; // only use this for output signal
-        T loss = 0;    // only use this for output signal
-        
-        bool opaque;
-        
-        Signal(SignalType t=InnerSignal) : type{t} {}
+    public:
+        Signal() {};
         Signal(const Signal& other) = delete;
         Signal& operator=(const Signal&) = delete;
-        
-        // set dims for data and grad
         void set_dims(int m)                        { set_dims({m}); }
         void set_dims(int m, int n)                 { set_dims({m,n}); }
         void set_dims(int m, int n, int o)          { set_dims({m,n,o}); }
@@ -43,12 +36,58 @@ namespace gs
         void set_dims(initializer_list<int> nums) {
             set_dims(vector<int>(nums));
         }
+        virtual void set_dims(vector<int> nums) = 0;
+    };
+    template<typename T>
+    using SP_Signal = shared_ptr<Signal<T>>;
+
+    template<typename T>
+    class InnerSignal : public Signal<T>
+    {
+    public:
+        UP_NArray<T> grad = nullptr;
+
+    public:
+        void set_dims(vector<int> nums) override {
+            for (auto m : nums) {
+                this->dims.push_back(m);
+            }
+            this->data = make_unique<NArray<T>>(nums);
+            grad = make_unique<NArray<T>>(nums);
+        }
+    };
+    template<typename T>
+    using SP_InnerSignal = shared_ptr<InnerSignal<T>>;
+
+
+    template<typename T>
+    class InputSignal : public Signal<T>
+    {
+    public:
         void set_dims(vector<int> nums) {
             for (auto m : nums) {
-                dims.push_back(m);
+                this->dims.push_back(m);
             }
-            data = make_unique<NArray<T>>(nums);
-            grad = make_unique<NArray<T>>(nums);
+            this->data = make_unique<NArray<T>>(nums);
+        }
+    };
+    template<typename T>
+    using SP_InputSignal = shared_ptr<InputSignal<T>>;
+
+
+    template<typename T>
+    class OutputSignal : public Signal<T>
+    {
+    public:
+        UP_NArray<T> target = nullptr;
+        T loss = 0;
+
+    public:
+        void set_dims(vector<int> nums) {
+            for (auto m : nums) {
+                this->dims.push_back(m);
+            }
+            this->data = make_unique<NArray<T>>(nums);
         }
         // set dims for target
         void set_target_dims(int m)                         { set_dims({m}); }
@@ -63,7 +102,20 @@ namespace gs
         }
     };
     template<typename T>
-    using SP_Signal = shared_ptr<Signal<T>>;
+    using SP_OutputSignal = shared_ptr<OutputSignal<T>>;
+    
+    template<typename T>
+    ostream& operator<<(std::ostream &strm, const SP_Signal<T> signal) {
+        return strm << "{"
+                    << signal->dims
+                    << ","
+                    << signal->data->get_dims()
+//                    << ","
+//                    << signal->grad->get_dims()
+                    << "}";
+    }
+    
+    
     
     // Filter does forward/backward propagation
     template<typename T>

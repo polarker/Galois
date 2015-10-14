@@ -23,6 +23,9 @@ namespace gs
         NArray& operator=(const NArray&) = delete;
         ~NArray();
         
+        vector<int> get_dims() { return dims; }
+        int get_size() { return size; }
+        
     private:
         vector<int> dims;
         int size;

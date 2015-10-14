@@ -54,12 +54,12 @@ namespace gs {
         // initial signals
         for (auto s : ins) {
             if (!Contains(input_ids, s) && (inner_signals.count(s) == 0)) {
-                inner_signals[s] = make_shared<Signal<T>>();
+                inner_signals[s] = make_shared<InnerSignal<T>>();
             }
         }
         for (auto s : outs) {
             if (!Contains(output_ids, s) && (inner_signals.count(s) == 0)) {
-                inner_signals[s] = make_shared<Signal<T>>();
+                inner_signals[s] = make_shared<InnerSignal<T>>();
             }
         }
     }
