@@ -88,20 +88,12 @@ namespace gs {
     
     template<typename T>
     void Net<T>::set_input_ids(const string id) {
-        assert(!Contains(input_ids, id));
-        input_ids.push_back(id);
-        _remove_signal(id);
+        set_input_ids({id});
     }
     
     template<typename T>
     void Net<T>::set_input_ids(const initializer_list<string> ids) {
-        for (auto id : ids) {
-            assert(!Contains(input_ids, id));
-        }
-        input_ids.insert(input_ids.end(), ids.begin(), ids.end());
-        for (auto id : ids) {
-            _remove_signal(id);
-        }
+        set_input_ids(vector<string>(ids));
     }
     
     template<typename T>
@@ -117,20 +109,12 @@ namespace gs {
     
     template<typename T>
     void Net<T>::set_output_ids(const string id) {
-        assert(!Contains(output_ids, id));
-        output_ids.push_back(id);
-        _remove_signal(id);
+        set_output_ids({id});
     }
     
     template<typename T>
     void Net<T>::set_output_ids(const initializer_list<string> ids) {
-        for (auto id : ids) {
-            assert(!Contains(output_ids, id));
-        }
-        output_ids.insert(output_ids.end(), ids.begin(), ids.end());
-        for (auto id : ids) {
-            _remove_signal(id);
-        }
+        set_output_ids(vector<string>(ids));
     }
     
     template<typename T>

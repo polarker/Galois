@@ -1,7 +1,8 @@
 #ifndef _GALOIS_NET_H_
 #define _GALOIS_NET_H_
 
-#include <galois/base.h>
+#include "galois/base.h"
+#include "galois/net.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -32,8 +33,8 @@ namespace gs
         
     public:
         Net();
-        Net( const Net& other ) = delete;
-        Net& operator=( const Net& ) = delete;
+        Net(const Net& other) = delete;
+        Net& operator=(const Net&) = delete;
         
         set<SP_PFilter<T>> get_pfilters() override { return pfilters; }
         

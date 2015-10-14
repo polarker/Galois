@@ -1,6 +1,8 @@
 #ifndef _GALOIS_BASE_H_
 #define _GALOIS_BASE_H_
 
+# include "galois/narray.h"
+# include "galois/utils.h"
 # include <iostream>
 # include <vector>
 # include <set>
@@ -9,8 +11,8 @@ using namespace std;
 namespace gs
 {
     
-    template<typename T>
-    using NArray = vector<T>;
+//    template<typename T>
+//    using NArray = vector<T>;
     
     enum SignalType { InnerSignal, InputSignal, OutputSignal };
     
@@ -20,25 +22,45 @@ namespace gs
     public:
         SignalType type;
         
-        vector<int> dims;
-        NArray<T> *data;
-        NArray<T> *grad;
+        vector<int> dims = {};
+        UP_NArray<T> data = nullptr;
+        UP_NArray<T> grad = nullptr;
         
-        NArray<T> *target; // only use this for output signal
-        T loss;    // only use this for output signal
+        UP_NArray<T> target = nullptr; // only use this for output signal
+        T loss = 0;    // only use this for output signal
         
         bool opaque;
         
-        Signal(SignalType t=InnerSignal)
-                : type{t}
-                , dims{}
-                , data{nullptr}
-                , grad{nullptr}
-                , target{nullptr}
-                , loss{0}
-                , opaque{true} {}
+        Signal(SignalType t=InnerSignal) : type{t} {}
         Signal(const Signal& other) = delete;
         Signal& operator=(const Signal&) = delete;
+        
+        // set dims for data and grad
+        void set_dims(int m)                        { set_dims({m}); }
+        void set_dims(int m, int n)                 { set_dims({m,n}); }
+        void set_dims(int m, int n, int o)          { set_dims({m,n,o}); }
+        void set_dims(int m, int n, int o, int k)   { set_dims({m,n,o,k}); }
+        void set_dims(initializer_list<int> nums) {
+            set_dims(vector<int>(nums));
+        }
+        void set_dims(vector<int> nums) {
+            for (auto m : nums) {
+                dims.push_back(m);
+            }
+            data = make_unique<NArray<T>>(nums);
+            grad = make_unique<NArray<T>>(nums);
+        }
+        // set dims for target
+        void set_target_dims(int m)                         { set_dims({m}); }
+        void set_target_dims(int m, int n)                  { set_dims({m,n}); }
+        void set_target_dims(int m, int n, int o)           { set_dims({m,n,o}); }
+        void set_target_dims(int m, int n, int o, int k)    { set_dims({m,n,o,k}); }
+        void set_target_dims(initializer_list<int> nums) {
+            set_target_dims(vector<int>(nums));
+        }
+        void set_target_dims(vector<int> nums) {
+            target = make_unique<NArray<T>>(nums);
+        }
     };
     template<typename T>
     using SP_Signal = shared_ptr<Signal<T>>;

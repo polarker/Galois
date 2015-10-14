@@ -14,13 +14,15 @@ namespace gs {
     template<typename T>
     void Linear<T>::set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size) {
         if (in_signal->dims.empty()) {
-            in_signal->dims.insert(in_signal->dims.end(), {batch_size, in_size});
+//            in_signal->dims.insert(in_signal->dims.end(), {batch_size, in_size});
+            in_signal->set_dims(batch_size, in_size);
         } else {
             assert(in_signal->dims ==  vector<int>({batch_size, in_size}));
             // for allocation
         }
         if (out_signal->dims.empty()) {
-            out_signal->dims.insert(out_signal->dims.end(), {batch_size, out_size});
+//            out_signal->dims.insert(out_signal->dims.end(), {batch_size, out_size});
+            out_signal->set_dims(batch_size, out_size);
         } else {
             assert(out_signal->dims == vector<int>({batch_size, out_size}));
             // for allocation
