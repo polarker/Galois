@@ -45,8 +45,8 @@ namespace gs {
     {
         if (std::find(Vec.begin(), Vec.end(), Element) != Vec.end())
             return true;
-        
-        return false;
+        else
+            return false;
     }
     
 }

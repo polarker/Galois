@@ -6,18 +6,15 @@ namespace gs {
     class Tanh : public BFilter<T> {
     public:
         void set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size);
-        void set_dims(vector<SP_Signal<T>> in_signals,
-                      vector<SP_Signal<T>> out_signals,
+        void set_dims(const vector<SP_Signal<T>> &in_signals,
+                      const vector<SP_Signal<T>> &out_signals,
                       int batch_size) override;
-        void Forward(SP_Signal<T> inputs, SP_Signal<T> outputs) override {
-            inputs->opaque = true;
-            outputs->opaque = true;
+
+        void forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override {
             cout << "forward" << endl;
         }
             
-        void Backward(SP_Signal<T> inputs, SP_Signal<T> outputs) override {
-            inputs->opaque = true;
-            outputs->opaque = true;
+        void backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override {
             cout << "backward" << endl;
         }
     };

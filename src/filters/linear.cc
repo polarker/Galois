@@ -30,11 +30,17 @@ namespace gs {
     }
     
     template<typename T>
-    void Linear<T>::set_dims(vector<SP_Signal<T>> in_signals, vector<SP_Signal<T>> out_signals, int batch_size) {
+    void Linear<T>::set_dims(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals, int batch_size) {
         assert(in_signals.size() == 1);
         assert(out_signals.size() == 1);
         
         set_dims(in_signals[0], out_signals[0], batch_size);
+    }
+    
+    template<typename T>
+    void Linear<T>::forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
+        assert(in_signals.size() == 1);
+        assert(out_signals.size() == 1);
     }
     
     template class Linear<float>;

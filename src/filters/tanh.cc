@@ -16,7 +16,7 @@ namespace gs {
     }
     
     template<typename T>
-    void Tanh<T>::set_dims(vector<SP_Signal<T>> in_signals, vector<SP_Signal<T>> out_signals, int batch_size) {
+    void Tanh<T>::set_dims(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals, int batch_size) {
         assert(in_signals.size() == 1);
         assert(out_signals.size() == 1);
         

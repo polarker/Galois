@@ -217,15 +217,15 @@ namespace gs {
     }
     
     template<typename T>
-    void Net<T>::set_dims(const initializer_list<SP_Signal<T>> in_signals,
-                  const initializer_list<SP_Signal<T>> out_signals,
+    void Net<T>::set_dims(const initializer_list<SP_Signal<T>> &in_signals,
+                  const initializer_list<SP_Signal<T>> &out_signals,
                   int batch_size) {
         set_dims(vector<SP_Signal<T>>(in_signals), vector<SP_Signal<T>>(out_signals), batch_size);
     }
     
     template<typename T>
-    void Net<T>::set_dims(const vector<SP_Signal<T>> in_signals,
-                       const vector<SP_Signal<T>> out_signals,
+    void Net<T>::set_dims(const vector<SP_Signal<T>> &in_signals,
+                       const vector<SP_Signal<T>> &out_signals,
                        int batch_size) {
         for (auto link_idx : fp_order) {
             auto t = links[link_idx];
@@ -235,6 +235,19 @@ namespace gs {
             filter->set_dims(_get_signal(ins, in_signals, out_signals),
                              _get_signal(outs, in_signals, out_signals),
                              batch_size);
+        }
+    }
+    
+    // future: optimization by passing reference
+    template<typename T>
+    void Net<T>::forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
+        for (auto link_idx : fp_order) {
+            auto t = links[link_idx];
+            auto ins = get<0>(t);
+            auto outs = get<1>(t);
+            auto filter = get<2>(t);
+            filter->forward(_get_signal(ins, in_signals, out_signals),
+                            _get_signal(outs, in_signals, out_signals));
         }
     }
     

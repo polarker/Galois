@@ -32,7 +32,7 @@ namespace gs
         T *data;
     };
     template<typename T>
-    using UP_NArray = unique_ptr<NArray<T>>;
+    using SP_NArray = shared_ptr<NArray<T>>;
 
 }
 

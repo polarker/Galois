@@ -61,22 +61,18 @@ namespace gs
         void set_dims(const SP_Signal<T> in_signal,
                       const SP_Signal<T> out_signal,
                       int batch_size);
-        void set_dims(const initializer_list<SP_Signal<T>> in_signals,
-                      const initializer_list<SP_Signal<T>> out_signals,
+        void set_dims(const initializer_list<SP_Signal<T>> &in_signals,
+                      const initializer_list<SP_Signal<T>> &out_signals,
                       int batch_size);
-        void set_dims(const vector<SP_Signal<T>> in_signals,
-                      const vector<SP_Signal<T>> out_signals,
+        void set_dims(const vector<SP_Signal<T>> &in_signals,
+                      const vector<SP_Signal<T>> &out_signals,
                       int batch_size) override;
         
-        void Forward(SP_Signal<T> inputs, SP_Signal<T> outputs) override {
-            inputs->opaque = true;
-            outputs->opaque = true;
-            cout << "forward" << endl;
-        }
-            
-        void Backward(SP_Signal<T> inputs, SP_Signal<T> outputs) override {
-            inputs->opaque = true;
-            outputs->opaque = true;
+        void forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
+        
+        void backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override {
+//            inputs->opaque = true;
+//            outputs->opaque = true;
             cout << "backward" << endl;
         }
     };

@@ -21,7 +21,7 @@ namespace gs
     {
     public:
         vector<int> dims = {};
-        UP_NArray<T> data = nullptr;
+        SP_NArray<T> data = nullptr;
 
         bool opaque = true;
         
@@ -45,7 +45,7 @@ namespace gs
     class InnerSignal : public Signal<T>
     {
     public:
-        UP_NArray<T> grad = nullptr;
+        SP_NArray<T> grad = nullptr;
 
     public:
         void set_dims(vector<int> nums) override {
@@ -79,7 +79,7 @@ namespace gs
     class OutputSignal : public Signal<T>
     {
     public:
-        UP_NArray<T> target = nullptr;
+        SP_NArray<T> target = nullptr;
         T loss = 0;
 
     public:
@@ -122,10 +122,10 @@ namespace gs
     class Filter
     {
     public:
-        virtual void Forward(SP_Signal<T> inputs, SP_Signal<T> outputs) = 0;
-        virtual void Backward(SP_Signal<T> inputs, SP_Signal<T> outputs) = 0;
-        virtual void set_dims(const vector<SP_Signal<T>> in_signals,
-                              const vector<SP_Signal<T>> out_signals,
+        virtual void forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) = 0;
+        virtual void backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) = 0;
+        virtual void set_dims(const vector<SP_Signal<T>> &in_signals,
+                              const vector<SP_Signal<T>> &out_signals,
                               int batch_size) = 0;
         //virtual const Filter *Share() const;
         //virtual const Filter *Clone() const;
@@ -152,14 +152,14 @@ namespace gs
     class TestBFilter : public BFilter<T>
     {
     public:
-        void Forward(SP_Signal<T> inputs, SP_Signal<T> outputs) {
-            inputs->opaque = true;
-            outputs->opaque = true;
+        void forward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
+//            inputs->opaque = true;
+//            outputs->opaque = true;
             cout << "forward" << endl;
         }
-        void Backward(SP_Signal<T> inputs, SP_Signal<T> outputs) {
-            inputs->opaque = true;
-            outputs->opaque = true;
+        void backward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
+//            inputs->opaque = true;
+//            outputs->opaque = true;
             cout << "backward" << endl;
         }
         void set_dims(const vector<SP_Signal<T>> in_signals,
@@ -171,14 +171,14 @@ namespace gs
     class TestPFilter : public PFilter<T>
     {
     public:
-        void Forward(SP_Signal<T> inputs, SP_Signal<T> outputs) override {
-            inputs->opaque = true;
-            outputs->opaque = true;
+        void forward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
+//            inputs->opaque = true;
+//            outputs->opaque = true;
             cout << "forward" << endl;
         }
-        void Backward(SP_Signal<T> inputs, SP_Signal<T> outputs) override {
-            inputs->opaque = true;
-            outputs->opaque = true;
+        void backward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
+//            inputs->opaque = true;
+//            outputs->opaque = true;
             cout << "backward" << endl;
         }
         void set_dims(const vector<SP_Signal<T>> in_signals,
