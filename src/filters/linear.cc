@@ -1,4 +1,5 @@
 #include "linear.h"
+#include "galois/narray.h"
 #include <cassert>
 
 using namespace std;
@@ -6,9 +7,8 @@ using namespace std;
 namespace gs {
     
     template<typename T>
-    Linear<T>::Linear(int in_size, int out_size) {
-        this->in_size = in_size;
-        this->out_size = out_size;
+    Linear<T>::Linear(int in_size, int out_size) : in_size(in_size), out_size(out_size) {
+        w = make_shared<NArray<T>>(in_size, out_size);
     }
     
     template<typename T>
@@ -41,6 +41,10 @@ namespace gs {
     void Linear<T>::forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
         assert(in_signals.size() == 1);
         assert(out_signals.size() == 1);
+        auto in_data = in_signals[0]->data;
+        auto out_data = out_signals[0]->data;
+        
+        
     }
     
     template class Linear<float>;

@@ -13,12 +13,9 @@ namespace gs
     class NArray
     {
     public:
-        NArray(int);
-        NArray(int, int);
-        NArray(int, int, int);
-        NArray(int, int, int, int);
-        NArray(initializer_list<int>);
+        NArray(int m, int n＝0, int o=0, int k=0);
         NArray(vector<int>);
+        NArray() = delete;
         NArray(const NArray& other) = delete;
         NArray& operator=(const NArray&) = delete;
         ~NArray();
@@ -27,9 +24,9 @@ namespace gs
         int get_size() { return size; }
         
     private:
-        vector<int> dims;
-        int size;
-        T *data;
+        vector<int> dims = {};
+        int size = 0;
+        T *data = nullptr;
     };
     template<typename T>
     using SP_NArray = shared_ptr<NArray<T>>;

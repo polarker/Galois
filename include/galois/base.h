@@ -52,8 +52,8 @@ namespace gs
             for (auto m : nums) {
                 this->dims.push_back(m);
             }
-            this->data = make_unique<NArray<T>>(nums);
-            grad = make_unique<NArray<T>>(nums);
+            this->data = make_shared<NArray<T>>(nums);
+            grad = make_shared<NArray<T>>(nums);
         }
     };
     template<typename T>
@@ -68,7 +68,7 @@ namespace gs
             for (auto m : nums) {
                 this->dims.push_back(m);
             }
-            this->data = make_unique<NArray<T>>(nums);
+            this->data = make_shared<NArray<T>>(nums);
         }
     };
     template<typename T>
@@ -87,7 +87,7 @@ namespace gs
             for (auto m : nums) {
                 this->dims.push_back(m);
             }
-            this->data = make_unique<NArray<T>>(nums);
+            this->data = make_shared<NArray<T>>(nums);
         }
         // set dims for target
         void set_target_dims(int m)                         { set_dims({m}); }
@@ -98,7 +98,7 @@ namespace gs
             set_target_dims(vector<int>(nums));
         }
         void set_target_dims(vector<int> nums) {
-            target = make_unique<NArray<T>>(nums);
+            target = make_shared<NArray<T>>(nums);
         }
     };
     template<typename T>

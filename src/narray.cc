@@ -1,31 +1,31 @@
 # include "galois/narray.h"
+# include <cassert>
 
 namespace gs
 {
     
     template<typename T>
-    NArray<T>::NArray(int m) {
-        NArray<T>({m});
-    }
-    
-    template<typename T>
-    NArray<T>::NArray(int m, int n) {
-        NArray<T>({m, n});
-    }
-    
-    template<typename T>
-    NArray<T>::NArray(int m, int n, int o) {
-        NArray<T>({m, n, o});
-    }
-    
-    template<typename T>
     NArray<T>::NArray(int m, int n, int o, int k) {
-        NArray<T>({m, n, o, k});
-    }
-    
-    template<typename T>
-    NArray<T>::NArray(initializer_list<int> nums) : dims{} {
-        NArray<T>(vector<int>(nums));
+        assert(m > 0);
+        assert(n >= 0);
+        assert(o >= 0);
+        assert(k >= 0);
+
+        size = m;
+        dims.push_back(m);
+        if (n > 0) {
+            size *= n;
+            dims.push_back(n);
+        }
+        if (o > 0) {
+            size *= o;
+            dims.push_back(o);
+        }
+        if (k > 0) {
+            size *= k;
+            dims.push_back(k);
+        }
+        data = new T[size];
     }
     
     template<typename T>
