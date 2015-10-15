@@ -9,6 +9,10 @@ namespace gs {
     template<typename T>
     Linear<T>::Linear(int in_size, int out_size) : in_size(in_size), out_size(out_size) {
         w = make_shared<NArray<T>>(in_size, out_size);
+//        b = make_shared<NArray<T>>(out_size);
+        dw = make_shared<NArray<T>>(in_size, out_size);
+//        db = make_shared<NArray<T>>(out_size);
+        this->opaque = true;
     }
     
     template<typename T>

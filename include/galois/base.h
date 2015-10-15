@@ -137,7 +137,10 @@ namespace gs
     class BFilter : public Filter<T> {};
     
     template<typename T>
-    class PFilter : public Filter<T> {};
+    class PFilter : public Filter<T> {
+    public:
+        bool opaque = true;
+    };
     template<typename T>
     using SP_PFilter = shared_ptr<PFilter<T>>;
     
