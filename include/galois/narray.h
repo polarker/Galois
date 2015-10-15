@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <Accelerate/Accelerate.h>
 
 using namespace std;
 
@@ -22,6 +23,9 @@ namespace gs
         
         vector<int> get_dims() { return dims; }
         int get_size() { return size; }
+        T* get_dataptr() { assert(data); return data; }
+        
+        void copy_data(const vector<int> &, T*);
         
     private:
         vector<int> dims = {};
@@ -30,6 +34,13 @@ namespace gs
     };
     template<typename T>
     using SP_NArray = shared_ptr<NArray<T>>;
+    
+    void GEMM(const char tA, const char tB,
+              const float alpha, const SP_NArray<float> A, const SP_NArray<float> B,
+              const float beta, const SP_NArray<float> C);
+    void GEMM(const char tA, const char tB,
+              const double alpha, const SP_NArray<double> A, const SP_NArray<double> B,
+              const double beta, const SP_NArray<double> C);
 
 }
 
