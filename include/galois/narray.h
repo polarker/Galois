@@ -41,6 +41,11 @@ namespace gs
     void GEMM(const char tA, const char tB,
               const double alpha, const SP_NArray<double> A, const SP_NArray<double> B,
               const double beta, const SP_NArray<double> C);
+    
+    template<typename T>
+    void MAP_TO (const function<T(T)>& f, const SP_NArray<T> A, const SP_NArray<T> B);
+    template<typename T>
+    void MAP_ADD(const function<T(T)>& f, const SP_NArray<T> A, const SP_NArray<T> B);
 
 }
 

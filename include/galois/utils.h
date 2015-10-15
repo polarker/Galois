@@ -1,6 +1,7 @@
 #ifndef _GALOIS_UTILS_H_
 #define _GALOIS_UTILS_H_
 
+#include "galois/narray.h"
 #include <cstddef>
 #include <memory>
 #include <type_traits>

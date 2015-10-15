@@ -114,8 +114,35 @@ namespace gs
                     beta,
                     C->get_dataptr(), ldc);
     }
+
+    template<typename T>
+    void MAP_TO (const function<T(T)>& f, const SP_NArray<T> A, const SP_NArray<T> B) {
+        assert(A->get_dims() == B->get_dims());
+        assert(A->get_size() == B->get_size());
+        auto A_ptr = A->get_dataptr();
+        auto B_ptr = B->get_dataptr();
+        for (int i = 0; i < A->get_size(); i++) {
+            A_ptr[i] = f(B_ptr[i]);
+        }
+    }
+
+    template<typename T>
+    void MAP_ADD(const function<T(T)>& f, const SP_NArray<T> A, const SP_NArray<T> B) {
+        assert(A->get_dims() == B->get_dims());
+        assert(A->get_size() == B->get_size());
+        auto A_ptr = A->get_dataptr();
+        auto B_ptr = B->get_dataptr();
+        for (int i = 0; i < A->get_size(); i++) {
+            A_ptr[i] += f(B_ptr[i]);
+        }
+    }
+
     
     template class NArray<float>;
     template class NArray<double>;
+    template void MAP_TO (const function<float(float)>& f, const SP_NArray<float> A, const SP_NArray<float> B);
+    template void MAP_TO (const function<double(double)>& f, const SP_NArray<double> A, const SP_NArray<double> B);
+    template void MAP_ADD(const function<float(float)>& f, const SP_NArray<float> A, const SP_NArray<float> B);
+    template void MAP_ADD(const function<double(double)>& f, const SP_NArray<double> A, const SP_NArray<double> B);
 
 }
