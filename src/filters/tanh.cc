@@ -8,9 +8,7 @@ namespace gs {
     void Tanh<T>::set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size) {
         assert(!in_signal->dims.empty());
         if (out_signal->dims.empty()) {
-//            out_signal->dims.insert(out_signal->dims.end(), in_signal->dims.begin(), in_signal->dims.end());
             out_signal->set_dims(in_signal->dims);
-            // for allocation
         } else {
             assert(in_signal->dims == out_signal->dims);
         }

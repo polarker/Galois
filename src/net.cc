@@ -238,7 +238,6 @@ namespace gs {
         }
     }
     
-    // future: optimization by passing reference
     template<typename T>
     void Net<T>::forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
         for (auto link_idx : fp_order) {

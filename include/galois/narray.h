@@ -14,7 +14,7 @@ namespace gs
     class NArray
     {
     public:
-        NArray(int m, int n＝0, int o=0, int k=0);
+        NArray(int m, int n=0, int o=0, int k=0);
         NArray(vector<int>);
         NArray() = delete;
         NArray(const NArray& other) = delete;

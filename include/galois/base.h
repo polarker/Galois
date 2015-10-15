@@ -11,11 +11,6 @@ using namespace std;
 namespace gs
 {
     
-//    template<typename T>
-//    using NArray = vector<T>;
-    
-//    enum SignalType { InnerSignal, InputSignal, OutputSignal };
-    
     template<typename T>
     class Signal
     {
@@ -182,13 +177,9 @@ namespace gs
     {
     public:
         void forward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
-//            inputs->opaque = true;
-//            outputs->opaque = true;
             cout << "forward" << endl;
         }
         void backward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
-//            inputs->opaque = true;
-//            outputs->opaque = true;
             cout << "backward" << endl;
         }
         void set_dims(const vector<SP_Signal<T>> in_signals,
@@ -201,13 +192,9 @@ namespace gs
     {
     public:
         void forward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
-//            inputs->opaque = true;
-//            outputs->opaque = true;
             cout << "forward" << endl;
         }
         void backward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
-//            inputs->opaque = true;
-//            outputs->opaque = true;
             cout << "backward" << endl;
         }
         void set_dims(const vector<SP_Signal<T>> in_signals,
