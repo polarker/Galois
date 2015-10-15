@@ -1,3 +1,6 @@
+#ifndef _GALOIS_LINEAR_H_
+#define _GALOIS_LINEAR_H_
+
 #include "galois/base.h"
 
 namespace gs {
@@ -29,3 +32,5 @@ namespace gs {
     };
     
 }
+
+#endif
