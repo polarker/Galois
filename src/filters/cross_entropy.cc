@@ -12,7 +12,8 @@ namespace gs {
         assert(os->dims.empty()); // output should only be set once for dimensions
         
         os->set_dims(in_dims);
-        os->set_target_dims(in_dims);
+        os->set_target_dims(batch_size);
+        os->set_extra_dims(batch_size);
     }
 
     template<typename T>
@@ -37,12 +38,13 @@ namespace gs {
         
         // softmax function
         MAP_TO<T>([](T x){return exp(x);}, in_data, out_data);
-        out_data->norm_for(NARRAY_DIM_ZERO);
+        out_data->normalize_for(NARRAY_DIM_ZERO);
         
         auto os = dynamic_pointer_cast<OutputSignal<T>>(out_signal);
         assert(os);
-        T loss = 0;
-        
+        auto target_data = os->target_data;
+        auto loss_data = os->extra_data;
+        PROJ_MAP_TO<T>([](T x){return -log(x);}, loss_data, out_data, target_data);
     }
 
     template class CrossEntropy<float>;

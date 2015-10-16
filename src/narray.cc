@@ -57,7 +57,7 @@ namespace gs
     }
     
     template<typename T>
-    void NArray<T>::norm_for(int dim) {
+    void NArray<T>::normalize_for(int dim) {
         // currently, only two dimensional array are supported
         assert(dim == NARRAY_DIM_ZERO || dim == NARRAY_DIM_ONE);
         assert(this->dims.size() == 2);
@@ -169,10 +169,58 @@ namespace gs
     }
     
     // currently, only two dimensional array are supported
+    // X[m][n] -> Y[m]
+    template<typename T>
+    void PROJ_MAP (const function<T(T)>& f,
+                   const SP_NArray<T> Y, const SP_NArray<T> X,
+                   const SP_NArray<T> idx,
+                   const bool overwrite) {
+        assert(X->get_dims().size() == 2);
+        assert(Y->get_dims().size() == 1);
+        int m = X->get_dims()[0];
+        int n = X->get_dims()[1];
+        assert(m == Y->get_dims()[0]);
+        assert(idx->get_dims().size() == 1);
+        assert(m == idx->get_dims()[0]);
+        
+        auto Y_ptr = Y->get_dataptr();
+        auto X_ptr = X->get_dataptr();
+        auto idx_ptr = idx->get_dataptr();
+        for (int i = 0; i < m; i++) {
+            int j = idx_ptr[i];
+            assert(j < n);
+            if (overwrite) {
+                Y_ptr[i] = f(X_ptr[i*n + j]);
+            } else {
+                Y_ptr[i] += f(X_ptr[i*n + j]);
+            }
+        }
+    }
+    
+    // currently, only two dimensional array are supported
+    // X[m][n] -> Y[m]
+    template<typename T>
+    void PROJ_MAP_TO (const function<T(T)>& f,
+                      const SP_NArray<T> Y, const SP_NArray<T> X,
+                      const SP_NArray<T> idx) {
+        PROJ_MAP(f, Y, X, idx, true);
+    }
+    
+    // currently, only two dimensional array are supported
+    // X[m][n] -> Y[m]
+    template<typename T>
+    void PROJ_MAP_ADD(const function<T(T)>& f,
+                      const SP_NArray<T> Y, const SP_NArray<T> X,
+                      const SP_NArray<T> idx) {
+        PROJ_MAP(f, Y, X, idx, false);
+    }
+    
+    // currently, only two dimensional array are supported
+    // to be fixed
     template<typename T>
     void SUB_MAP (const function<T(T)>& f,
                   const SP_NArray<T> Y, const SP_NArray<T> X,
-                  const SP_NArray<int> a, const SP_NArray<int> b,
+                  const SP_NArray<T> a, const SP_NArray<T> b,
                   const bool overwrite) {
         assert(Y->get_dims() == X->get_dims());
         assert(Y->get_dims().size() == 2);
@@ -185,10 +233,12 @@ namespace gs
         auto a_ptr = a->get_dataptr();
         auto b_ptr = b->get_dataptr();
         for (int i = 0; i < size; i++) {
+            int a_idx = int(a_ptr[i]);
+            int b_idx = int(b_ptr[i]);
             if (overwrite) {
-                Y_ptr[a_ptr[i]*stride + b_ptr[i]] = f(X_ptr[i]);
+                Y_ptr[a_idx*stride + b_idx] = f(X_ptr[i]);
             } else {
-                Y_ptr[a_ptr[i]*stride + b_ptr[i]] += f(X_ptr[i]);
+                Y_ptr[a_idx*stride + b_idx] += f(X_ptr[i]);
             }
         }
     }
@@ -197,7 +247,7 @@ namespace gs
     template<typename T>
     void SUB_MAP_TO (const function<T(T)>& f,
                      const SP_NArray<T> Y, const SP_NArray<T> X,
-                     const SP_NArray<int> a, const SP_NArray<int> b) {
+                     const SP_NArray<T> a, const SP_NArray<T> b) {
         SUB_MAP(f, Y, X, a, b, true);
     }
     
@@ -205,7 +255,7 @@ namespace gs
     template<typename T>
     void SUB_MAP_ADD(const function<T(T)>& f,
                      const SP_NArray<T> Y, const SP_NArray<T> X,
-                     const SP_NArray<int> a, const SP_NArray<int> b) {
+                     const SP_NArray<T> a, const SP_NArray<T> b) {
         SUB_MAP(f, Y, X, a, b, false);
     }
     
@@ -213,12 +263,14 @@ namespace gs
     template class NArray<int>;
     template class NArray<float>;
     template class NArray<double>;
-    template void GEMM(const char tA, const char tB,
-                       const float alpha, const SP_NArray<float> A, const SP_NArray<float> B,
-                       const float beta, const SP_NArray<float> C);
-    template void GEMM(const char tA, const char tB,
-                       const double alpha, const SP_NArray<double> A, const SP_NArray<double> B,
-                       const double beta, const SP_NArray<double> C);
+    template
+    void GEMM(const char tA, const char tB,
+              const float alpha, const SP_NArray<float> A, const SP_NArray<float> B,
+              const float beta, const SP_NArray<float> C);
+    template
+    void GEMM(const char tA, const char tB,
+              const double alpha, const SP_NArray<double> A, const SP_NArray<double> B,
+              const double beta, const SP_NArray<double> C);
     //    template void MAP (const function<float(float)>& f,
     //                       const SP_NArray<float> A, const SP_NArray<float> B,
     //                       const bool overwrite);
@@ -229,17 +281,37 @@ namespace gs
     template void MAP_TO (const function<double(double)>& f, const SP_NArray<double> Y, const SP_NArray<double> X);
     template void MAP_ADD(const function<float(float)>& f, const SP_NArray<float> Y, const SP_NArray<float> X);
     template void MAP_ADD(const function<double(double)>& f, const SP_NArray<double> Y, const SP_NArray<double> X);
-    template void SUB_MAP_TO (const function<float(float)>& f,
-                              const SP_NArray<float> Y, const SP_NArray<float> X,
-                              const SP_NArray<int> a, const SP_NArray<int> b);
-    template void SUB_MAP_TO (const function<double(double)>& f,
-                              const SP_NArray<double> Y, const SP_NArray<double> X,
-                              const SP_NArray<int> a, const SP_NArray<int> b);
-    template void SUB_MAP_ADD(const function<float(float)>& f,
-                              const SP_NArray<float> Y, const SP_NArray<float> X,
-                              const SP_NArray<int> a, const SP_NArray<int> b);
-    template void SUB_MAP_ADD(const function<double(double)>& f,
-                              const SP_NArray<double> Y, const SP_NArray<double> X,
-                              const SP_NArray<int> a, const SP_NArray<int> b);
+    template
+    void PROJ_MAP_TO (const function<float(float)>& f,
+                      const SP_NArray<float> Y, const SP_NArray<float> X,
+                      const SP_NArray<float> idx);
+    template
+    void PROJ_MAP_TO (const function<double(double)>& f,
+                      const SP_NArray<double> Y, const SP_NArray<double> X,
+                      const SP_NArray<double> idx);
+    template
+    void PROJ_MAP_ADD (const function<float(float)>& f,
+                       const SP_NArray<float> Y, const SP_NArray<float> X,
+                       const SP_NArray<float> idx);
+    template
+    void PROJ_MAP_ADD (const function<double(double)>& f,
+                       const SP_NArray<double> Y, const SP_NArray<double> X,
+                       const SP_NArray<double> idx);
+    template
+    void SUB_MAP_TO (const function<float(float)>& f,
+                     const SP_NArray<float> Y, const SP_NArray<float> X,
+                     const SP_NArray<float> a, const SP_NArray<float> b);
+    template
+    void SUB_MAP_TO (const function<double(double)>& f,
+                     const SP_NArray<double> Y, const SP_NArray<double> X,
+                     const SP_NArray<double> a, const SP_NArray<double> b);
+    template
+    void SUB_MAP_ADD(const function<float(float)>& f,
+                     const SP_NArray<float> Y, const SP_NArray<float> X,
+                     const SP_NArray<float> a, const SP_NArray<float> b);
+    template
+    void SUB_MAP_ADD(const function<double(double)>& f,
+                     const SP_NArray<double> Y, const SP_NArray<double> X,
+                     const SP_NArray<double> a, const SP_NArray<double> b);
     
 }

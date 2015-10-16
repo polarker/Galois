@@ -38,7 +38,7 @@ namespace gs
         T* get_dataptr() { assert(data); return data; }
         
         void copy_data(const vector<int> &, T*);
-        void norm_for(int dim);
+        void normalize_for(int dim);
         
     private:
         const vector<int> dims = {};
@@ -62,13 +62,22 @@ namespace gs
     void MAP_ADD(const function<T(T)>& f, const SP_NArray<T> Y, const SP_NArray<T> X);
     
     template<typename T>
+    void PROJ_MAP_TO (const function<T(T)>& f,
+                      const SP_NArray<T> Y, const SP_NArray<T> X,
+                      const SP_NArray<T> idx);
+    template<typename T>
+    void PROJ_MAP_TO (const function<T(T)>& f,
+                      const SP_NArray<T> Y, const SP_NArray<T> X,
+                      const SP_NArray<T> idx);
+    
+    template<typename T>
     void SUB_MAP_TO (const function<T(T)>& f,
                     const SP_NArray<T> Y, const SP_NArray<T> X,
-                    const SP_NArray<int> a, const SP_NArray<int> b);
+                    const SP_NArray<T> a, const SP_NArray<T> b);
     template<typename T>
     void SUB_MAP_ADD(const function<T(T)>& f,
                     const SP_NArray<T> Y, const SP_NArray<T> X,
-                    const SP_NArray<int> a, const SP_NArray<int> b);
+                    const SP_NArray<T> a, const SP_NArray<T> b);
 
 }
 

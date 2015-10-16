@@ -78,6 +78,7 @@ namespace gs
     public:
         vector<int> target_dims = {};
         SP_NArray<T> target_data = nullptr;
+        vector<int> extra_dims = {};
         SP_NArray<T> extra_data = nullptr; // output signals need extra for optimization sometimes.
         T loss = 0;
 
@@ -103,6 +104,21 @@ namespace gs
                 target_dims.push_back(m);
             }
             target_data = make_shared<NArray<T>>(nums);
+        }
+        // set dims for extra
+        void set_extra_dims(int m)                         { set_extra_dims({m}); }
+        void set_extra_dims(int m, int n)                  { set_extra_dims({m,n}); }
+        void set_extra_dims(int m, int n, int o)           { set_extra_dims({m,n,o}); }
+        void set_extra_dims(int m, int n, int o, int k)    { set_extra_dims({m,n,o,k}); }
+        void set_extra_dims(initializer_list<int> nums) {
+            set_extra_dims(vector<int>(nums));
+        }
+        void set_extra_dims(vector<int> nums) {
+            assert(extra_dims.empty());
+            for (auto m : nums) {
+                extra_dims.push_back(m);
+            }
+            extra_data = make_shared<NArray<T>>(nums);
         }
     };
     template<typename T>
@@ -134,6 +150,8 @@ namespace gs
         << signal->data->get_dims()
         << ","
         << signal->target_data->get_dims()
+        << ","
+        << signal->extra_data->get_dims()
         << "}";
     }
     
