@@ -45,9 +45,9 @@ namespace gs {
         auto out_data = out_signals[0]->data;
         
         if (out_signals[0]->opaque) {
-            GEMM('N', 'N', 1.0, in_data, w, 0.0, out_data);
+            GEMM<T>('N', 'N', 1.0, in_data, w, 0.0, out_data);
         } else {
-            GEMM('N', 'N', 1.0, in_data, w, 1.0, out_data);
+            GEMM<T>('N', 'N', 1.0, in_data, w, 1.0, out_data);
         }
     }
     
