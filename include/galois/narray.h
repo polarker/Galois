@@ -16,8 +16,11 @@ namespace gs
     class NArray
     {
     public:
-        NArray(int m, int n=0, int o=0, int k=0);
-        NArray(vector<int>);
+        explicit NArray(int m);
+        explicit NArray(int m, int n);
+        explicit NArray(int m, int n, int o);
+        explicit NArray(int m, int n, int o, int k);
+        explicit NArray(vector<int>);
         NArray() = delete;
         NArray(const NArray& other) = delete;
         NArray& operator=(const NArray&) = delete;
@@ -38,7 +41,7 @@ namespace gs
         void norm_for(int dim);
         
     private:
-        vector<int> dims = {};
+        const vector<int> dims = {};
         T *data = nullptr;
     };
     template<typename T>

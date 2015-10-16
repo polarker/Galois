@@ -3,40 +3,42 @@
 
 namespace gs
 {
-    
     template<typename T>
-    NArray<T>::NArray(int m, int n, int o, int k) {
+    NArray<T>::NArray(int m) : dims{m} {
         assert(m > 0);
-        assert(n >= 0);
-        assert(o >= 0);
-        assert(k >= 0);
-        
-        int size = m;
-        dims.push_back(m);
-        if (n > 0) {
-            size *= n;
-            dims.push_back(n);
-        }
-        if (o > 0) {
-            size *= o;
-            dims.push_back(o);
-        }
-        if (k > 0) {
-            size *= k;
-            dims.push_back(k);
-        }
-        data = new T[size];
+        data = new T[get_size()];
+    }
+
+    template<typename T>
+    NArray<T>::NArray(int m, int n) : dims{m, n} {
+        assert(m > 0);
+        assert(n > 0);
+        data = new T[get_size()];
+    }
+
+    template<typename T>
+    NArray<T>::NArray(int m, int n, int o) : dims{m, n, o} {
+        assert(m > 0);
+        assert(n > 0);
+        assert(o > 0);
+        data = new T[get_size()];
     }
     
     template<typename T>
-    NArray<T>::NArray(vector<int> nums) : dims{} {
-        int size = 1;
+    NArray<T>::NArray(int m, int n, int o, int k) : dims{m, n, o, k} {
+        assert(m > 0);
+        assert(n > 0);
+        assert(o > 0);
+        assert(k > 0);
+        data = new T[get_size()];
+    }
+    
+    template<typename T>
+    NArray<T>::NArray(vector<int> nums) : dims{nums} {
         for (auto m : nums) {
             assert(m > 0);
-            dims.push_back(m);
-            size *= m;
         }
-        data = new T[size];
+        data = new T[get_size()];
     }
     
     template<typename T>
@@ -208,6 +210,7 @@ namespace gs
     }
     
     
+    template class NArray<int>;
     template class NArray<float>;
     template class NArray<double>;
     template void GEMM(const char tA, const char tB,
