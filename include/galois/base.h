@@ -72,8 +72,8 @@ namespace gs
     {
     public:
         SP_NArray<T> target_data = nullptr;
-        SP_NArray<T> extra_data = nullptr; // output signals need extra for optimization sometimes.
         T loss = 0;
+        SP_NArray<T> extra_data = nullptr; // output signals need extra for optimization sometimes.
 
     public:
         void set_dims(vector<int> nums) {

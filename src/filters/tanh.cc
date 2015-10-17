@@ -36,7 +36,7 @@ namespace gs {
         if (out_signals[0]->opaque) {
             MAP_TO<T>([](T x){ return tanh(x); }, in_data, out_data);
         } else {
-            MAP_ADD<T>([](T x){ return tanh(x); }, in_data, out_data);
+            MAP_ON<T>([](T x){ return tanh(x); }, in_data, out_data);
         }
     }
     

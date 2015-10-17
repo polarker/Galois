@@ -48,37 +48,33 @@ namespace gs
     using SP_NArray = shared_ptr<NArray<T>>;
     
     template<typename T>
-    void GEMM(const char tA, const char tB,
-              const T alpha, const SP_NArray<T> A, const SP_NArray<T> B,
-              const T beta, const SP_NArray<T> C);
+    void GEMM (const char tA, const char tB,
+               const T alpha, const SP_NArray<T> A, const SP_NArray<T> B,
+               const T beta, const SP_NArray<T> C);
     
-//    template<typename T>
-//    void MAP (const function<T(T)>& f,
-//              const SP_NArray<T> A, const SP_NArray<T> B,
-//              const bool overwrite);
     template<typename T>
     void MAP_TO (const function<T(T)>& f, const SP_NArray<T> Y, const SP_NArray<T> X);
     template<typename T>
-    void MAP_ADD(const function<T(T)>& f, const SP_NArray<T> Y, const SP_NArray<T> X);
+    void MAP_ON (const function<T(T)>& f, const SP_NArray<T> Y, const SP_NArray<T> X);
     
     template<typename T>
     void PROJ_MAP_TO (const function<T(T)>& f,
                       const SP_NArray<T> Y, const SP_NArray<T> X,
                       const SP_NArray<T> idx);
     template<typename T>
-    void PROJ_MAP_TO (const function<T(T)>& f,
+    void PROJ_MAP_ON (const function<T(T)>& f,
                       const SP_NArray<T> Y, const SP_NArray<T> X,
                       const SP_NArray<T> idx);
     
     template<typename T>
     void SUB_MAP_TO (const function<T(T)>& f,
-                    const SP_NArray<T> Y, const SP_NArray<T> X,
-                    const SP_NArray<T> a, const SP_NArray<T> b);
+                     const SP_NArray<T> Y, const SP_NArray<T> X,
+                     const SP_NArray<T> a, const SP_NArray<T> b);
     template<typename T>
-    void SUB_MAP_ADD(const function<T(T)>& f,
-                    const SP_NArray<T> Y, const SP_NArray<T> X,
-                    const SP_NArray<T> a, const SP_NArray<T> b);
-
+    void SUB_MAP_ON (const function<T(T)>& f,
+                     const SP_NArray<T> Y, const SP_NArray<T> X,
+                     const SP_NArray<T> a, const SP_NArray<T> b);
+    
 }
 
 #endif
