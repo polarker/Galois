@@ -4,6 +4,7 @@
 # include "galois/narray.h"
 # include "galois/utils.h"
 # include <iostream>
+# include <random>
 # include <vector>
 # include <set>
 # include <cassert>

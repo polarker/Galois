@@ -2,6 +2,7 @@
 #define _GALOIS_NARRAY_H_
 
 
+#include <random>
 #include <vector>
 #include <Accelerate/Accelerate.h>
 
@@ -38,6 +39,14 @@ namespace gs
         T* get_dataptr() { assert(data); return data; }
         
         void copy_data(const vector<int> &, T*);
+        void uniform(T lower, T upper) {
+            // future : move random generator to a single file
+            default_random_engine galois_rn_generator;
+            uniform_real_distribution<T> distribution(lower, upper);
+            for (int i = 0; i < get_size(); i++) {
+                data[i] = distribution(galois_rn_generator);
+            }
+        }
         void normalize_for(int dim);
         void fill(T x) {
             for (int i = 0; i < get_size(); i++) {
