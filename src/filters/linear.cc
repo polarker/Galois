@@ -8,10 +8,11 @@ namespace gs {
     
     template<typename T>
     Linear<T>::Linear(int in_size, int out_size) : in_size(in_size), out_size(out_size) {
+        T s = sqrt(6. / (in_size + out_size));
         this->w  = make_shared<NArray<T>>(in_size, out_size);
-        this->w->fill(1.0);
+        this->w->uniform(-s, s);
         this->b  = make_shared<NArray<T>>(out_size);
-        this->b->fill(0.0);
+        this->b->uniform(-s, s);
         this->dw = make_shared<NArray<T>>(in_size, out_size);
         this->db = make_shared<NArray<T>>(out_size);
         this->opaque = true;
