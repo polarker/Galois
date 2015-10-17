@@ -4,12 +4,12 @@ namespace gs {
     
     template<typename T>
     void CrossEntropy<T>::set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size) {
-        auto in_dims = in_signal->dims;
-        assert(!in_dims.empty());
+        assert(!in_signal->empty());
+        auto in_dims = in_signal->get_dims();
         
         auto os = dynamic_pointer_cast<OutputSignal<T>>(out_signal);
         assert(os);
-        assert(os->dims.empty()); // output should only be set once for dimensions
+        assert(os->empty()); // output should only be set once for dimensions
         
         os->set_dims(in_dims);
         os->set_target_dims(batch_size);

@@ -8,24 +8,24 @@ namespace gs {
     
     template<typename T>
     Linear<T>::Linear(int in_size, int out_size) : in_size(in_size), out_size(out_size) {
-        w = make_shared<NArray<T>>(in_size, out_size);
-        b = make_shared<NArray<T>>(out_size);
-        dw = make_shared<NArray<T>>(in_size, out_size);
-        db = make_shared<NArray<T>>(out_size);
+        this->w  = make_shared<NArray<T>>(in_size, out_size);
+        this->b  = make_shared<NArray<T>>(out_size);
+        this->dw = make_shared<NArray<T>>(in_size, out_size);
+        this->db = make_shared<NArray<T>>(out_size);
         this->opaque = true;
     }
     
     template<typename T>
     void Linear<T>::set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size) {
-        if (in_signal->dims.empty()) {
+        if (in_signal->empty()) {
             in_signal->set_dims(batch_size, in_size);
         } else {
-            assert(in_signal->dims ==  vector<int>({batch_size, in_size}));
+            assert(in_signal->get_dims() ==  vector<int>({batch_size, in_size}));
         }
-        if (out_signal->dims.empty()) {
+        if (out_signal->empty()) {
             out_signal->set_dims(batch_size, out_size);
         } else {
-            assert(out_signal->dims == vector<int>({batch_size, out_size}));
+            assert(out_signal->get_dims() == vector<int>({batch_size, out_size}));
         }
     }
     

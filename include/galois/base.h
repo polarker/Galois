@@ -6,6 +6,8 @@
 # include <iostream>
 # include <vector>
 # include <set>
+# include <cassert>
+
 using namespace std;
 
 namespace gs
@@ -15,7 +17,6 @@ namespace gs
     class Signal
     {
     public:
-        vector<int> dims = {};
         SP_NArray<T> data = nullptr;
 
         bool opaque = true;
@@ -32,6 +33,8 @@ namespace gs
             set_dims(vector<int>(nums));
         }
         virtual void set_dims(vector<int> nums) = 0;
+        vector<int> get_dims() { assert(data); return data->get_dims(); }
+        bool empty() { return data == nullptr; }
     };
     template<typename T>
     using SP_Signal = shared_ptr<Signal<T>>;
@@ -44,12 +47,8 @@ namespace gs
 
     public:
         void set_dims(vector<int> nums) override {
-            assert(this->dims.empty());
-            for (auto m : nums) {
-                this->dims.push_back(m);
-            }
             this->data = make_shared<NArray<T>>(nums);
-            grad = make_shared<NArray<T>>(nums);
+            this->grad = make_shared<NArray<T>>(nums);
         }
     };
     template<typename T>
@@ -61,10 +60,6 @@ namespace gs
     {
     public:
         void set_dims(vector<int> nums) {
-            assert(this->dims.empty());
-            for (auto m : nums) {
-                this->dims.push_back(m);
-            }
             this->data = make_shared<NArray<T>>(nums);
         }
     };
@@ -76,18 +71,12 @@ namespace gs
     class OutputSignal : public Signal<T>
     {
     public:
-        vector<int> target_dims = {};
         SP_NArray<T> target_data = nullptr;
-        vector<int> extra_dims = {};
         SP_NArray<T> extra_data = nullptr; // output signals need extra for optimization sometimes.
         T loss = 0;
 
     public:
         void set_dims(vector<int> nums) {
-            assert(this->dims.empty());
-            for (auto m : nums) {
-                this->dims.push_back(m);
-            }
             this->data = make_shared<NArray<T>>(nums);
         }
         // set dims for target
@@ -99,10 +88,6 @@ namespace gs
             set_target_dims(vector<int>(nums));
         }
         void set_target_dims(vector<int> nums) {
-            assert(target_dims.empty());
-            for (auto m : nums) {
-                target_dims.push_back(m);
-            }
             target_data = make_shared<NArray<T>>(nums);
         }
         // set dims for extra
@@ -114,10 +99,6 @@ namespace gs
             set_extra_dims(vector<int>(nums));
         }
         void set_extra_dims(vector<int> nums) {
-            assert(extra_dims.empty());
-            for (auto m : nums) {
-                extra_dims.push_back(m);
-            }
             extra_data = make_shared<NArray<T>>(nums);
         }
     };
@@ -127,26 +108,18 @@ namespace gs
     template<typename T>
     ostream& operator<<(std::ostream &strm, const SP_Signal<T> signal) {
         return strm << "{"
-                    << signal->dims
-                    << ","
                     << signal->data->get_dims()
-//                    << ","
-//                    << signal->grad->get_dims()
                     << "}";
     }
     template<typename T>
     ostream& operator<<(std::ostream &strm, const SP_InputSignal<T> signal) {
         return strm << "{"
-        << signal->dims
-        << ","
         << signal->data->get_dims()
         << "}";
     }
     template<typename T>
     ostream& operator<<(std::ostream &strm, const SP_OutputSignal<T> signal) {
         return strm << "{"
-        << signal->dims
-        << ","
         << signal->data->get_dims()
         << ","
         << signal->target_data->get_dims()

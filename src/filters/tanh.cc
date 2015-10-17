@@ -6,11 +6,13 @@ namespace gs {
     
     template<typename T>
     void Tanh<T>::set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size) {
-        assert(!in_signal->dims.empty());
-        if (out_signal->dims.empty()) {
-            out_signal->set_dims(in_signal->dims);
+        assert(!in_signal->empty());
+        auto in_dims = in_signal->get_dims();
+        assert(!in_dims.empty());
+        if (out_signal->empty()) {
+            out_signal->set_dims(in_dims);
         } else {
-            assert(in_signal->dims == out_signal->dims);
+            assert(in_dims == out_signal->get_dims());
         }
     }
     
