@@ -1,4 +1,5 @@
 #include "cross_entropy.h"
+#include <cmath>
 
 namespace gs {
     
@@ -37,14 +38,19 @@ namespace gs {
         auto out_data = out_signal->data;
         
         // softmax function
-        MAP_TO<T>([](T x){return exp(x);}, in_data, out_data);
+        MAP_TO<T>(out_data, [](T x){return exp(x);}, in_data);
+        cout << "cross entropy forward:\n" << out_data << '\n';
         out_data->normalize_for(NARRAY_DIM_ZERO);
+        cout << "cross entropy forward:\n" << out_data << '\n';
         
         auto os = dynamic_pointer_cast<OutputSignal<T>>(out_signal);
         assert(os);
         auto target_data = os->target_data;
         auto loss_data = os->extra_data;
-        PROJ_MAP_TO<T>([](T x){return -log(x);}, loss_data, out_data, target_data);
+        PROJ_MAP_TO<T>(loss_data, [](T x){return -log(x);}, out_data, target_data);
+        SUM_POSITIVE_VALUE<T>(loss_data, &os->loss);
+        
+        out_signal->opaque = false;
     }
 
     template class CrossEntropy<float>;

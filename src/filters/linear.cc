@@ -9,7 +9,9 @@ namespace gs {
     template<typename T>
     Linear<T>::Linear(int in_size, int out_size) : in_size(in_size), out_size(out_size) {
         this->w  = make_shared<NArray<T>>(in_size, out_size);
+        this->w->fill(1.0);
         this->b  = make_shared<NArray<T>>(out_size);
+        this->b->fill(0.0);
         this->dw = make_shared<NArray<T>>(in_size, out_size);
         this->db = make_shared<NArray<T>>(out_size);
         this->opaque = true;
@@ -46,8 +48,11 @@ namespace gs {
         
         if (out_signals[0]->opaque) {
             GEMM<T>('N', 'N', 1.0, in_data, w, 0.0, out_data);
+            ADD_TO_ROW<T>(out_data, b);
+            out_signals[0]->opaque = false;
         } else {
             GEMM<T>('N', 'N', 1.0, in_data, w, 1.0, out_data);
+            ADD_TO_ROW<T>(out_data, b);
         }
     }
     

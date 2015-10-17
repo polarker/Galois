@@ -34,9 +34,10 @@ namespace gs {
         auto out_data = out_signals[0]->data;
         
         if (out_signals[0]->opaque) {
-            MAP_TO<T>([](T x){ return tanh(x); }, in_data, out_data);
+            MAP_TO<T>(out_data, [](T x){ return tanh(x); }, in_data);
+            out_signals[0]->opaque = false;
         } else {
-            MAP_ON<T>([](T x){ return tanh(x); }, in_data, out_data);
+            MAP_ON<T>(out_data, [](T x){ return tanh(x); }, in_data);
         }
     }
     

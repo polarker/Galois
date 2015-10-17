@@ -28,7 +28,7 @@ namespace gs
         
         vector<int> get_dims() { return dims; }
         int get_size() {
-            if (dims.empty()) return 0;
+            assert(!dims.empty());
             int size = 1;
             for (auto d : dims) {
                 size *= d;
@@ -39,6 +39,11 @@ namespace gs
         
         void copy_data(const vector<int> &, T*);
         void normalize_for(int dim);
+        void fill(T x) {
+            for (int i = 0; i < get_size(); i++) {
+                data[i] = x;
+            }
+        }
         
     private:
         const vector<int> dims = {};
@@ -48,31 +53,69 @@ namespace gs
     using SP_NArray = shared_ptr<NArray<T>>;
     
     template<typename T>
+    ostream& operator<<(std::ostream &strm, const SP_NArray<T> M) {
+        // currently, only surpport matrix
+        auto M_dims = M->get_dims();
+        auto M_ptr = M->get_dataptr();
+        assert(M_dims.size() <= 2);
+        int m = 0;
+        int n = 0;
+        if (M_dims.size() == 1) {
+            m = 1;
+            n = M_dims[0];
+        } else {
+            m = M_dims[0];
+            n = M_dims[1];
+        }
+        
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                strm << M_ptr[i*n + j] << '\t';
+            }
+            strm << endl;
+        }
+        return strm;
+    }
+    
+    template<typename T>
+    void SUM_POSITIVE_VALUE (const SP_NArray<T> A, T *res);
+    
+    // currently, only two dimensional array are supported
+    template<typename T>
+    void ADD_TO_ROW (const SP_NArray<T> A, const SP_NArray<T> a);
+    
+    template<typename T>
     void GEMM (const char tA, const char tB,
                const T alpha, const SP_NArray<T> A, const SP_NArray<T> B,
                const T beta, const SP_NArray<T> C);
     
     template<typename T>
-    void MAP_TO (const function<T(T)>& f, const SP_NArray<T> Y, const SP_NArray<T> X);
+    void MAP_TO (const SP_NArray<T> Y, const function<T(T)>& f, const SP_NArray<T> X);
     template<typename T>
-    void MAP_ON (const function<T(T)>& f, const SP_NArray<T> Y, const SP_NArray<T> X);
+    void MAP_ON (const SP_NArray<T> Y, const function<T(T)>& f, const SP_NArray<T> X);
     
+    // currently, only two dimensional array are supported
     template<typename T>
-    void PROJ_MAP_TO (const function<T(T)>& f,
-                      const SP_NArray<T> Y, const SP_NArray<T> X,
+    void PROJ_MAP_TO (const SP_NArray<T> Y,
+                      const function<T(T)>& f,
+                      const SP_NArray<T> X,
                       const SP_NArray<T> idx);
     template<typename T>
-    void PROJ_MAP_ON (const function<T(T)>& f,
-                      const SP_NArray<T> Y, const SP_NArray<T> X,
+    void PROJ_MAP_ON (const SP_NArray<T> Y,
+                      const function<T(T)>& f,
+                      const SP_NArray<T> X,
                       const SP_NArray<T> idx);
     
+    // currently, only two dimensional array are supported
     template<typename T>
-    void SUB_MAP_TO (const function<T(T)>& f,
-                     const SP_NArray<T> Y, const SP_NArray<T> X,
+    void SUB_MAP_TO (const SP_NArray<T> Y,
+                     const function<T(T)>& f,
+                     const SP_NArray<T> X,
                      const SP_NArray<T> a, const SP_NArray<T> b);
     template<typename T>
-    void SUB_MAP_ON (const function<T(T)>& f,
-                     const SP_NArray<T> Y, const SP_NArray<T> X,
+    void SUB_MAP_ON (const SP_NArray<T> Y,
+                     const function<T(T)>& f,
+                     const SP_NArray<T> X,
                      const SP_NArray<T> a, const SP_NArray<T> b);
     
 }
