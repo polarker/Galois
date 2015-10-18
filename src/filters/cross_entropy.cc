@@ -49,7 +49,7 @@ namespace gs {
     }
     
     template<typename T>
-    void backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
+    void CrossEntropy<T>::backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
         assert(in_signals.size() == 1);
         assert(out_signals.size() == 1);
         auto in_signal = in_signals[0];
@@ -58,13 +58,13 @@ namespace gs {
         
         auto in_grad = in_signal->get_grad();
         auto out_data = out_signal->get_data();
-        int batch_size = in_signal->get_data_dims[0];
+        int batch_size = in_signal->get_data_dims()[0];
         if (in_grad->opaque()) {
-            MAP_TO<T>(in_grad, [](T y){return y/T(batch_size);}, out_data);
+            MAP_TO<T>(in_grad, [batch_size](T y){return y/T(batch_size);}, out_data);
             // todo
             in_grad->set_opaque(false);
         } else {
-            MAP_ON<T>(in_grad, [](T y){return y/T(batch_size);}, out_data);
+            MAP_ON<T>(in_grad, [batch_size](T y){return y/T(batch_size);}, out_data);
             // todo
         }
     }

@@ -138,36 +138,6 @@ namespace gs
         virtual set<SP_PFilter<T>> get_pfilters() = 0;
     };
     
-    template<typename T>
-    class TestBFilter : public BFilter<T>
-    {
-    public:
-        void forward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
-            cout << "forward" << endl;
-        }
-        void backward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
-            cout << "backward" << endl;
-        }
-        void set_dims(const vector<SP_Signal<T>> in_signals,
-                      const vector<SP_Signal<T>> out_signals,
-                      int batch_size) {}
-    };
-    
-    template<typename T>
-    class TestPFilter : public PFilter<T>
-    {
-    public:
-        void forward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
-            cout << "forward" << endl;
-        }
-        void backward(const vector<SP_Signal<T>> in_signals, const vector<SP_Signal<T>> out_signals) override {
-            cout << "backward" << endl;
-        }
-        void set_dims(const vector<SP_Signal<T>> in_signals,
-                      const vector<SP_Signal<T>> out_signals,
-                      int batch_size) override {}
-    };
-    
 }
 
 #endif
