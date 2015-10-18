@@ -15,7 +15,6 @@ namespace gs {
         this->b->uniform(-s, s);
         this->dw = make_shared<NArray<T>>(in_size, out_size);
         this->db = make_shared<NArray<T>>(out_size);
-        this->opaque = true;
         
         cout << "s\t" << s << endl;
         cout << "w\n" << this->w << endl;
@@ -58,6 +57,35 @@ namespace gs {
         } else {
             GEMM<T>('N', 'N', 1.0, in_data, w, 1.0, out_data);
             ADD_TO_ROW<T>(out_data, b);
+        }
+    }
+
+    template<typename T>
+    void Linear<T>::backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
+        assert(in_signals.size() == 1);
+        assert(out_signals.size() == 1);
+        auto in_data = in_signals[0]->get_data();
+        auto out_grad = out_signals[0]->get_grad();
+
+        if (this->w->opaque()) {
+            GEMM<T>('T', 'N', 1.0, in_data, out_grad, 0.0, this->dw);
+        } else {
+            GEMM<T>('T', 'N', 1.0, in_data, out_grad, 1.0, this->dw);
+        }
+        if (this->b->opaque()) {
+//            SUM_TO_ROW_TO<T>(this->db, out_grad);
+            this->b->set_opaque(false);
+        } else {
+//            SUM_TO_ROW_ON<T>(this->db, out_grad);
+        }
+        if (in_signals[0]->get_type() == InnerSignal) {
+            auto in_grad = in_signals[0]->get_grad();
+            if (in_grad->opaque()) {
+                GEMM<T>('N', 'T', 1.0, out_grad, this->w, 0.0, in_grad);
+                in_grad->set_opaque(false);
+            } else {
+                GEMM<T>('N', 'T', 1.0, out_grad, this->w, 1.0, in_grad);
+            }
         }
     }
     
