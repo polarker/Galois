@@ -17,6 +17,8 @@ namespace gs
     class NArray
     {
     public:
+        static default_random_engine galois_rn_generator;
+        
         explicit NArray(int m);
         explicit NArray(int m, int n);
         explicit NArray(int m, int n, int o);
@@ -43,7 +45,6 @@ namespace gs
         void copy_data(const vector<int> &, T*);
         void uniform(T lower, T upper) {
             // future : move random generator to a single file
-            default_random_engine galois_rn_generator;
             uniform_real_distribution<T> distribution(lower, upper);
             for (int i = 0; i < get_size(); i++) {
                 data[i] = distribution(galois_rn_generator);
@@ -63,6 +64,8 @@ namespace gs
     };
     template<typename T>
     using SP_NArray = shared_ptr<NArray<T>>;
+    template<typename T>
+    default_random_engine NArray<T>::galois_rn_generator(0);
     
     template<typename T>
     ostream& operator<<(std::ostream &strm, const SP_NArray<T> M) {

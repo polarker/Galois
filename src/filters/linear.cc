@@ -16,19 +16,23 @@ namespace gs {
         this->dw = make_shared<NArray<T>>(in_size, out_size);
         this->db = make_shared<NArray<T>>(out_size);
         this->opaque = true;
+        
+        cout << "s\t" << s << endl;
+        cout << "w\n" << this->w << endl;
+        cout << "b\n" << this->b << endl;
     }
     
     template<typename T>
     void Linear<T>::set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size) {
         if (in_signal->empty()) {
-            in_signal->set_dims(batch_size, in_size);
+            in_signal->set_data_dims(batch_size, in_size);
         } else {
-            assert(in_signal->get_dims() ==  vector<int>({batch_size, in_size}));
+            assert(in_signal->get_data_dims() ==  vector<int>({batch_size, in_size}));
         }
         if (out_signal->empty()) {
-            out_signal->set_dims(batch_size, out_size);
+            out_signal->set_data_dims(batch_size, out_size);
         } else {
-            assert(out_signal->get_dims() == vector<int>({batch_size, out_size}));
+            assert(out_signal->get_data_dims() == vector<int>({batch_size, out_size}));
         }
     }
     
@@ -44,8 +48,8 @@ namespace gs {
     void Linear<T>::forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
         assert(in_signals.size() == 1);
         assert(out_signals.size() == 1);
-        auto in_data = in_signals[0]->data;
-        auto out_data = out_signals[0]->data;
+        auto in_data = in_signals[0]->get_data();
+        auto out_data = out_signals[0]->get_data();
         
         if (out_data->opaque()) {
             GEMM<T>('N', 'N', 1.0, in_data, w, 0.0, out_data);

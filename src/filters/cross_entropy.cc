@@ -6,15 +6,12 @@ namespace gs {
     template<typename T>
     void CrossEntropy<T>::set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size) {
         assert(!in_signal->empty());
-        auto in_dims = in_signal->get_dims();
+        auto in_dims = in_signal->get_data_dims();
         
-        auto os = dynamic_pointer_cast<OutputSignal<T>>(out_signal);
-        assert(os);
-        assert(os->empty()); // output should only be set once for dimensions
-        
-        os->set_dims(in_dims);
-        os->set_target_dims(batch_size);
-        os->set_extra_dims(batch_size);
+        assert(out_signal->empty());
+        out_signal->set_data_dims(in_dims);
+        out_signal->set_target_dims(batch_size);
+        out_signal->set_extra_dims(batch_size);
     }
 
     template<typename T>
@@ -33,22 +30,20 @@ namespace gs {
         assert(out_signals.size() == 1);
         auto in_signal = in_signals[0];
         auto out_signal = out_signals[0];
-        auto in_data = in_signal->data;
-        auto out_data = out_signal->data;
+        assert(out_signal->get_type() == OutputSignal);
+        
+        auto in_data = in_signal->get_data();
+        auto out_data = out_signal->get_data();
         assert(out_data->opaque());
         
         // softmax function
         MAP_TO<T>(out_data, [](T x){return exp(x);}, in_data);
-        cout << "cross entropy forward:\n" << out_data << '\n';
         out_data->normalize_for(NARRAY_DIM_ZERO);
-        cout << "cross entropy forward:\n" << out_data << '\n';
         
-        auto os = dynamic_pointer_cast<OutputSignal<T>>(out_signal);
-        assert(os);
-        auto target_data = os->target_data;
-        auto loss_data = os->extra_data;
-        PROJ_MAP_TO<T>(loss_data, [](T x){return -log(x);}, out_data, target_data);
-        SUM_POSITIVE_VALUE<T>(loss_data, &os->loss);
+        auto target = out_signal->get_target();
+        auto loss = out_signal->get_extra();
+        PROJ_MAP_TO<T>(loss, [](T x){return -log(x);}, out_data, target);
+        SUM_POSITIVE_VALUE<T>(loss, out_signal->get_loss().get());
         
         out_data->set_opaque(false);
     }
