@@ -34,9 +34,17 @@ namespace gs
         
     public:
         Signal() = delete;
-        Signal(SignalType type) : type(type), loss(make_shared<T>(0)) {};
+        Signal(SignalType type) : type(type) {};
         Signal(const Signal& other) = delete;
         Signal& operator=(const Signal&) = delete;
+        
+        bool empty() {
+            return (data == nullptr) &&
+                   (grad == nullptr) &&
+                   (target == nullptr) &&
+                   (loss == nullptr) &&
+                   (extra == nullptr);
+        }
         
         SignalType      get_type()      { return type;  }
         SP_NArray<T>    get_data()      { return data;  }
@@ -65,7 +73,6 @@ namespace gs
             assert(data);
             return data->get_dims();
         }
-        bool empty() { return data == nullptr; }
         // set dims for target
         void set_target_dims(int m)                         { set_target_dims({m}); }
         void set_target_dims(int m, int n)                  { set_target_dims({m,n}); }
@@ -82,6 +89,12 @@ namespace gs
         vector<int> get_target_dims() {
             assert(target);
             return target->get_dims();
+        }
+        // initialize loss
+        void initialize_loss() {
+            assert(type == OutputSignal);
+            assert(!loss);
+            loss = make_shared<T>(0);
         }
         // set dims for extra
         void set_extra_dims(int m)                         { set_extra_dims({m}); }

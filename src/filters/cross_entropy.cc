@@ -8,10 +8,12 @@ namespace gs {
         assert(!in_signal->empty());
         auto in_dims = in_signal->get_data_dims();
         
+        assert(out_signal->get_type() == OutputSignal);
         assert(out_signal->empty());
         out_signal->set_data_dims(in_dims);
         out_signal->set_target_dims(batch_size);
         out_signal->set_extra_dims(batch_size);
+        out_signal->initialize_loss();
     }
 
     template<typename T>
