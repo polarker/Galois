@@ -36,7 +36,9 @@ namespace gs
             }
             return size;
         }
-        T* get_dataptr() { assert(data); return data; }
+        T* get_data() { assert(data); return data; }
+        bool opaque() { return data_opaque; }
+        void set_opaque(bool b) { data_opaque = b; }
         
         void copy_data(const vector<int> &, T*);
         void uniform(T lower, T upper) {
@@ -57,6 +59,7 @@ namespace gs
     private:
         const vector<int> dims = {};
         T *data = nullptr;
+        bool data_opaque = true;
     };
     template<typename T>
     using SP_NArray = shared_ptr<NArray<T>>;
@@ -65,7 +68,7 @@ namespace gs
     ostream& operator<<(std::ostream &strm, const SP_NArray<T> M) {
         // currently, only surpport matrix
         auto M_dims = M->get_dims();
-        auto M_ptr = M->get_dataptr();
+        auto M_ptr = M->get_data();
         assert(M_dims.size() <= 2);
         int m = 0;
         int n = 0;

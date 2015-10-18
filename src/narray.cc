@@ -89,7 +89,7 @@ namespace gs
     template<typename T>
     void SUM_POSITIVE_VALUE (const SP_NArray<T> A, T *res) {
         T sum = 0;
-        auto A_ptr = A->get_dataptr();
+        auto A_ptr = A->get_data();
         auto A_size = A->get_size();
         for (int i = 0; i < A_size; i++) {
             sum += A_ptr[i];
@@ -106,9 +106,9 @@ namespace gs
         assert(A_dims[1] == b_dims[0]);
         
         auto m = A_dims[0];
-        auto A_ptr = A->get_dataptr();
+        auto A_ptr = A->get_data();
         auto n = A_dims[1];
-        auto b_ptr = b->get_dataptr();
+        auto b_ptr = b->get_data();
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 A_ptr[i*n+j] += b_ptr[j];
@@ -165,10 +165,10 @@ namespace gs
               t_A, t_B,
               M, N, K,
               alpha,
-              A->get_dataptr(), lda,
-              B->get_dataptr(), ldb,
+              A->get_data(), lda,
+              B->get_data(), ldb,
               beta,
-              C->get_dataptr(), ldc);
+              C->get_data(), ldc);
     }
     
     template<typename T>
@@ -177,8 +177,8 @@ namespace gs
               const SP_NArray<T> X,
               const bool overwrite) {
         assert(Y->get_dims() == X->get_dims());
-        auto Y_ptr = Y->get_dataptr();
-        auto X_ptr = X->get_dataptr();
+        auto Y_ptr = Y->get_data();
+        auto X_ptr = X->get_data();
         for (int i = 0; i < Y->get_size(); i++) {
             if (overwrite) {
                 Y_ptr[i] = f(X_ptr[i]);
@@ -195,9 +195,9 @@ namespace gs
               const bool overwrite) {
         assert(Y->get_dims() == X->get_dims());
         assert(Y->get_dims() == Z->get_dims());
-        auto Y_ptr = Y->get_dataptr();
-        auto X_ptr = X->get_dataptr();
-        auto Z_ptr = Z->get_dataptr();
+        auto Y_ptr = Y->get_data();
+        auto X_ptr = X->get_data();
+        auto Z_ptr = Z->get_data();
         for (int i = 0; i < Y->get_size(); i++) {
             if (overwrite) {
                 Y_ptr[i] = f(X_ptr[i], Z_ptr[i]);
@@ -247,9 +247,9 @@ namespace gs
         assert(idx->get_dims().size() == 1);
         assert(m == idx->get_dims()[0]);
         
-        auto Y_ptr = Y->get_dataptr();
-        auto X_ptr = X->get_dataptr();
-        auto idx_ptr = idx->get_dataptr();
+        auto Y_ptr = Y->get_data();
+        auto X_ptr = X->get_data();
+        auto idx_ptr = idx->get_data();
         for (int i = 0; i < m; i++) {
             int j = idx_ptr[i];
             assert(j < n);
@@ -295,10 +295,10 @@ namespace gs
         assert(a->get_size() == b->get_size());
         int size = a->get_size();
         
-        auto Y_ptr = Y->get_dataptr();
-        auto X_ptr = X->get_dataptr();
-        auto a_ptr = a->get_dataptr();
-        auto b_ptr = b->get_dataptr();
+        auto Y_ptr = Y->get_data();
+        auto X_ptr = X->get_data();
+        auto a_ptr = a->get_data();
+        auto b_ptr = b->get_data();
         for (int i = 0; i < size; i++) {
             int a_idx = int(a_ptr[i]);
             int b_idx = int(b_ptr[i]);
