@@ -99,9 +99,21 @@ namespace gs
                const T beta, const SP_NArray<T> C);
     
     template<typename T>
-    void MAP_TO (const SP_NArray<T> Y, const function<T(T)>& f, const SP_NArray<T> X);
+    void MAP_TO (const SP_NArray<T> Y,
+                 const function<T(T)>& f,
+                 const SP_NArray<T> X);
     template<typename T>
-    void MAP_ON (const SP_NArray<T> Y, const function<T(T)>& f, const SP_NArray<T> X);
+    void MAP_ON (const SP_NArray<T> Y,
+                 const function<T(T)>& f,
+                 const SP_NArray<T> X);
+    template<typename T>
+    void MAP_TO (const SP_NArray<T> Y,
+                 const function<T(T, T)>& f,
+                 const SP_NArray<T> X, const SP_NArray<T> Z);
+    template<typename T>
+    void MAP_ON (const SP_NArray<T> Y,
+                 const function<T(T, T)>& f,
+                 const SP_NArray<T> X, const SP_NArray<T> Z);
     
     // currently, only two dimensional array are supported
     template<typename T>

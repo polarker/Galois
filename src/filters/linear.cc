@@ -47,10 +47,10 @@ namespace gs {
         auto in_data = in_signals[0]->data;
         auto out_data = out_signals[0]->data;
         
-        if (out_signals[0]->opaque) {
+        if (out_signals[0]->opaque_data) {
             GEMM<T>('N', 'N', 1.0, in_data, w, 0.0, out_data);
             ADD_TO_ROW<T>(out_data, b);
-            out_signals[0]->opaque = false;
+            out_signals[0]->opaque_data = false;
         } else {
             GEMM<T>('N', 'N', 1.0, in_data, w, 1.0, out_data);
             ADD_TO_ROW<T>(out_data, b);

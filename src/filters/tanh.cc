@@ -33,11 +33,35 @@ namespace gs {
         auto in_data = in_signals[0]->data;
         auto out_data = out_signals[0]->data;
         
-        if (out_signals[0]->opaque) {
+        if (out_signals[0]->opaque_data) {
             MAP_TO<T>(out_data, [](T x){ return tanh(x); }, in_data);
-            out_signals[0]->opaque = false;
+            out_signals[0]->opaque_data = false;
         } else {
             MAP_ON<T>(out_data, [](T x){ return tanh(x); }, in_data);
+        }
+    }
+    
+    template<typename T>
+    void Tanh<T>::backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
+        assert(in_signals.size() == 1);
+        assert(out_signals.size() == 1);
+        if (dynamic_pointer_cast<InputSignal<T>>(in_signals[0])) {
+            return;
+        }
+        
+        auto in_signal = dynamic_pointer_cast<InnerSignal<T>>(in_signals[0]);
+        assert(in_signal);
+        auto out_signal = dynamic_pointer_cast<InnerSignal<T>>(out_signals[0]);
+        assert(out_signal);
+        auto in_grad = in_signal->grad;
+        auto out_data = out_signal->data;
+        auto out_grad = out_signal->grad;
+        
+        if (out_signal->opaque_grad) {
+            MAP_TO<T>(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);
+            out_signal->opaque_grad = false;
+        } else {
+            MAP_ON<T>(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);;
         }
     }
     
