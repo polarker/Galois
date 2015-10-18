@@ -33,9 +33,9 @@ namespace gs {
         assert(out_signals.size() == 1);
         auto in_signal = in_signals[0];
         auto out_signal = out_signals[0];
-        assert(out_signal->opaque_data);
         auto in_data = in_signal->data;
         auto out_data = out_signal->data;
+        assert(out_data->opaque());
         
         // softmax function
         MAP_TO<T>(out_data, [](T x){return exp(x);}, in_data);
@@ -50,7 +50,7 @@ namespace gs {
         PROJ_MAP_TO<T>(loss_data, [](T x){return -log(x);}, out_data, target_data);
         SUM_POSITIVE_VALUE<T>(loss_data, &os->loss);
         
-        out_signal->opaque_data = false;
+        out_data->set_opaque(false);
     }
 
     template class CrossEntropy<float>;

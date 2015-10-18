@@ -19,7 +19,6 @@ namespace gs
     {
     public:
         SP_NArray<T> data = nullptr;
-        bool opaque_data = true;
         
     public:
         Signal() {};
@@ -44,7 +43,6 @@ namespace gs
     {
     public:
         SP_NArray<T> grad = nullptr;
-        bool opaque_grad = true;
 
     public:
         void set_dims(vector<int> nums) override {

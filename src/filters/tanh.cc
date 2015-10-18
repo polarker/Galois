@@ -33,9 +33,9 @@ namespace gs {
         auto in_data = in_signals[0]->data;
         auto out_data = out_signals[0]->data;
         
-        if (out_signals[0]->opaque_data) {
+        if (out_data->opaque()) {
             MAP_TO<T>(out_data, [](T x){ return tanh(x); }, in_data);
-            out_signals[0]->opaque_data = false;
+            out_data->set_opaque(false);
         } else {
             MAP_ON<T>(out_data, [](T x){ return tanh(x); }, in_data);
         }
@@ -57,9 +57,9 @@ namespace gs {
         auto out_data = out_signal->data;
         auto out_grad = out_signal->grad;
         
-        if (out_signal->opaque_grad) {
+        if (out_grad->opaque()) {
             MAP_TO<T>(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);
-            out_signal->opaque_grad = false;
+            out_grad->set_opaque(false);
         } else {
             MAP_ON<T>(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);;
         }
