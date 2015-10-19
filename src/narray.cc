@@ -188,10 +188,10 @@ namespace gs
                const char tA, const char tB,
                const SP_NArray<L> A, const SP_NArray<L> B) {
         if (Y->opaque()) {
-            GEMM(tA, tB, L(1.0), A, B, L(0.0), Y);
+            GEMM(tA, tB, static_cast<L>(1.0), A, B, static_cast<L>(0.0), Y);
             Y->set_opaque(false);
         } else {
-            GEMM(tA, tB, L(1.0), A, B, L(1.0), Y);
+            GEMM(tA, tB, static_cast<L>(1.0), A, B, static_cast<L>(1.0), Y);
         }
     }
     
@@ -326,14 +326,14 @@ namespace gs
         auto b_ptr = b->get_data();
         if (overwrite) {
             for (int i = 0; i < size; i++) {
-                int a_idx = int(a_ptr[i]);
-                int b_idx = int(b_ptr[i]);
+                int a_idx = static_cast<int>(a_ptr[i]);
+                int b_idx = static_cast<int>(b_ptr[i]);
                 Y_ptr[a_idx*stride + b_idx] = f(X_ptr[i]);
             }
         } else {
             for (int i = 0; i < size; i++) {
-                int a_idx = int(a_ptr[i]);
-                int b_idx = int(b_ptr[i]);
+                int a_idx = static_cast<int>(a_ptr[i]);
+                int b_idx = static_cast<int>(b_ptr[i]);
                 Y_ptr[a_idx*stride + b_idx] += f(X_ptr[i]);
             }
         }
