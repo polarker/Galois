@@ -105,11 +105,10 @@ namespace gs
         assert(Y_dims.size() == 2);
         assert(b_dims.size() == 1);
         assert(Y_dims[1] == b_dims[0]);
-        assert(!Y->opaque());
         
         auto m = Y_dims[0];
-        auto Y_ptr = Y->get_data();
         auto n = Y_dims[1];
+        auto Y_ptr = Y->get_data();
         auto b_ptr = b->get_data();
         if (Y->opaque()) {
             for (int i = 0; i < m; i++) {
@@ -122,6 +121,34 @@ namespace gs
             for (int i = 0; i < m; i++) {
                 for (int j = 0; j < n; j++) {
                     Y_ptr[i*n+j] += b_ptr[j];
+                }
+            }
+        }
+    }
+    
+    template<typename T>
+    void SUM_TO_ROW (const SP_NArray<T> b, const SP_NArray<T> X) {
+        auto b_dims = b->get_dims();
+        auto X_dims = X->get_dims();
+        assert(b_dims.size() == 1);
+        assert(X_dims.size() == 2);
+        assert(b_dims[0] == X_dims[1]);
+
+        auto m = X_dims[0];
+        auto n = X_dims[1];
+        auto X_ptr = X->get_data();
+        auto b_ptr = b->get_data();
+        if (b->opaque()) {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    b_ptr[j] = X_ptr[i*n + j];
+                }
+            }
+            b->set_opaque(false);
+        } else {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    b_ptr[j] += X_ptr[i*n + j];
                 }
             }
         }
@@ -316,25 +343,73 @@ namespace gs
                    const bool overwrite) {
         assert(Y->get_dims() == X->get_dims());
         assert(Y->get_dims().size() == 2);
-        int stride = Y->get_dims()[1];
-        assert(a->get_size() == b->get_size());
-        int size = a->get_size();
-        
+        auto m = Y->get_dims()[0];
+        auto n = Y->get_dims()[1];
         auto Y_ptr = Y->get_data();
         auto X_ptr = X->get_data();
-        auto a_ptr = a->get_data();
-        auto b_ptr = b->get_data();
-        if (overwrite) {
-            for (int i = 0; i < size; i++) {
-                int a_idx = static_cast<int>(a_ptr[i]);
-                int b_idx = static_cast<int>(b_ptr[i]);
-                Y_ptr[a_idx*stride + b_idx] = f(X_ptr[i]);
+        
+        if (a == nullptr) {
+            if (b == nullptr) {
+                assert(m == n);
+                if (overwrite) {
+                    for (int i = 0; i < m; i++) {
+                        Y_ptr[i*n + i] = f(X_ptr[i*n + i]);
+                    }
+                } else {
+                    for (int i = 0; i < m; i++) {
+                        Y_ptr[i*n + i] += f(X_ptr[i*n + i]);
+                    }
+                }
+            } else {
+                assert(b->get_dims().size() == 1);
+                assert(b->get_size() == m);
+                auto b_ptr = b->get_data();
+                if (overwrite) {
+                    for (int i = 0; i < m; i++) {
+                        auto j = static_cast<int>(b_ptr[i]);
+                        Y_ptr[i*n + j] = f(X_ptr[i*n + j]);
+                    }
+                } else {
+                    for (int i = 0; i < m; i++) {
+                        auto j = static_cast<int>(b_ptr[i]);
+                        Y_ptr[i*n + j] += f(X_ptr[i*n + j]);
+                    }
+                }
             }
         } else {
-            for (int i = 0; i < size; i++) {
-                int a_idx = static_cast<int>(a_ptr[i]);
-                int b_idx = static_cast<int>(b_ptr[i]);
-                Y_ptr[a_idx*stride + b_idx] += f(X_ptr[i]);
+            assert(a->get_dims().size() == 1);
+            auto a_ptr = a->get_data();
+            if (b == nullptr) {
+                assert(a->get_size() == n);
+                if (overwrite) {
+                    for (int j = 0; j < n; j++) {
+                        auto i = static_cast<int>(a_ptr[j]);
+                        Y_ptr[i*n + j] = f(X_ptr[i*n + j]);
+                    }
+                } else {
+                    for (int j = 0; j < n; j++) {
+                        auto i = static_cast<int>(a_ptr[j]);
+                        Y_ptr[i*n + j] += f(X_ptr[i*n + j]);
+                    }
+                }
+            } else {
+                assert(b->get_dims().size() == 1);
+                assert(a->get_size() == b->get_size());
+                auto size = a->get_size();
+                auto b_ptr = b->get_data();
+                if (overwrite) {
+                    for (int k = 0; k < size; k++) {
+                        auto i = static_cast<int>(a_ptr[k]);
+                        auto j = static_cast<int>(b_ptr[k]);
+                        Y_ptr[i*n + j] = f(X_ptr[i*n + j]);
+                    }
+                } else {
+                    for (int k = 0; k < size; k++) {
+                        auto i = static_cast<int>(a_ptr[k]);
+                        auto j = static_cast<int>(b_ptr[k]);
+                        Y_ptr[i*n + j] += f(X_ptr[i*n + j]);
+                    }
+                }
             }
         }
     }
@@ -365,6 +440,10 @@ namespace gs
     void ADD_TO_ROW (const SP_NArray<float> A, const SP_NArray<float> a);
     template
     void ADD_TO_ROW (const SP_NArray<double> A, const SP_NArray<double> a);
+    template
+    void SUM_TO_ROW (const SP_NArray<float> a, const SP_NArray<float> A);
+    template
+    void SUM_TO_ROW (const SP_NArray<double> a, const SP_NArray<double> A);
     template
     void GEMM(const char tA, const char tB,
               const float alpha, const SP_NArray<float> A, const SP_NArray<float> B,

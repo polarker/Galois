@@ -60,8 +60,10 @@ namespace gs {
         
         auto in_grad = in_signal->get_grad();
         auto out_data = out_signal->get_data();
+        auto target = out_signal->get_target();
         int batch_size = in_signal->get_data_dims()[0];
         MAP<T>(in_grad, [batch_size](T y){return y/static_cast<T>(batch_size);}, out_data);
+        SUB_MAP<T>(in_grad, [batch_size](T y){return -1/static_cast<T>(batch_size);}, in_grad, nullptr, target);
     }
 
     template class CrossEntropy<float>;

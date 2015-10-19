@@ -62,7 +62,7 @@ namespace gs {
         auto out_grad = out_signals[0]->get_grad();
 
         GEMM(this->dw, 'T', 'N', in_data, out_grad);
-//        SUM_TO_ROW<T>(this->db, out_grad);
+        SUM_TO_ROW<T>(this->db, out_grad);
         if (in_signals[0]->get_type() == InnerSignal) {
             auto in_grad = in_signals[0]->get_grad();
             GEMM(in_grad, 'N', 'T', out_grad, this->w);

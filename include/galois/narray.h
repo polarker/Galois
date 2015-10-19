@@ -100,6 +100,8 @@ namespace gs
     // currently, only two dimensional array are supported
     template<typename T>
     void ADD_TO_ROW (const SP_NArray<T> A, const SP_NArray<T> a);
+    template<typename T>
+    void SUM_TO_ROW (const SP_NArray<T> a, const SP_NArray<T> A);
     
 //    template<typename T>
 //    void GEMM (const char tA, const char tB,
