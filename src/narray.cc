@@ -111,9 +111,18 @@ namespace gs
         auto Y_ptr = Y->get_data();
         auto n = Y_dims[1];
         auto b_ptr = b->get_data();
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                Y_ptr[i*n+j] += b_ptr[j];
+        if (Y->opaque()) {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    Y_ptr[i*n+j] = b_ptr[j];
+                }
+            }
+            Y->set_opaque(false);
+        } else {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    Y_ptr[i*n+j] += b_ptr[j];
+                }
             }
         }
     }
@@ -175,14 +184,14 @@ namespace gs
     }
     
     template<typename L>
-    void GEMM (const char tA, const char tB,
-               const SP_NArray<L> A, const SP_NArray<L> B,
-               const SP_NArray<L> C) {
-        if (C->opaque()) {
-            GEMM(tA, tB, L(1.0), A, B, L(0.0), C);
-            C->set_opaque(false);
+    void GEMM (const SP_NArray<L> Y,
+               const char tA, const char tB,
+               const SP_NArray<L> A, const SP_NArray<L> B) {
+        if (Y->opaque()) {
+            GEMM(tA, tB, L(1.0), A, B, L(0.0), Y);
+            Y->set_opaque(false);
         } else {
-            GEMM(tA, tB, L(1.0), A, B, L(1.0), C);
+            GEMM(tA, tB, L(1.0), A, B, L(1.0), Y);
         }
     }
     
@@ -194,10 +203,12 @@ namespace gs
         assert(Y->get_dims() == X->get_dims());
         auto Y_ptr = Y->get_data();
         auto X_ptr = X->get_data();
-        for (int i = 0; i < Y->get_size(); i++) {
-            if (overwrite) {
+        if (overwrite) {
+            for (int i = 0; i < Y->get_size(); i++) {
                 Y_ptr[i] = f(X_ptr[i]);
-            } else {
+            }
+        } else {
+            for (int i = 0; i < Y->get_size(); i++) {
                 Y_ptr[i] += f(X_ptr[i]);
             }
         }
@@ -213,10 +224,12 @@ namespace gs
         auto Y_ptr = Y->get_data();
         auto X_ptr = X->get_data();
         auto Z_ptr = Z->get_data();
-        for (int i = 0; i < Y->get_size(); i++) {
-            if (overwrite) {
+        if (overwrite) {
+            for (int i = 0; i < Y->get_size(); i++) {
                 Y_ptr[i] = f(X_ptr[i], Z_ptr[i]);
-            } else {
+            }
+        } else {
+            for (int i = 0; i < Y->get_size(); i++) {
                 Y_ptr[i] += f(X_ptr[i], Z_ptr[i]);
             }
         }
@@ -263,12 +276,16 @@ namespace gs
         auto Y_ptr = Y->get_data();
         auto X_ptr = X->get_data();
         auto idx_ptr = idx->get_data();
-        for (int i = 0; i < m; i++) {
-            int j = idx_ptr[i];
-            assert(j < n);
-            if (overwrite) {
+        if (overwrite) {
+            for (int i = 0; i < m; i++) {
+                int j = idx_ptr[i];
+                assert(j < n);
                 Y_ptr[i] = f(X_ptr[i*n + j]);
-            } else {
+            }
+        } else {
+            for (int i = 0; i < m; i++) {
+                int j = idx_ptr[i];
+                assert(j < n);
                 Y_ptr[i] += f(X_ptr[i*n + j]);
             }
         }
@@ -307,12 +324,16 @@ namespace gs
         auto X_ptr = X->get_data();
         auto a_ptr = a->get_data();
         auto b_ptr = b->get_data();
-        for (int i = 0; i < size; i++) {
-            int a_idx = int(a_ptr[i]);
-            int b_idx = int(b_ptr[i]);
-            if (overwrite) {
+        if (overwrite) {
+            for (int i = 0; i < size; i++) {
+                int a_idx = int(a_ptr[i]);
+                int b_idx = int(b_ptr[i]);
                 Y_ptr[a_idx*stride + b_idx] = f(X_ptr[i]);
-            } else {
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                int a_idx = int(a_ptr[i]);
+                int b_idx = int(b_ptr[i]);
                 Y_ptr[a_idx*stride + b_idx] += f(X_ptr[i]);
             }
         }
@@ -353,13 +374,13 @@ namespace gs
               const double alpha, const SP_NArray<double> A, const SP_NArray<double> B,
               const double beta, const SP_NArray<double> C);
     template
-    void GEMM(const char tA, const char tB,
-              const SP_NArray<float> A, const SP_NArray<float> B,
-              const SP_NArray<float> C);
+    void GEMM(const SP_NArray<float> Y,
+              const char tA, const char tB,
+              const SP_NArray<float> A, const SP_NArray<float> B);
     template
-    void GEMM(const char tA, const char tB,
-              const SP_NArray<double> A, const SP_NArray<double> B,
-              const SP_NArray<double> C);
+    void GEMM(const SP_NArray<double> Y,
+              const char tA, const char tB,
+              const SP_NArray<double> A, const SP_NArray<double> B);
     //    template void MAP (const function<float(float)>& f,
     //                       const SP_NArray<float> A, const SP_NArray<float> B,
     //                       const bool overwrite);

@@ -49,12 +49,14 @@ namespace gs
             for (int i = 0; i < get_size(); i++) {
                 data[i] = distribution(galois_rn_generator);
             }
+            data_opaque = false;
         }
         void normalize_for(int dim);
         void fill(T x) {
             for (int i = 0; i < get_size(); i++) {
                 data[i] = x;
             }
+            data_opaque = false;
         }
         
     private:
@@ -99,14 +101,14 @@ namespace gs
     template<typename T>
     void ADD_TO_ROW (const SP_NArray<T> A, const SP_NArray<T> a);
     
+//    template<typename T>
+//    void GEMM (const char tA, const char tB,
+//               const T alpha, const SP_NArray<T> A, const SP_NArray<T> B,
+//               const T beta, const SP_NArray<T> C);
     template<typename T>
-    void GEMM (const char tA, const char tB,
-               const T alpha, const SP_NArray<T> A, const SP_NArray<T> B,
-               const T beta, const SP_NArray<T> C);
-    template<typename T>
-    void GEMM (const char tA, const char tB,
-               const SP_NArray<T> A, const SP_NArray<T> B,
-               const SP_NArray<T> C);
+    void GEMM (const SP_NArray<T> Y,
+               const char tA, const char tB,
+               const SP_NArray<T> A, const SP_NArray<T> B);
     
     template<typename T>
     void MAP (const SP_NArray<T> Y,

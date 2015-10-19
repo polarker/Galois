@@ -50,7 +50,7 @@ namespace gs {
         auto in_data = in_signals[0]->get_data();
         auto out_data = out_signals[0]->get_data();
         
-        GEMM<T>('N', 'N', in_data, w, out_data);
+        GEMM<T>(out_data, 'N', 'N', in_data, w);
         ADD_TO_ROW<T>(out_data, b);
     }
 
@@ -61,25 +61,11 @@ namespace gs {
         auto in_data = in_signals[0]->get_data();
         auto out_grad = out_signals[0]->get_grad();
 
-        if (this->w->opaque()) {
-            GEMM<T>('T', 'N', 1.0, in_data, out_grad, 0.0, this->dw);
-        } else {
-            GEMM<T>('T', 'N', 1.0, in_data, out_grad, 1.0, this->dw);
-        }
-        if (this->b->opaque()) {
-//            SUM_TO_ROW_TO<T>(this->db, out_grad);
-            this->b->set_opaque(false);
-        } else {
-//            SUM_TO_ROW_ON<T>(this->db, out_grad);
-        }
+        GEMM(this->dw, 'T', 'N', in_data, out_grad);
+//        SUM_TO_ROW<T>(this->db, out_grad);
         if (in_signals[0]->get_type() == InnerSignal) {
             auto in_grad = in_signals[0]->get_grad();
-            if (in_grad->opaque()) {
-                GEMM<T>('N', 'T', 1.0, out_grad, this->w, 0.0, in_grad);
-                in_grad->set_opaque(false);
-            } else {
-                GEMM<T>('N', 'T', 1.0, out_grad, this->w, 1.0, in_grad);
-            }
+            GEMM(in_grad, 'N', 'T', out_grad, this->w);
         }
     }
     
