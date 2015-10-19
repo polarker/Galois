@@ -46,8 +46,6 @@ namespace gs {
         auto loss = out_signal->get_extra();
         PROJ_MAP<T>(loss, [](T x){return -log(x);}, out_data, target);
         SUM_POSITIVE_VALUE<T>(loss, out_signal->get_loss().get());
-        
-        out_data->set_opaque(false);
     }
     
     template<typename T>

@@ -237,6 +237,18 @@ namespace gs {
                              batch_size);
         }
     }
+
+    template<typename T>
+    void Net<T>::reopaque() {
+        for (auto &kv : inner_signals) {
+            auto signal = kv.second;
+            signal->reopaque();
+        }
+        for (auto t : links) {
+            auto filter = get<2>(t);
+            filter->reopaque();
+        }
+    }
     
     template<typename T>
     void Net<T>::forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {

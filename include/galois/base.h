@@ -53,6 +53,13 @@ namespace gs
         shared_ptr<T>   get_loss()      { return loss;  }
         SP_NArray<T>    get_extra()     { return extra; }
         
+        void reopaque() {
+            if (data)   { data->reopaque(); }
+            if (grad)   { grad->reopaque(); }
+            if (target) { target->reopaque(); }
+            if (extra)  { extra->reopaque(); }
+        }
+        
         // set dims for data (and grad)
         void set_data_dims(int m)                        { set_data_dims({m}); }
         void set_data_dims(int m, int n)                 { set_data_dims({m,n}); }
@@ -127,6 +134,7 @@ namespace gs
         virtual void set_dims(const vector<SP_Signal<T>> &in_signals,
                               const vector<SP_Signal<T>> &out_signals,
                               int batch_size) = 0;
+        virtual void reopaque() = 0;
         //virtual const Filter *Share() const;
         //virtual const Filter *Clone() const;
     };
@@ -134,13 +142,13 @@ namespace gs
     using SP_Filter = shared_ptr<Filter<T>>;
     
     template<typename T>
-    class BFilter : public Filter<T> {};
+    class BFilter : public Filter<T> {
+    public:
+        void reopaque() override {}
+    };
     
     template<typename T>
-    class PFilter : public Filter<T> {
-    public:
-        bool opaque = true;
-    };
+    class PFilter : public Filter<T> {};
     template<typename T>
     using SP_PFilter = shared_ptr<PFilter<T>>;
     

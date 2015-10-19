@@ -17,7 +17,7 @@ namespace gs
     class Net : public GFilter<T>
     {
     public:
-        vector<tuple<const vector <string>, const vector <string>, SP_Filter<T>>> links;
+        vector<tuple<const vector<string>, const vector<string>, SP_Filter<T>>> links;
         set<SP_PFilter<T>> pfilters;
         
         map<string, vector<tuple<string, int>>> fp_graph;
@@ -67,6 +67,7 @@ namespace gs
         void set_dims(const vector<SP_Signal<T>> &in_signals,
                       const vector<SP_Signal<T>> &out_signals,
                       int batch_size) override;
+        void reopaque() override;
         
         void forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
         

@@ -54,7 +54,7 @@ namespace gs
         for (int i = 0; i < this->get_size(); i++) {
             this->data[i] = data[i];
         }
-        data_opaque = false;
+        setclear();
     }
     
     template<typename T>
@@ -116,7 +116,7 @@ namespace gs
                     Y_ptr[i*n+j] = b_ptr[j];
                 }
             }
-            Y->set_opaque(false);
+            Y->setclear();
         } else {
             for (int i = 0; i < m; i++) {
                 for (int j = 0; j < n; j++) {
@@ -144,7 +144,7 @@ namespace gs
                     b_ptr[j] = X_ptr[i*n + j];
                 }
             }
-            b->set_opaque(false);
+            b->setclear();
         } else {
             for (int i = 0; i < m; i++) {
                 for (int j = 0; j < n; j++) {
@@ -207,7 +207,7 @@ namespace gs
               B->get_data(), ldb,
               beta,
               C->get_data(), ldc);
-        C->set_opaque(false);
+        C->setclear();
     }
     
     template<typename L>
@@ -216,7 +216,7 @@ namespace gs
                const SP_NArray<L> A, const SP_NArray<L> B) {
         if (Y->opaque()) {
             GEMM(tA, tB, static_cast<L>(1.0), A, B, static_cast<L>(0.0), Y);
-            Y->set_opaque(false);
+            Y->setclear();
         } else {
             GEMM(tA, tB, static_cast<L>(1.0), A, B, static_cast<L>(1.0), Y);
         }
@@ -266,7 +266,7 @@ namespace gs
     void MAP (const SP_NArray<T> Y, const function<T(T)>& f, const SP_NArray<T> X) {
         if (Y->opaque()) {
             _MAP(Y, f, X, true);
-            Y->set_opaque(false);
+            Y->setclear();
         } else {
             _MAP(Y, f, X, false);
         }
@@ -278,7 +278,7 @@ namespace gs
               const SP_NArray<T> X, const SP_NArray<T> Z) {
         if (Y->opaque()) {
             _MAP(Y, f, X, Z, true);
-            Y->set_opaque(false);
+            Y->setclear();
         } else {
             _MAP(Y, f, X, Z, false);
         }
@@ -327,7 +327,7 @@ namespace gs
                    const SP_NArray<T> idx) {
         if (Y->opaque()) {
             _PROJ_MAP(Y, f, X, idx, true);
-            Y->set_opaque(false);
+            Y->setclear();
         } else {
             _PROJ_MAP(Y, f, X, idx, false);
         }
@@ -422,7 +422,7 @@ namespace gs
                   const SP_NArray<T> a, const SP_NArray<T> b) {
         if (Y->opaque()) {
             _SUB_MAP(Y, f, X, a, b, true);
-            Y->set_opaque(false);
+            Y->setclear();
         } else {
             _SUB_MAP(Y, f, X, a, b, false);
         }

@@ -40,7 +40,8 @@ namespace gs
         }
         T* get_data() { assert(data); return data; }
         bool opaque() { return data_opaque; }
-        void set_opaque(bool b) { data_opaque = b; }
+        void reopaque() { data_opaque = true; }
+        void setclear() { data_opaque = false; }
         
         void copy_data(const vector<int> &, T*);
         void uniform(T lower, T upper) {

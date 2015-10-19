@@ -23,6 +23,7 @@ namespace gs {
         void set_dims(const vector<SP_Signal<T>> &in_signals,
                       const vector<SP_Signal<T>> &out_signals,
                       int batch_size) override;
+        void reopaque() override;
         
         void forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
             
