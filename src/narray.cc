@@ -139,17 +139,18 @@ namespace gs
         auto X_ptr = X->get_data();
         auto b_ptr = b->get_data();
         if (b->opaque()) {
-            for (int i = 0; i < m; i++) {
-                for (int j = 0; j < n; j++) {
-                    b_ptr[j] = X_ptr[i*n + j];
-                }
+            for (int j = 0; j < n; j++) {
+                b_ptr[j] = X_ptr[j];
             }
             b->setclear();
         } else {
-            for (int i = 0; i < m; i++) {
-                for (int j = 0; j < n; j++) {
-                    b_ptr[j] += X_ptr[i*n + j];
-                }
+            for (int j = 0; j < n; j++) {
+                b_ptr[j] += X_ptr[j];
+            }
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                b_ptr[j] += X_ptr[i*n + j];
             }
         }
     }
@@ -192,7 +193,7 @@ namespace gs
         auto M   = tA=='T' ? A_dims[1] : A_dims[0];
         auto K_A = tA=='T' ? A_dims[0] : A_dims[1];
         auto K_B = tB=='T' ? B_dims[1] : B_dims[0];
-        auto N   = tA=='T' ? B_dims[0] : B_dims[1];
+        auto N   = tB=='T' ? B_dims[0] : B_dims[1];
         assert(K_A == K_B);
         assert(C->get_dims() == vector<int>({M, N}));
         auto K   = K_A;

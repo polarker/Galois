@@ -43,9 +43,11 @@ namespace gs {
         out_data->normalize_for(NARRAY_DIM_ZERO);
         
         auto target = out_signal->get_target();
-        auto loss = out_signal->get_extra();
-        PROJ_MAP<T>(loss, [](T x){return -log(x);}, out_data, target);
-        SUM_POSITIVE_VALUE<T>(loss, out_signal->get_loss().get());
+        auto losses = out_signal->get_extra();
+        PROJ_MAP<T>(losses, [](T x){return -log(x);}, out_data, target);
+        auto loss = out_signal->get_loss();
+        SUM_POSITIVE_VALUE<T>(losses, loss.get());
+        *loss /= target->get_size();
     }
     
     template<typename T>

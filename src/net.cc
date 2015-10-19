@@ -261,6 +261,18 @@ namespace gs {
                             _get_signal(outs, in_signals, out_signals));
         }
     }
+
+    template<typename T>
+    void Net<T>::backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
+        for (auto link_idx : bp_order) {
+            auto t = links[link_idx];
+            auto ins = get<0>(t);
+            auto outs = get<1>(t);
+            auto filter = get<2>(t);
+            filter->backward(_get_signal(ins, in_signals, out_signals),
+                            _get_signal(outs, in_signals, out_signals));
+        }
+    }
     
     template class Net<float>;
     template class Net<double>;
