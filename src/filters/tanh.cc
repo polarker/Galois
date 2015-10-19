@@ -32,12 +32,7 @@ namespace gs {
         auto in_data = in_signals[0]->get_data();
         auto out_data = out_signals[0]->get_data();
         
-        if (out_data->opaque()) {
-            MAP_TO<T>(out_data, [](T x){ return tanh(x); }, in_data);
-            out_data->set_opaque(false);
-        } else {
-            MAP_ON<T>(out_data, [](T x){ return tanh(x); }, in_data);
-        }
+        MAP<T>(out_data, [](T x){ return tanh(x); }, in_data);
     }
     
     template<typename T>
@@ -51,12 +46,7 @@ namespace gs {
         auto out_data = out_signal->get_data();
         auto out_grad = out_signal->get_grad();
         
-        if (in_grad->opaque()) {
-            MAP_TO<T>(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);
-            out_grad->set_opaque(false);
-        } else {
-            MAP_ON<T>(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);;
-        }
+        MAP<T>(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);
     }
     
     template class Tanh<float>;

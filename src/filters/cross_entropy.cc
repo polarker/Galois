@@ -39,12 +39,12 @@ namespace gs {
         assert(out_data->opaque());
         
         // softmax function
-        MAP_TO<T>(out_data, [](T x){return exp(x);}, in_data);
+        MAP<T>(out_data, [](T x){return exp(x);}, in_data);
         out_data->normalize_for(NARRAY_DIM_ZERO);
         
         auto target = out_signal->get_target();
         auto loss = out_signal->get_extra();
-        PROJ_MAP_TO<T>(loss, [](T x){return -log(x);}, out_data, target);
+        PROJ_MAP<T>(loss, [](T x){return -log(x);}, out_data, target);
         SUM_POSITIVE_VALUE<T>(loss, out_signal->get_loss().get());
         
         out_data->set_opaque(false);
@@ -61,14 +61,7 @@ namespace gs {
         auto in_grad = in_signal->get_grad();
         auto out_data = out_signal->get_data();
         int batch_size = in_signal->get_data_dims()[0];
-        if (in_grad->opaque()) {
-            MAP_TO<T>(in_grad, [batch_size](T y){return y/T(batch_size);}, out_data);
-            // todo
-            in_grad->set_opaque(false);
-        } else {
-            MAP_ON<T>(in_grad, [batch_size](T y){return y/T(batch_size);}, out_data);
-            // todo
-        }
+        MAP<T>(in_grad, [batch_size](T y){return y/T(batch_size);}, out_data);
     }
 
     template class CrossEntropy<float>;

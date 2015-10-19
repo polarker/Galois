@@ -103,44 +103,30 @@ namespace gs
     void GEMM (const char tA, const char tB,
                const T alpha, const SP_NArray<T> A, const SP_NArray<T> B,
                const T beta, const SP_NArray<T> C);
+    template<typename T>
+    void GEMM (const char tA, const char tB,
+               const SP_NArray<T> A, const SP_NArray<T> B,
+               const SP_NArray<T> C);
     
     template<typename T>
-    void MAP_TO (const SP_NArray<T> Y,
+    void MAP (const SP_NArray<T> Y,
                  const function<T(T)>& f,
                  const SP_NArray<T> X);
     template<typename T>
-    void MAP_ON (const SP_NArray<T> Y,
-                 const function<T(T)>& f,
-                 const SP_NArray<T> X);
-    template<typename T>
-    void MAP_TO (const SP_NArray<T> Y,
-                 const function<T(T, T)>& f,
-                 const SP_NArray<T> X, const SP_NArray<T> Z);
-    template<typename T>
-    void MAP_ON (const SP_NArray<T> Y,
+    void MAP (const SP_NArray<T> Y,
                  const function<T(T, T)>& f,
                  const SP_NArray<T> X, const SP_NArray<T> Z);
     
     // currently, only two dimensional array are supported
     template<typename T>
-    void PROJ_MAP_TO (const SP_NArray<T> Y,
-                      const function<T(T)>& f,
-                      const SP_NArray<T> X,
-                      const SP_NArray<T> idx);
-    template<typename T>
-    void PROJ_MAP_ON (const SP_NArray<T> Y,
+    void PROJ_MAP (const SP_NArray<T> Y,
                       const function<T(T)>& f,
                       const SP_NArray<T> X,
                       const SP_NArray<T> idx);
     
     // currently, only two dimensional array are supported
     template<typename T>
-    void SUB_MAP_TO (const SP_NArray<T> Y,
-                     const function<T(T)>& f,
-                     const SP_NArray<T> X,
-                     const SP_NArray<T> a, const SP_NArray<T> b);
-    template<typename T>
-    void SUB_MAP_ON (const SP_NArray<T> Y,
+    void SUB_MAP (const SP_NArray<T> Y,
                      const function<T(T)>& f,
                      const SP_NArray<T> X,
                      const SP_NArray<T> a, const SP_NArray<T> b);

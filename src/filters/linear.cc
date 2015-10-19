@@ -50,14 +50,8 @@ namespace gs {
         auto in_data = in_signals[0]->get_data();
         auto out_data = out_signals[0]->get_data();
         
-        if (out_data->opaque()) {
-            GEMM<T>('N', 'N', 1.0, in_data, w, 0.0, out_data);
-            ADD_TO_ROW<T>(out_data, b);
-            out_data->set_opaque(false);
-        } else {
-            GEMM<T>('N', 'N', 1.0, in_data, w, 1.0, out_data);
-            ADD_TO_ROW<T>(out_data, b);
-        }
+        GEMM<T>('N', 'N', in_data, w, out_data);
+        ADD_TO_ROW<T>(out_data, b);
     }
 
     template<typename T>
