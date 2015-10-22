@@ -14,11 +14,7 @@ namespace gs {
         this->b  = make_shared<NArray<T>>(out_size);
         this->b->uniform(-s, s);
         this->dw = make_shared<NArray<T>>(in_size, out_size);
-        this->db = make_shared<NArray<T>>(out_size);
-        
-        cout << "s\t" << s << endl;
-        cout << "w\n" << this->w << endl;
-        cout << "b\n" << this->b << endl;
+        this->db = make_shared<NArray<T>>(out_size);    
     }
     
     template<typename T>
