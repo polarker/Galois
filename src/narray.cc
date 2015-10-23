@@ -4,20 +4,20 @@
 namespace gs
 {
     template<typename T>
-    NArray<T>::NArray(int m) : dims{m} {
+    NArray<T>::NArray(int m) : dims{m}, size{m} {
         assert(m > 0);
         data = new T[get_size()];
     }
     
     template<typename T>
-    NArray<T>::NArray(int m, int n) : dims{m, n} {
+    NArray<T>::NArray(int m, int n) : dims{m, n}, size{m*n} {
         assert(m > 0);
         assert(n > 0);
         data = new T[get_size()];
     }
     
     template<typename T>
-    NArray<T>::NArray(int m, int n, int o) : dims{m, n, o} {
+    NArray<T>::NArray(int m, int n, int o) : dims{m, n, o}, size{m*n*o} {
         assert(m > 0);
         assert(n > 0);
         assert(o > 0);
@@ -25,7 +25,7 @@ namespace gs
     }
     
     template<typename T>
-    NArray<T>::NArray(int m, int n, int o, int k) : dims{m, n, o, k} {
+    NArray<T>::NArray(int m, int n, int o, int k) : dims{m, n, o, k}, size{m*n*o*k} {
         assert(m > 0);
         assert(n > 0);
         assert(o > 0);
@@ -37,6 +37,10 @@ namespace gs
     NArray<T>::NArray(vector<int> nums) : dims{nums} {
         for (auto m : nums) {
             assert(m > 0);
+        }
+        size = 1;
+        for (auto d : dims) {
+            size *= d;
         }
         data = new T[get_size()];
     }

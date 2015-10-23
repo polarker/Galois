@@ -34,7 +34,7 @@ namespace gs
         
     public:
         Signal() = delete;
-        Signal(SignalType type) : type(type) {};
+        explicit Signal(SignalType type) : type(type) {};
         Signal(const Signal& other) = delete;
         Signal& operator=(const Signal&) = delete;
         

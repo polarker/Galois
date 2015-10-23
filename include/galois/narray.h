@@ -1,7 +1,6 @@
 #ifndef _GALOIS_NARRAY_H_
 #define _GALOIS_NARRAY_H_
 
-
 #include <random>
 #include <vector>
 #include <Accelerate/Accelerate.h>
@@ -30,14 +29,7 @@ namespace gs
         ~NArray();
         
         vector<int> get_dims() { return dims; }
-        int get_size() {
-            assert(!dims.empty());
-            int size = 1;
-            for (auto d : dims) {
-                size *= d;
-            }
-            return size;
-        }
+        int get_size() { return size; }
         T* get_data() { assert(data); return data; }
         bool opaque() { return data_opaque; }
         void reopaque() { data_opaque = true; }
@@ -62,6 +54,7 @@ namespace gs
         
     private:
         const vector<int> dims = {};
+        int size = 0;
         T *data = nullptr;
         bool data_opaque = true;
     };
