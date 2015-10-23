@@ -81,14 +81,13 @@ namespace gs
         for (auto pfilter : net.get_pfilters()) {
             pfilters.push_back(pfilter);
         }
-        assert(!pfilters.empty());
         optimizer->compile(pfilters);
-        
-        net.set_p_order();
         
         assert(!input_ids.empty());
         assert(!output_ids.empty());
         net.install_signals(input_signals, output_signals);
+        
+        net.set_p_order();
         net.set_dims(batch_size);
     }
     

@@ -173,6 +173,8 @@ namespace gs {
     
     template<typename T>
     void Net<T>::set_p_order() {
+        assert(fp_order.empty());
+        assert(bp_order.empty());
         for (auto out_id : output_ids) {
             _set_fp_order(out_id);
         }
@@ -222,6 +224,8 @@ namespace gs {
     
     template<typename T>
     void Net<T>::set_dims(int batch_size) {
+        assert(!fp_order.empty());
+        assert(!bp_order.empty());
         for (auto link_idx : fp_order) {
             auto t = links[link_idx];
             auto filter = get<2>(t);
