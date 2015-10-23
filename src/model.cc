@@ -103,8 +103,8 @@ namespace gs
             output_signal->reopaque();
             output_signal->get_target()->fill(1.0);
         }
-        net.forward(input_signals, output_signals);
-        net.backward(input_signals, output_signals);
+        net.forward();
+        net.backward();
         
         cout << "loss:\t" << *output_signals[0]->get_loss() << endl;
         optimizer->update();

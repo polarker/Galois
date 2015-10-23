@@ -27,22 +27,15 @@ namespace gs {
     }
         
     template<typename T>
-    void Tanh<T>::forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
-        assert(in_signals.size() == 1);
-        assert(out_signals.size() == 1);
-        auto in_data = in_signals[0]->get_data();
-        auto out_data = out_signals[0]->get_data();
+    void Tanh<T>::forward() {
+        auto in_data = in_signal->get_data();
+        auto out_data = out_signal->get_data();
         
         MAP<T>(out_data, [](T x){ return tanh(x); }, in_data);
     }
     
     template<typename T>
-    void Tanh<T>::backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
-        assert(in_signals.size() == 1);
-        assert(out_signals.size() == 1);
-        auto in_signal = in_signals[0];
-        auto out_signal = out_signals[0];
-        
+    void Tanh<T>::backward() {
         auto in_grad = in_signal->get_grad();
         auto out_data = out_signal->get_data();
         auto out_grad = out_signal->get_grad();

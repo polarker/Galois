@@ -59,27 +59,24 @@ namespace gs {
     }
     
     template<typename T>
-    void Linear<T>::forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
-        assert(in_signals.size() == 1);
-        assert(out_signals.size() == 1);
-        auto in_data = in_signals[0]->get_data();
-        auto out_data = out_signals[0]->get_data();
+    void Linear<T>::forward() {
+        auto in_data = in_signal->get_data();
+        auto out_data = out_signal->get_data();
         
         GEMM<T>(out_data, 'N', 'N', in_data, w);
         ADD_TO_ROW<T>(out_data, b);
     }
 
     template<typename T>
-    void Linear<T>::backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
-        assert(in_signals.size() == 1);
-        assert(out_signals.size() == 1);
-        auto in_data = in_signals[0]->get_data();
-        auto out_grad = out_signals[0]->get_grad();
+    void Linear<T>::backward() {
+        auto in_data = in_signal->get_data();
+        auto out_grad = out_signal->get_grad();
 
         GEMM(this->dw, 'T', 'N', in_data, out_grad);
         SUM_TO_ROW<T>(this->db, out_grad);
-        if (in_signals[0]->get_type() == InnerSignal) {
-            auto in_grad = in_signals[0]->get_grad();
+        
+        if (in_signal->get_type() == InnerSignal) {
+            auto in_grad = in_signal->get_grad();
             GEMM(in_grad, 'N', 'T', out_grad, this->w);
         }
     }

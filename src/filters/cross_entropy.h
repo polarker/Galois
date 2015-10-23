@@ -18,8 +18,8 @@ namespace gs {
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
         void set_dims(int batch_size) override;
         
-        void forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
-        void backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
+        void forward() override;
+        void backward() override;
     };
     
 }
