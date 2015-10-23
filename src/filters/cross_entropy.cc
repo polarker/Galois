@@ -4,7 +4,18 @@
 namespace gs {
     
     template<typename T>
-    void CrossEntropy<T>::set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size) {
+    void CrossEntropy<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
+        assert(in_signal == nullptr);
+        assert(out_signal == nullptr);
+        assert(in_signals.size() == 1);
+        assert(out_signals.size() == 1);
+        
+        in_signal = in_signals[0];
+        out_signal = out_signals[0];
+    }
+    
+    template<typename T>
+    void CrossEntropy<T>::set_dims(int batch_size) {
         assert(!in_signal->empty());
         auto in_dims = in_signal->get_data_dims();
         
@@ -14,16 +25,6 @@ namespace gs {
         out_signal->set_target_dims(batch_size);
         out_signal->set_extra_dims(batch_size);
         out_signal->initialize_loss();
-    }
-
-    template<typename T>
-    void CrossEntropy<T>::set_dims(const vector<SP_Signal<T>> &in_signals,
-                      const vector<SP_Signal<T>> &out_signals,
-                      int batch_size) {
-        assert(in_signals.size() == 1);
-        assert(out_signals.size() == 1);
-        
-        set_dims(in_signals[0], out_signals[0], batch_size);
     }
 
     template<typename T>

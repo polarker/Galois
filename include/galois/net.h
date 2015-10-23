@@ -18,7 +18,6 @@ namespace gs
     {
     public:
         vector<tuple<const vector<string>, const vector<string>, SP_Filter<T>>> links;
-        vector<tuple<const vector<SP_Signal<T>>, const vector<SP_Signal<T>>, SP_Filter<T>>> compiled_links;
         set<SP_PFilter<T>> pfilters;
         
         map<string, vector<tuple<string, int>>> fp_graph;
@@ -59,16 +58,8 @@ namespace gs
         vector<SP_Signal<T>> _get_signal(vector<string> id,
                                                const vector<SP_Signal<T>> in_signals,
                                                const vector<SP_Signal<T>> out_signals);
-        void compile(const vector<SP_Signal<T>> in_signal, const vector<SP_Signal<T>> out_signal);
-        void set_dims(const SP_Signal<T> in_signal,
-                      const SP_Signal<T> out_signal,
-                      int batch_size);
-        void set_dims(const initializer_list<SP_Signal<T>> &in_signals,
-                      const initializer_list<SP_Signal<T>> &out_signals,
-                      int batch_size);
-        void set_dims(const vector<SP_Signal<T>> &in_signals,
-                      const vector<SP_Signal<T>> &out_signals,
-                      int batch_size) override;
+        void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
+        void set_dims(int batch_size) override;
         void reopaque() override;
         
         void forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;

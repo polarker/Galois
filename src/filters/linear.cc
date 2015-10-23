@@ -18,7 +18,18 @@ namespace gs {
     }
     
     template<typename T>
-    void Linear<T>::set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size) {
+    void Linear<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
+        assert(in_signal == nullptr);
+        assert(out_signal == nullptr);
+        assert(in_signals.size() == 1);
+        assert(out_signals.size() == 1);
+        
+        in_signal = in_signals[0];
+        out_signal = out_signals[0];
+    }
+    
+    template<typename T>
+    void Linear<T>::set_dims(int batch_size) {
         if (in_signal->empty()) {
             in_signal->set_data_dims(batch_size, in_size);
         } else {
@@ -29,14 +40,6 @@ namespace gs {
         } else {
             assert(out_signal->get_data_dims() == vector<int>({batch_size, out_size}));
         }
-    }
-    
-    template<typename T>
-    void Linear<T>::set_dims(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals, int batch_size) {
-        assert(in_signals.size() == 1);
-        assert(out_signals.size() == 1);
-        
-        set_dims(in_signals[0], out_signals[0], batch_size);
     }
     
     template<typename T>

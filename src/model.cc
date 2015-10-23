@@ -88,7 +88,8 @@ namespace gs
         
         assert(!input_ids.empty());
         assert(!output_ids.empty());
-        net.set_dims(input_signals, output_signals, batch_size);
+        net.install_signals(input_signals, output_signals);
+        net.set_dims(batch_size);
     }
     
     template<typename T>

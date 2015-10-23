@@ -7,14 +7,16 @@ namespace gs {
     
     template<typename T>
     class Tanh : public BFilter<T> {
+    private:
+        SP_Signal<T> in_signal = nullptr;
+        SP_Signal<T> out_signal = nullptr;
     public:
         Tanh() {}
         Tanh(const Tanh&) = delete;
         Tanh& operator=(const Tanh&) = delete;
-        void set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size);
-        void set_dims(const vector<SP_Signal<T>> &in_signals,
-                      const vector<SP_Signal<T>> &out_signals,
-                      int batch_size) override;
+        
+        void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
+        void set_dims(int batch_size) override;
 
         void forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
         void backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;

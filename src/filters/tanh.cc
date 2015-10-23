@@ -5,7 +5,18 @@
 namespace gs {
     
     template<typename T>
-    void Tanh<T>::set_dims(SP_Signal<T> in_signal, SP_Signal<T> out_signal, int batch_size) {
+    void Tanh<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
+        assert(in_signal == nullptr);
+        assert(out_signal == nullptr);
+        assert(in_signals.size() == 1);
+        assert(out_signals.size() == 1);
+        
+        in_signal = in_signals[0];
+        out_signal = out_signals[0];
+    }
+    
+    template<typename T>
+    void Tanh<T>::set_dims(int batch_size) {
         assert(!in_signal->empty());
         auto in_dims = in_signal->get_data_dims();
         if (out_signal->empty()) {
@@ -14,17 +25,7 @@ namespace gs {
             assert(in_dims == out_signal->get_data_dims());
         }
     }
-    
-    template<typename T>
-    void Tanh<T>::set_dims(const vector<SP_Signal<T>> &in_signals,
-                           const vector<SP_Signal<T>> &out_signals,
-                           int batch_size) {
-        assert(in_signals.size() == 1);
-        assert(out_signals.size() == 1);
         
-        set_dims(in_signals[0], out_signals[0], batch_size);
-    }
-    
     template<typename T>
     void Tanh<T>::forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
         assert(in_signals.size() == 1);
