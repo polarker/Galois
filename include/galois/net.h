@@ -24,7 +24,9 @@ namespace gs
         map<string, vector<tuple<string, int>>> bp_graph;
         
         vector<int> fp_order;
+        vector<SP_Filter<T>> fp_filters;
         vector<int> bp_order;
+        vector<SP_Filter<T>> bp_filters;
         
         map<string, SP_Signal<T>> inner_signals;
         
@@ -53,11 +55,11 @@ namespace gs
         void _set_bp_order(const string);
         void set_p_order();
         SP_Signal<T> _get_signal(string id,
-                                       const vector<SP_Signal<T>> in_signals,
-                                       const vector<SP_Signal<T>> out_signals);
+                                 const vector<SP_Signal<T>> in_signals,
+                                 const vector<SP_Signal<T>> out_signals);
         vector<SP_Signal<T>> _get_signal(vector<string> id,
-                                               const vector<SP_Signal<T>> in_signals,
-                                               const vector<SP_Signal<T>> out_signals);
+                                         const vector<SP_Signal<T>> in_signals,
+                                         const vector<SP_Signal<T>> out_signals);
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
         void set_dims(int batch_size) override;
         void reopaque() override;

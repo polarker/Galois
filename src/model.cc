@@ -6,9 +6,9 @@ namespace gs
     
     template<typename T>
     Model<T>::Model(int batch_size, T learning_rate, string optimizer_name)
-    : net()
-    , batch_size(batch_size)
-    , learning_rate(learning_rate) {
+            : net()
+            , batch_size(batch_size)
+            , learning_rate(learning_rate) {
         if (optimizer_name == "sgd") {
             optimizer = make_shared<SGD_Optimizer<T>>(learning_rate);
         } else {

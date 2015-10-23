@@ -175,11 +175,23 @@ namespace gs {
     void Net<T>::set_p_order() {
         assert(fp_order.empty());
         assert(bp_order.empty());
+        assert(fp_filters.empty());
+        assert(bp_filters.empty());
         for (auto out_id : output_ids) {
             _set_fp_order(out_id);
         }
         for (auto in_id : input_ids) {
             _set_bp_order(in_id);
+        }
+        for (auto link_idx : fp_order) {
+            auto t = links[link_idx];
+            auto filter = get<2>(t);
+            fp_filters.push_back(filter);
+        }
+        for (auto link_idx : bp_order) {
+            auto t = links[link_idx];
+            auto filter = get<2>(t);
+            bp_filters.push_back(filter);
         }
     }
     
@@ -247,18 +259,14 @@ namespace gs {
     
     template<typename T>
     void Net<T>::forward() {
-        for (auto link_idx : fp_order) {
-            auto t = links[link_idx];
-            auto filter = get<2>(t);
+        for (auto filter : fp_filters) {
             filter->forward();
         }
     }
 
     template<typename T>
     void Net<T>::backward() {
-        for (auto link_idx : bp_order) {
-            auto t = links[link_idx];
-            auto filter = get<2>(t);
+        for (auto filter : bp_filters) {
             filter->backward();
         }
     }
