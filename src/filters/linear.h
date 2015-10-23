@@ -25,6 +25,9 @@ namespace gs {
                       int batch_size) override;
         void reopaque() override;
         
+        vector<SP_NArray<T>> get_params() override;
+        vector<SP_NArray<T>> get_grads() override;
+        
         void forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
             
         void backward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;

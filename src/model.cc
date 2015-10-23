@@ -1,10 +1,19 @@
 #include "galois/model.h"
+#include "prettyprint.hpp"
 
 namespace gs
 {
     
     template<typename T>
-    Model<T>::Model(int batch_size) : net(), batch_size(batch_size) {
+    Model<T>::Model(int batch_size, T learning_rate, string optimizer_name)
+    : net()
+    , batch_size(batch_size)
+    , learning_rate(learning_rate) {
+        if (optimizer_name == "sgd") {
+            optimizer = make_shared<SGD_Optimizer<T>>(learning_rate);
+        } else {
+            throw(optimizer_name + " is not implemented");
+        }
     }
     
     template<typename T>
@@ -73,6 +82,8 @@ namespace gs
             pfilters.push_back(pfilter);
         }
         assert(!pfilters.empty());
+        optimizer->compile(pfilters);
+        
         net.set_p_order();
         
         assert(!input_ids.empty());
@@ -93,7 +104,9 @@ namespace gs
         }
         net.forward(input_signals, output_signals);
         net.backward(input_signals, output_signals);
+        
         cout << "loss:\t" << *output_signals[0]->get_loss() << endl;
+        optimizer->update();
     }
 
     template class Model<float>;

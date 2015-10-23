@@ -86,12 +86,14 @@ namespace gs
             n = M_dims[1];
         }
         
+        strm << '[' << endl;
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 strm << M_ptr[i*n + j] << '\t';
             }
             strm << endl;
         }
+        strm << ']' << endl;
         return strm;
     }
     

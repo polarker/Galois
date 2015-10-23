@@ -1,5 +1,6 @@
 #include "galois/base.h"
 #include "galois/net.h"
+#include "optimizers/optimizer.h"
 
 namespace gs
 {
@@ -7,7 +8,7 @@ namespace gs
     template<typename T>
     class Model
     {
-    private:
+    public:
         Net<T> net;
         vector<SP_PFilter<T>> pfilters;
         vector<string> input_ids = {};
@@ -16,8 +17,10 @@ namespace gs
         vector<SP_Signal<T>> output_signals = {};
         
         int batch_size;
+        T learning_rate;
+        SP_Optimizer<T> optimizer;
     public:
-        Model(int batch_size);
+        Model(int batch_size, T learning_rate, string optimizer_name);
         
         void add_link(const initializer_list<string>, const initializer_list<string>, SP_Filter<T>);
         void add_link(const initializer_list<string>, const string, SP_Filter<T>);

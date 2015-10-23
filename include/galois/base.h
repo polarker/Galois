@@ -148,7 +148,11 @@ namespace gs
     };
     
     template<typename T>
-    class PFilter : public Filter<T> {};
+    class PFilter : public Filter<T> {
+    public:
+        virtual vector<SP_NArray<T>> get_params() = 0;
+        virtual vector<SP_NArray<T>> get_grads() = 0;
+    };
     template<typename T>
     using SP_PFilter = shared_ptr<PFilter<T>>;
     

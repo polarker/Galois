@@ -46,6 +46,16 @@ namespace gs {
     }
     
     template<typename T>
+    vector<SP_NArray<T>> Linear<T>::get_params() {
+        return vector<SP_NArray<T>>{ this->w, this->b };
+    }
+    
+    template<typename T>
+    vector<SP_NArray<T>> Linear<T>::get_grads() {
+        return vector<SP_NArray<T>>{ this->dw, this->db };
+    }
+    
+    template<typename T>
     void Linear<T>::forward(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
         assert(in_signals.size() == 1);
         assert(out_signals.size() == 1);
