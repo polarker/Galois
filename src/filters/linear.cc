@@ -63,8 +63,8 @@ namespace gs {
         auto in_data = in_signal->get_data();
         auto out_data = out_signal->get_data();
         
-        GEMM<T>(out_data, 'N', 'N', in_data, w);
-        ADD_TO_ROW<T>(out_data, b);
+        GEMM(out_data, 'N', 'N', in_data, w);
+        ADD_TO_ROW(out_data, b);
     }
 
     template<typename T>
@@ -73,7 +73,7 @@ namespace gs {
         auto out_grad = out_signal->get_grad();
 
         GEMM(this->dw, 'T', 'N', in_data, out_grad);
-        SUM_TO_ROW<T>(this->db, out_grad);
+        SUM_TO_ROW(this->db, out_grad);
         
         if (in_signal->get_type() == InnerSignal) {
             auto in_grad = in_signal->get_grad();

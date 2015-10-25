@@ -31,7 +31,7 @@ namespace gs {
         auto in_data = in_signal->get_data();
         auto out_data = out_signal->get_data();
         
-        MAP<T>(out_data, [](T x){ return tanh(x); }, in_data);
+        MAP(out_data, [](T x){ return tanh(x); }, in_data);
     }
     
     template<typename T>
@@ -40,7 +40,7 @@ namespace gs {
         auto out_data = out_signal->get_data();
         auto out_grad = out_signal->get_grad();
         
-        MAP<T>(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);
+        MAP(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);
     }
     
     template class Tanh<float>;

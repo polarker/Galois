@@ -49,7 +49,7 @@ namespace gs
                 auto grad = this->grads[i];
                 assert(!param->opaque());
                 T lrate = this->lrate;
-                MAP<T>(param, [=](T x){return -lrate*x;}, grad);
+                MAP(param, [=](T x){return -lrate*x;}, grad);
 //                helper(param, grad, [=](T x){return -lrate*x;});
             }
         }

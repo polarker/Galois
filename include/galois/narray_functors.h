@@ -137,9 +137,9 @@ namespace gs
         }
     }
     
-    template<typename T>
+    template<typename T, typename FUNC>
     void _MAP (const SP_NArray<T> Y,
-               const function<T(T)>& f,
+               const FUNC& f,
                const SP_NArray<T> X,
                const bool overwrite) {
         assert(Y->get_dims() == X->get_dims());
@@ -156,9 +156,9 @@ namespace gs
         }
     }
     
-    template<typename T>
+    template<typename T, typename FUNC>
     void _MAP (const SP_NArray<T> Y,
-               const function<T(T, T)>& f,
+               const FUNC& f,
                const SP_NArray<T> X, const SP_NArray<T> Z,
                const bool overwrite) {
         assert(Y->get_dims() == X->get_dims());
@@ -177,8 +177,8 @@ namespace gs
         }
     }
     
-    template<typename T>
-    void MAP (const SP_NArray<T> Y, const function<T(T)>& f, const SP_NArray<T> X) {
+    template<typename T, typename FUNC>
+    void MAP (const SP_NArray<T> Y, const FUNC& f, const SP_NArray<T> X) {
         if (Y->opaque()) {
             _MAP(Y, f, X, true);
             Y->setclear();
@@ -187,9 +187,9 @@ namespace gs
         }
     }
     
-    template<typename T>
+    template<typename T, typename FUNC>
     void MAP (const SP_NArray<T> Y,
-              const function<T(T, T)>& f,
+              const FUNC& f,
               const SP_NArray<T> X, const SP_NArray<T> Z) {
         if (Y->opaque()) {
             _MAP(Y, f, X, Z, true);
@@ -201,9 +201,9 @@ namespace gs
     
     // currently, only two dimensional array are supported
     // X[m][n] -> Y[m]
-    template<typename T>
+    template<typename T, typename FUNC>
     void _PROJ_MAP (const SP_NArray<T> Y,
-                    const function<T(T)>& f,
+                    const FUNC& f,
                     const SP_NArray<T> X,
                     const SP_NArray<T> idx,
                     const bool overwrite) {
@@ -235,9 +235,9 @@ namespace gs
     
     // currently, only two dimensional array are supported
     // X[m][n] -> Y[m]
-    template<typename T>
+    template<typename T, typename FUNC>
     void PROJ_MAP (const SP_NArray<T> Y,
-                   const function<T(T)>& f,
+                   const FUNC& f,
                    const SP_NArray<T> X,
                    const SP_NArray<T> idx) {
         if (Y->opaque()) {
@@ -250,9 +250,9 @@ namespace gs
     
     // currently, only two dimensional array are supported
     // to be fixed
-    template<typename T>
+    template<typename T, typename FUNC>
     void _SUB_MAP (const SP_NArray<T> Y,
-                   const function<T(T)>& f,
+                   const FUNC& f,
                    const SP_NArray<T> X,
                    const SP_NArray<T> a, const SP_NArray<T> b,
                    const bool overwrite) {
@@ -330,9 +330,9 @@ namespace gs
     }
     
     // currently, only two dimensional array are supported
-    template<typename T>
+    template<typename T, typename FUNC>
     void SUB_MAP (const SP_NArray<T> Y,
-                  const function<T(T)>& f,
+                  const FUNC& f,
                   const SP_NArray<T> X,
                   const SP_NArray<T> a, const SP_NArray<T> b) {
         if (Y->opaque()) {

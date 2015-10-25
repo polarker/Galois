@@ -1,7 +1,7 @@
 #include "galois/base.h"
 #include "galois/narray.h"
 #include "galois/net.h"
-#include "optimizers/optimizer.h"
+#include "galois/optimizer.h"
 
 namespace gs
 {

@@ -36,14 +36,14 @@ namespace gs {
         assert(out_data->opaque());
         
         // softmax function
-        MAP<T>(out_data, [](T x){return exp(x);}, in_data);
+        MAP(out_data, [](T x){return exp(x);}, in_data);
         out_data->normalize_for(NARRAY_DIM_ZERO);
         
         auto target = out_signal->get_target();
         auto losses = out_signal->get_extra();
-        PROJ_MAP<T>(losses, [](T x){return -log(x);}, out_data, target);
+        PROJ_MAP(losses, [](T x){return -log(x);}, out_data, target);
         auto loss = out_signal->get_loss();
-        SUM_POSITIVE_VALUE<T>(losses, loss.get());
+        SUM_POSITIVE_VALUE(losses, loss.get());
         *loss /= target->get_size();
     }
     
@@ -53,8 +53,8 @@ namespace gs {
         auto out_data = out_signal->get_data();
         auto target = out_signal->get_target();
         int batch_size = in_signal->get_data_dims()[0];
-        MAP<T>(in_grad, [batch_size](T y){return y/static_cast<T>(batch_size);}, out_data);
-        SUB_MAP<T>(in_grad, [batch_size](T y){return -1/static_cast<T>(batch_size);}, in_grad, nullptr, target);
+        MAP(in_grad, [batch_size](T y){return y/static_cast<T>(batch_size);}, out_data);
+        SUB_MAP(in_grad, [batch_size](T y){return -1/static_cast<T>(batch_size);}, in_grad, SP_NArray<T>(nullptr), target);
     }
 
     template class CrossEntropy<float>;
