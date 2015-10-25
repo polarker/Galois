@@ -1,5 +1,6 @@
-#include "cross_entropy.h"
+#include "galois/filters/cross_entropy.h"
 #include <cmath>
+#include <cassert>
 
 namespace gs {
     
