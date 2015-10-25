@@ -105,7 +105,7 @@ namespace gs
     
     template<typename T>
     void Model<T>::fit() {
-        uniform_int_distribution<> distribution(0, train_count);
+        uniform_int_distribution<> distribution(0, train_count-1);
         vector<int> batch_ids(batch_size);
         for (int i = 0; i < batch_size; i++) {
             batch_ids[i] = distribution(galois_rn_generator);

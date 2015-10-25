@@ -40,8 +40,8 @@ namespace gs
         void reopaque() { data_opaque = true; }
         void setclear() { data_opaque = false; }
         
-        void copy_from(const vector<int> &, T*);
-        void copy_from(const vector<int> &, SP_NArray<T>);
+        void copy_from(const vector<int> &, const T*);
+        void copy_from(const vector<int> &, const SP_NArray<T>);
         void uniform(T lower, T upper) {
             // future : move random generator to a single file
             uniform_real_distribution<T> distribution(lower, upper);
@@ -94,47 +94,8 @@ namespace gs
         return strm;
     }
     
-    template<typename T>
-    void SUM_POSITIVE_VALUE (const SP_NArray<T> A, T *res);
-    
-    // currently, only two dimensional array are supported
-    template<typename T>
-    void ADD_TO_ROW (const SP_NArray<T> A, const SP_NArray<T> a);
-    template<typename T>
-    void SUM_TO_ROW (const SP_NArray<T> a, const SP_NArray<T> A);
-    
-//    template<typename T>
-//    void GEMM (const char tA, const char tB,
-//               const T alpha, const SP_NArray<T> A, const SP_NArray<T> B,
-//               const T beta, const SP_NArray<T> C);
-    template<typename T>
-    void GEMM (const SP_NArray<T> Y,
-               const char tA, const char tB,
-               const SP_NArray<T> A, const SP_NArray<T> B);
-    
-    template<typename T>
-    void MAP (const SP_NArray<T> Y,
-                 const function<T(T)>& f,
-                 const SP_NArray<T> X);
-    template<typename T>
-    void MAP (const SP_NArray<T> Y,
-                 const function<T(T, T)>& f,
-                 const SP_NArray<T> X, const SP_NArray<T> Z);
-    
-    // currently, only two dimensional array are supported
-    template<typename T>
-    void PROJ_MAP (const SP_NArray<T> Y,
-                      const function<T(T)>& f,
-                      const SP_NArray<T> X,
-                      const SP_NArray<T> idx);
-    
-    // currently, only two dimensional array are supported
-    template<typename T>
-    void SUB_MAP (const SP_NArray<T> Y,
-                     const function<T(T)>& f,
-                     const SP_NArray<T> X,
-                     const SP_NArray<T> a, const SP_NArray<T> b);
-    
 }
+
+#include "narray_functors.cpp"
 
 #endif
