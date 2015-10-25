@@ -49,7 +49,17 @@ namespace gs
                 auto grad = this->grads[i];
                 assert(!param->opaque());
                 T lrate = this->lrate;
-                MAP<T>(param, [lrate](T x){return -lrate*x;}, grad);
+                MAP<T>(param, [=](T x){return -lrate*x;}, grad);
+//                helper(param, grad, [=](T x){return -lrate*x;});
+            }
+        }
+        
+        template<typename F>
+        void helper(SP_NArray<T> param, SP_NArray<T> grad, F f) {
+            auto param_ptr = param->get_data();
+            auto grad_ptr = grad->get_data();
+            for (int j = 0; j < param->get_size(); j++) {
+                param_ptr[j] -= f(grad_ptr[j]);
             }
         }
     };

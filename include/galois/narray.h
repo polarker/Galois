@@ -9,6 +9,11 @@ using namespace std;
 
 namespace gs
 {
+    template<typename T>
+    class NArray;
+    template<typename T>
+    using SP_NArray = shared_ptr<NArray<T>>;
+
     const int   NARRAY_DIM_ZERO = 0;
     const int   NARRAY_DIM_ONE = 1;
     
@@ -35,7 +40,8 @@ namespace gs
         void reopaque() { data_opaque = true; }
         void setclear() { data_opaque = false; }
         
-        void copy_data(const vector<int> &, T*);
+        void copy_from(const vector<int> &, T*);
+        void copy_from(const vector<int> &, SP_NArray<T>);
         void uniform(T lower, T upper) {
             // future : move random generator to a single file
             uniform_real_distribution<T> distribution(lower, upper);
@@ -58,8 +64,6 @@ namespace gs
         T *data = nullptr;
         bool data_opaque = true;
     };
-    template<typename T>
-    using SP_NArray = shared_ptr<NArray<T>>;
     template<typename T>
     default_random_engine NArray<T>::galois_rn_generator(0);
     

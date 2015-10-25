@@ -89,23 +89,42 @@ namespace gs
         
         net.set_p_order();
         net.set_dims(batch_size);
+        // todo: check the dimension of dataset
+    }
+    
+    template<typename T>
+    void Model<T>::add_train_dataset(SP_NArray<T> data, SP_NArray<T> target) {
+        assert(input_ids.size() == 1);
+        assert(output_ids.size() == 1);
+        assert(data->get_dims()[0] == target->get_dims()[0]);
+        
+        train_count = data->get_dims()[0];
+        train_data = vector<SP_NArray<T>>{data};
+        train_target = vector<SP_NArray<T>>{target};
     }
     
     template<typename T>
     void Model<T>::fit() {
+        uniform_int_distribution<> distribution(0, train_count);
+        vector<int> batch_ids(batch_size);
+        for (int i = 0; i < batch_size; i++) {
+            batch_ids[i] = distribution(galois_rn_generator);
+        }
+        
         net.reopaque();
-        for (auto input_signal : input_signals) {
-            input_signal->reopaque();
-            input_signal->get_data()->fill(1.0);
+        for (int i = 0; i < input_signals.size(); i++) {
+            input_signals[i]->reopaque();
+            input_signals[i]->get_data()->copy_from(batch_ids, train_data[i]);
         }
-        for (auto output_signal : output_signals) {
-            output_signal->reopaque();
-            output_signal->get_target()->fill(1.0);
+        for (int i = 0; i < output_signals.size(); i++) {
+            output_signals[i]->reopaque();
+            output_signals[i]->get_target()->copy_from(batch_ids, train_target[i]);
         }
+        
         net.forward();
         net.backward();
         
-        cout << "loss:\t" << *output_signals[0]->get_loss() << endl;
+//        cout << "loss:\t" << *output_signals[0]->get_loss() << endl;
         optimizer->update();
     }
 

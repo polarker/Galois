@@ -53,13 +53,32 @@ namespace gs
     }
     
     template<typename T>
-    void NArray<T>::copy_data(const vector<int> &dims, T* data) {
+    void NArray<T>::copy_from(const vector<int> &dims, T* data) {
         assert(dims == this->dims);
         for (int i = 0; i < this->get_size(); i++) {
             this->data[i] = data[i];
         }
         setclear();
     }
+
+    template<typename T>
+    void NArray<T>::copy_from(const vector<int> &dims, SP_NArray<T> dataset) {
+        assert(dims.size() == this->get_dims()[0]);
+        assert(dataset->get_dims().size() == this->dims.size());
+        for (int i = 1; i < this->dims.size(); i++) {
+            assert(this->dims[i] == dataset->get_dims()[i]);
+        }
+        int batch_size = dims.size();
+        int stride = this->get_size() / batch_size;
+        for (int i = 0; i < batch_size; i++) {
+            assert(dims[i] < dataset->get_dims()[0]);
+            for (int j = 0; j < stride; j++) {
+                this->data[i*stride + j] = dataset->get_data()[dims[i]*stride + j];
+            }
+        }
+        setclear();
+    }
+
     
     template<typename T>
     void NArray<T>::normalize_for(int dim) {
