@@ -5,9 +5,10 @@ namespace gs
 {
     
     template<typename T>
-    Model<T>::Model(int batch_size, T learning_rate, string optimizer_name)
+    Model<T>::Model(int batch_size, int num_epoch, T learning_rate, string optimizer_name)
             : net()
             , batch_size(batch_size)
+            , num_epoch(num_epoch)
             , learning_rate(learning_rate) {
         if (optimizer_name == "sgd") {
             optimizer = make_shared<SGD_Optimizer<T>>(learning_rate);
@@ -104,7 +105,7 @@ namespace gs
     }
     
     template<typename T>
-    void Model<T>::fit() {
+    void Model<T>::fit_one_batch() {
         uniform_int_distribution<> distribution(0, train_count-1);
         vector<int> batch_ids(batch_size);
         for (int i = 0; i < batch_size; i++) {
@@ -126,6 +127,20 @@ namespace gs
         
 //        cout << "loss:\t" << *output_signals[0]->get_loss() << endl;
         optimizer->update();
+    }
+    
+    template<typename T>
+    void Model<T>::fit() {
+        for (int k = 1; k < num_epoch+1; k++) {
+            cout << "Epoch: " << k;
+            auto start = chrono::system_clock::now();
+            for (int i = 0; i < train_count/batch_size; i++) {
+                fit_one_batch();
+            }
+            auto end = chrono::system_clock::now();
+            chrono::duration<double> eplased_time = end - start;
+            cout << ", time: " << eplased_time.count() << endl;
+        }
     }
 
     template class Model<float>;

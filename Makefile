@@ -7,7 +7,7 @@ BUILDDIR := build
 SRC := $(wildcard $(SRCDIR)/*.cc $(SRCDIR)/*/*.cc)
 OBJ := $(patsubst $(SRCDIR)/%.cc, $(BUILDDIR)/%.o, $(SRC))
 INC := -I include
-LIB := -framework accelerate
+LIB := -framework accelerate -lz
 
 TARGET := bin/main
 

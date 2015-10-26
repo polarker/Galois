@@ -20,6 +20,7 @@ namespace gs
         vector<SP_Signal<T>> output_signals = {};
         
         int batch_size;
+        int num_epoch;
         T learning_rate;
         SP_Optimizer<T> optimizer;
         
@@ -27,7 +28,7 @@ namespace gs
         vector<SP_NArray<T>> train_data = {};
         vector<SP_NArray<T>> train_target = {};
     public:
-        Model(int batch_size, T learning_rate, string optimizer_name);
+        Model(int batch_size, int num_epoch, T learning_rate, string optimizer_name);
         
         void add_link(const initializer_list<string>, const initializer_list<string>, SP_Filter<T>);
         void add_link(const initializer_list<string>, const string, SP_Filter<T>);
@@ -41,6 +42,7 @@ namespace gs
         void set_output_ids(const vector<string>);
         void compile();
         void add_train_dataset(SP_NArray<T> data, SP_NArray<T> target);
+        void fit_one_batch();
         void fit();
     };
     template<typename T>
