@@ -42,7 +42,7 @@ namespace gs
         void set_output_ids(const vector<string>);
         void compile();
         void add_train_dataset(SP_NArray<T> data, SP_NArray<T> target);
-        void fit_one_batch();
+        T fit_one_batch(const bool update=true);
         void fit();
     };
     template<typename T>

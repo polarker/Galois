@@ -104,7 +104,7 @@ namespace gs
     }
     
     template<typename T>
-    void Model<T>::fit_one_batch() {
+    T Model<T>::fit_one_batch(const bool update) {
         uniform_int_distribution<> distribution(0, train_count-1);
         vector<int> batch_ids(batch_size);
         for (int i = 0; i < batch_size; i++) {
@@ -123,9 +123,15 @@ namespace gs
         
         net.forward();
         net.backward();
+        if (update) {
+            optimizer->update();
+        }
         
-//        cout << "loss:\t" << *output_signals[0]->get_loss() << endl;
-        optimizer->update();
+        T loss = 0;
+        for (auto output_signal : output_signals) {
+            loss += *output_signal->get_loss();
+        }
+        return loss;
     }
     
     template<typename T>
@@ -135,10 +141,7 @@ namespace gs
             auto start = chrono::system_clock::now();
             T loss = 0;
             for (int i = 0; i < train_count/batch_size; i++) {
-                fit_one_batch();
-                for (auto output_signal : output_signals) {
-                    loss += *output_signal->get_loss();
-                }
+                loss += fit_one_batch();
             }
             loss /= T(train_count/batch_size);
             

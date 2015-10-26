@@ -28,19 +28,19 @@ namespace mnist
         
         int32_t read_int() {
             uint8_t buf[4];
-            assert(gzread(fp, buf, sizeof(buf)) != sizeof(buf));
+            assert(gzread(fp, buf, sizeof(buf)) == sizeof(buf));
             return int32_t(buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3]);
         }
         
         uint8_t read_byte() {
             uint8_t b;
-            assert(gzread(fp, &b, sizeof(b)) != sizeof(b));
+            assert(gzread(fp, &b, sizeof(b)) == sizeof(b));
             return b;
         }
     };
     
     template<typename T>
-    gs::SP_NArray<T> read_images(const string &file_name) {
+    gs::SP_NArray<T> read_images(const string &file_name, int num_samples=INT_MAX) {
         GzipFile gf(file_name.c_str(), "rb");
         int magic = gf.read_int();
         int count = gf.read_int();
@@ -48,9 +48,15 @@ namespace mnist
         int cols  = gf.read_int();
         cout << "Image: magic=" << magic << ", count=" << count << ", rows=" << rows << ", cols=" << cols << endl;
         
-        auto res = make_shared<gs::NArray<T>>(count, rows*cols);
+        if (num_samples == INT_MAX) {
+            num_samples = count;
+        } else {
+            assert(0 < num_samples && num_samples <= count);
+        }
+        
+        auto res = make_shared<gs::NArray<T>>(num_samples, rows*cols);
         auto res_ptr = res->get_data();
-        for (int i = 0; i < count*rows*cols; i++) {
+        for (int i = 0; i < num_samples*rows*cols; i++) {
             res_ptr[i] = T(gf.read_byte()) / T(256);
         }
         
@@ -58,15 +64,21 @@ namespace mnist
     }
     
     template<typename T>
-    gs::SP_NArray<T> read_labels(const string &file_name) {
+    gs::SP_NArray<T> read_labels(const string &file_name,  int num_samples=INT_MAX) {
         GzipFile gf(file_name.c_str(), "rb");
         int magic = gf.read_int();
         int count = gf.read_int();
         cout << "Lable: magic=" << magic << ", count=" << count << endl;
         
-        auto res = make_shared<gs::NArray<T>>(count);
+        if (num_samples == INT_MAX) {
+            num_samples = count;
+        } else {
+            assert(0 < num_samples && num_samples <= count);
+        }
+        
+        auto res = make_shared<gs::NArray<T>>(num_samples);
         auto res_ptr = res->get_data();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < num_samples; i++) {
             res_ptr[i] = T(gf.read_byte());
         }
         return res;
