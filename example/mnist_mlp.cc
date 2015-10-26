@@ -1,4 +1,3 @@
-#include <string>
 #include "galois/model.h"
 #include "galois/filters.h"
 #include "galois/dataset/mnist.h"
