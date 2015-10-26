@@ -18,9 +18,7 @@ namespace mnist
     public:
         GzipFile(const char *file, const char *mode) {
             fp = gzopen(file, mode);
-            if (!fp) {
-                throw("unable to open file");
-            }
+            assert(fp);
         }
         ~GzipFile() {
             if (fp) {
@@ -30,17 +28,13 @@ namespace mnist
         
         int32_t read_int() {
             uint8_t buf[4];
-            if (gzread(fp, buf, sizeof(buf)) != sizeof(buf)) {
-                throw("unable to read an integer");
-            }
+            assert(gzread(fp, buf, sizeof(buf)) != sizeof(buf));
             return int32_t(buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3]);
         }
         
         uint8_t read_byte() {
             uint8_t b;
-            if (gzread(fp, &b, sizeof(b)) != sizeof(b)) {
-                throw("unable to read a byte");
-            }
+            assert(gzread(fp, &b, sizeof(b)) != sizeof(b));
             return b;
         }
     };

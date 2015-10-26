@@ -1,5 +1,4 @@
 #include "galois/model.h"
-#include "prettyprint.hpp"
 
 namespace gs
 {
@@ -132,14 +131,22 @@ namespace gs
     template<typename T>
     void Model<T>::fit() {
         for (int k = 1; k < num_epoch+1; k++) {
-            cout << "Epoch: " << k;
+            printf("Epoch: %2d", k);
             auto start = chrono::system_clock::now();
+            T loss = 0;
             for (int i = 0; i < train_count/batch_size; i++) {
                 fit_one_batch();
+                for (auto output_signal : output_signals) {
+                    loss += *output_signal->get_loss();
+                }
             }
+            loss /= T(train_count/batch_size);
+            
             auto end = chrono::system_clock::now();
             chrono::duration<double> eplased_time = end - start;
-            cout << ", time: " << eplased_time.count() << endl;
+            printf(", time: %.2fs", eplased_time.count());
+            printf(", loss: %.6f", loss);
+            printf("\n");
         }
     }
 
