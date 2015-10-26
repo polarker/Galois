@@ -4,6 +4,7 @@
 #include <random>
 #include <vector>
 #include <Accelerate/Accelerate.h>
+#include <cassert>
 
 using namespace std;
 
@@ -96,6 +97,6 @@ namespace gs
     
 }
 
-#include "narray_functors.h"
+#include "narray_functors.h_inl"
 
 #endif
