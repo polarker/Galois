@@ -22,8 +22,8 @@ int main()
     model.set_output_ids("predicitons");
     model.compile();
 
-    auto images = mnist::read_images<T>("../data/train-images-idx3-ubyte.gz");
-    auto labels = mnist::read_labels<T>("../data/train-labels-idx1-ubyte.gz");
+    auto images = mnist::read_images<T>("./data/train-images-idx3-ubyte.gz");
+    auto labels = mnist::read_labels<T>("./data/train-labels-idx1-ubyte.gz");
     model.add_train_dataset(images, labels);
 
     model.fit();

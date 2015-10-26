@@ -1,27 +1,41 @@
-CXX := g++
-CFLAGS := -g -std=c++11 -Wall
+CXX 	:= g++
+CFLAGS 	:= -g -std=c++11 -Wall
 
-SRCDIR := src
-BUILDDIR := build
-BINDIR := bin
-EXAMPLEDIR := example
+SRCDIR 		:= src
+BUILDDIR 	:= build
+BINDIR 		:= bin
+EXAMPLEDIR 	:= example
+TESTDIR 	:= test
 
-SRC := $(wildcard $(SRCDIR)/*.cc $(SRCDIR)/*/*.cc)
-OBJ := $(patsubst $(SRCDIR)/%.cc, $(BUILDDIR)/%.o, $(SRC))
-EXAMPLESRC := $(wildcard $(EXAMPLEDIR)/*.cc $(EXAMPLEDIR)/*/*.cc)
-EXAMPLEOBJ := $(patsubst $(EXAMPLEDIR)/%.cc, $(BUILDDIR)/example/%.o, $(EXAMPLESRC))
-EXAMPLE := $(patsubst $(EXAMPLEDIR)/%.cc, $(BINDIR)/%, $(EXAMPLESRC))
-INC := -I include
-LIB := -framework accelerate -lz
+SRC 		:= $(wildcard $(SRCDIR)/*.cc 		$(SRCDIR)/*/*.cc)
+EXAMPLESRC 	:= $(wildcard $(EXAMPLEDIR)/*.cc 	$(EXAMPLEDIR)/*/*.cc)
+TESTSRC		:= $(wildcard $(TESTDIR)/*.cc 		$(TESTDIR)/*/*.cc)
+
+OBJ 		:= $(patsubst $(SRCDIR)/%.cc, 		$(BUILDDIR)/%.o, 		$(SRC))
+EXAMPLEOBJ 	:= $(patsubst $(EXAMPLEDIR)/%.cc, 	$(BUILDDIR)/example/%.o, $(EXAMPLESRC))
+TESTOBJ 	:= $(patsubst $(TESTDIR)/%.cc, 		$(BUILDDIR)/test/%.o, 	$(TESTSRC))
+
+EXAMPLE 	:= $(patsubst $(EXAMPLEDIR)/%.cc, 	$(BINDIR)/%, $(EXAMPLESRC))
+TEST		:= $(patsubst $(TESTDIR)/%.cc, 		$(BINDIR)/%, $(TESTSRC))
+
+INC 		:= -I include
+LIB 		:= -framework accelerate -lz
 
 .PHONY: all clean
 
-all: $(EXAMPLE)
+all: $(EXAMPLE) $(TEST)
 
 $(EXAMPLE): $(EXAMPLEOBJ) $(OBJ)
-	$(CXX) $(CFLAGS) $(LIB) $(OBJ) -o $@
+	$(CXX) $(CFLAGS) $(LIB) $(EXAMPLEOBJ) $(OBJ) -o $@
 
 $(EXAMPLEOBJ): $(EXAMPLESRC)
+	@mkdir -p $(@D)
+	$(CXX) $(CFLAGS) $(INC) -c $< -o $@
+
+$(TEST): $(TESTOBJ) $(OBJ)
+	$(CXX) $(CFLAGS) $(LIB) $(TESTOBJ) $(OBJ) -o $@
+
+$(TESTOBJ): $(TESTSRC)
 	@mkdir -p $(@D)
 	$(CXX) $(CFLAGS) $(INC) -c $< -o $@
 
@@ -30,5 +44,6 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cc
 	$(CXX) $(CFLAGS) $(INC) -c $< -o $@
 
 clean:
-	rm $(OBJ) $(EXAMPLEOBJ) $(EXAMPLE)
+	rm -r $(BUILDDIR)/*
+	rm -r $(BINDIR)/*
 
