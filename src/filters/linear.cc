@@ -19,10 +19,10 @@ namespace gs {
     
     template<typename T>
     void Linear<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
-        assert(in_signal == nullptr);
-        assert(out_signal == nullptr);
-        assert(in_signals.size() == 1);
-        assert(out_signals.size() == 1);
+        CHECK(in_signal == nullptr, "in signal should not be initialized");
+        CHECK(out_signal == nullptr, "out signal should not be initialized");
+        CHECK(in_signals.size() == 1, "only need 1 in signal");
+        CHECK(out_signals.size() == 1, "only need 1 out signal");
         
         in_signal = in_signals[0];
         out_signal = out_signals[0];
@@ -33,12 +33,12 @@ namespace gs {
         if (in_signal->empty()) {
             in_signal->set_data_dims(batch_size, in_size);
         } else {
-            assert(in_signal->get_data_dims() ==  vector<int>({batch_size, in_size}));
+            CHECK(in_signal->get_data_dims() ==  vector<int>({batch_size, in_size}), "the dimension of in signal is wrong");
         }
         if (out_signal->empty()) {
             out_signal->set_data_dims(batch_size, out_size);
         } else {
-            assert(out_signal->get_data_dims() == vector<int>({batch_size, out_size}));
+            CHECK(out_signal->get_data_dims() == vector<int>({batch_size, out_size}), "the dimension of out signal is wrong");
         }
     }
     

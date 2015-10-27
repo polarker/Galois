@@ -6,23 +6,23 @@ namespace gs {
     
     template<typename T>
     void CrossEntropy<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
-        assert(in_signal == nullptr);
-        assert(out_signal == nullptr);
-        assert(in_signals.size() == 1);
-        assert(out_signals.size() == 1);
+        CHECK(in_signal == nullptr, "in_signal should not be initialized before");
+        CHECK(out_signal == nullptr, "out_signal should not be initialized before");
+        CHECK(in_signals.size() == 1, "only need 1 in signal");
+        CHECK(out_signals.size() == 1, "only need 1 out signal");
         
         in_signal = in_signals[0];
         out_signal = out_signals[0];
-        assert(out_signal->get_type() == OutputSignal);
+        CHECK(out_signal->get_type() == OutputSignal, "OutputSignal is needed");
     }
     
     template<typename T>
     void CrossEntropy<T>::set_dims(int batch_size) {
-        assert(!in_signal->empty());
+        CHECK(!in_signal->empty(), "in signal should be empty");
         auto in_dims = in_signal->get_data_dims();
         
-        assert(out_signal->get_type() == OutputSignal);
-        assert(out_signal->empty());
+        CHECK(out_signal->get_type() == OutputSignal, "OutputSignal is needed");
+        CHECK(out_signal->empty(), "out signal should be empty");
         out_signal->set_data_dims(in_dims);
         out_signal->set_target_dims(batch_size);
         out_signal->set_extra_dims(batch_size);
@@ -33,7 +33,7 @@ namespace gs {
     void CrossEntropy<T>::forward() {
         auto in_data = in_signal->get_data();
         auto out_data = out_signal->get_data();
-        assert(out_data->opaque());
+        CHECK(out_data->opaque(), "out data should be opaque");
         
         // softmax function
         MAP(out_data, [](T x){return exp(x);}, in_data);
