@@ -1,6 +1,7 @@
 #ifndef _GALOIS_NARRAY_H_
 #define _GALOIS_NARRAY_H_
 
+#include "galois/utils.h"
 #include <random>
 #include <vector>
 #include <Accelerate/Accelerate.h>
@@ -36,7 +37,7 @@ namespace gs
         
         vector<int> get_dims() { return dims; }
         int get_size() { return size; }
-        T* get_data() { assert(data); return data; }
+        T* get_data() { CHECK(data, "data should be non-empty"); return data; }
         bool opaque() { return data_opaque; }
         void reopaque() { data_opaque = true; }
         void setclear() { data_opaque = false; }
@@ -73,7 +74,7 @@ namespace gs
         // currently, only surpport matrix
         auto M_dims = M->get_dims();
         auto M_ptr = M->get_data();
-        assert(M_dims.size() <= 2);
+        CHECK(M_dims.size() <= 2, "only support upto 2 dimensional array");
         int m = 0;
         int n = 0;
         if (M_dims.size() == 1) {

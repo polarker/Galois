@@ -48,7 +48,7 @@ namespace gs
     
     template<typename T>
     void Model<T>::set_input_ids(const vector<string> ids) {
-        assert(input_ids.empty());
+        CHECK(input_ids.empty(), "input_ids should not be set before");
         net.set_input_ids(ids);
         input_ids = ids;
         for (int i = 0; i < input_ids.size(); i++) {
@@ -68,7 +68,7 @@ namespace gs
     
     template<typename T>
     void Model<T>::set_output_ids(const vector<string> ids) {
-        assert(output_ids.empty());
+        CHECK(output_ids.empty(), "output_ids should not be set before");
         net.set_output_ids(ids);
         output_ids = ids;
         for (int j = 0; j < output_ids.size(); j++) {
@@ -83,8 +83,8 @@ namespace gs
         }
         optimizer->compile(pfilters);
         
-        assert(!input_ids.empty());
-        assert(!output_ids.empty());
+        CHECK(!input_ids.empty(), "input_ids should have been set");
+        CHECK(!output_ids.empty(), "output_ids should have been set");
         net.install_signals(input_signals, output_signals);
         
         net.set_p_order();
@@ -94,9 +94,9 @@ namespace gs
     
     template<typename T>
     void Model<T>::add_train_dataset(SP_NArray<T> data, SP_NArray<T> target) {
-        assert(input_ids.size() == 1);
-        assert(output_ids.size() == 1);
-        assert(data->get_dims()[0] == target->get_dims()[0]);
+        CHECK(input_ids.size() == 1, "there should be only one input signal");
+        CHECK(output_ids.size() == 1, "there should be only one output signal");
+        CHECK(data->get_dims()[0] == target->get_dims()[0], "data and target should have the same number of samples");
         
         train_count = data->get_dims()[0];
         train_data = vector<SP_NArray<T>>{data};

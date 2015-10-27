@@ -47,10 +47,10 @@ namespace gs
         void _remove_signal(string);
         void set_input_ids(const string);
         void set_input_ids(const initializer_list<string>);
-        void set_input_ids(const vector<string>);
+        void set_input_ids(const vector<string>&);
         void set_output_ids(const string);
         void set_output_ids(const initializer_list<string>);
-        void set_output_ids(const vector<string>);
+        void set_output_ids(const vector<string>&);
         void _set_fp_order(const string);
         void _set_bp_order(const string);
         void set_p_order();

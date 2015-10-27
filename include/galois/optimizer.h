@@ -32,11 +32,11 @@ namespace gs
             for (auto pfilter : this->pfilters) {
                 auto tmp_params = pfilter->get_params();
                 auto tmp_grads = pfilter->get_grads();
-                assert(tmp_params.size() == tmp_grads.size());
+                CHECK(tmp_params.size() == tmp_grads.size(), "numbers of params and grads should be equal");
                 for (int i = 0; i < tmp_params.size(); i++) {
                     auto param = tmp_params[i];
                     auto grad = tmp_grads[i];
-                    assert(param->get_dims() == grad->get_dims());
+                    CHECK(param->get_dims() == grad->get_dims(), "param and grad should have the same dimensions");
                     this->params.push_back(param);
                     this->grads.push_back(grad);
                 }
@@ -47,21 +47,12 @@ namespace gs
             for (int i = 0; i < this->params.size(); i++) {
                 auto param = this->params[i];
                 auto grad = this->grads[i];
-                assert(!param->opaque());
+                CHECK(!param->opaque(), "param should not be opaque");
                 T lrate = this->lrate;
                 MAP(param, [=](T x){return -lrate*x;}, grad);
-//                helper(param, grad, [=](T x){return -lrate*x;});
             }
         }
         
-        template<typename F>
-        void helper(SP_NArray<T> param, SP_NArray<T> grad, F f) {
-            auto param_ptr = param->get_data();
-            auto grad_ptr = grad->get_data();
-            for (int j = 0; j < param->get_size(); j++) {
-                param_ptr[j] -= f(grad_ptr[j]);
-            }
-        }
     };
     
 }

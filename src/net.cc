@@ -97,7 +97,7 @@ namespace gs {
     }
     
     template<typename T>
-    void Net<T>::set_input_ids(const vector<string> ids) {
+    void Net<T>::set_input_ids(const vector<string>& ids) {
         for (auto id : ids) {
             assert(!Contains(input_ids, id));
         }
@@ -118,7 +118,7 @@ namespace gs {
     }
     
     template<typename T>
-    void Net<T>::set_output_ids(const vector<string> ids) {
+    void Net<T>::set_output_ids(const vector<string>& ids) {
         for (auto id : ids) {
             assert(!Contains(output_ids, id));
         }
