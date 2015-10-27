@@ -8,8 +8,8 @@ namespace gs {
     template<typename T>
     class Linear : public PFilter<T> {
     private:
-        SP_Signal<T> in_signal;
-        SP_Signal<T> out_signal;
+        SP_Signal<T> in_signal = nullptr;
+        SP_Signal<T> out_signal = nullptr;
     public:
         int in_size = 0;
         int out_size = 0;

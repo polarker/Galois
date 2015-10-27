@@ -69,15 +69,15 @@ namespace gs
             set_data_dims(vector<int>(nums));
         }
         void set_data_dims(vector<int> nums) {
-            assert(!data);
+            CHECK(!data, "data should be nullptr before initialization");
             data = make_shared<NArray<T>>(nums);
             if (type == InnerSignal) {
-                assert(!grad);
+                CHECK(!grad, "grad should be nullptr before initialization");
                 grad = make_shared<NArray<T>>(nums);
             }
         }
         vector<int> get_data_dims() {
-            assert(data);
+            CHECK(data, "data should be non-empty");
             return data->get_dims();
         }
         // set dims for target
@@ -89,18 +89,18 @@ namespace gs
             set_target_dims(vector<int>(nums));
         }
         void set_target_dims(vector<int> nums) {
-            assert(type == OutputSignal);
-            assert(!target);
+            CHECK(type == OutputSignal, "only OutputSignal could set target");
+            CHECK(!target, "target should be nullptr before initialization");
             target = make_shared<NArray<T>>(nums);
         }
         vector<int> get_target_dims() {
-            assert(target);
+            CHECK(target, "target should be non-empty");
             return target->get_dims();
         }
         // initialize loss
         void initialize_loss() {
-            assert(type == OutputSignal);
-            assert(!loss);
+            CHECK(type == OutputSignal, "only OutputSignal could set loss");
+            CHECK(!loss, "loss should be nullptr before initialization");
             loss = make_shared<T>(0);
         }
         // set dims for extra
@@ -112,11 +112,11 @@ namespace gs
             set_extra_dims(vector<int>(nums));
         }
         void set_extra_dims(vector<int> nums) {
-            assert(!extra);
+            CHECK(!extra, "extra should be nullptr before initialization");
             extra = make_shared<NArray<T>>(nums);
         }
         vector<int> get_extra_dims() {
-            assert(extra);
+            CHECK(extra, "extra should be non-empty");
             return extra->get_dims();
         }
     };
