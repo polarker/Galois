@@ -5,38 +5,38 @@ namespace gs
 {
     template<typename T>
     NArray<T>::NArray(int m) : dims{m}, size{m} {
-        assert(m > 0);
+        CHECK(m > 0, "m should be positive");
         data = new T[get_size()];
     }
     
     template<typename T>
     NArray<T>::NArray(int m, int n) : dims{m, n}, size{m*n} {
-        assert(m > 0);
-        assert(n > 0);
+        CHECK(m > 0, "m should be positive");
+        CHECK(n > 0, "n should be positive");
         data = new T[get_size()];
     }
     
     template<typename T>
     NArray<T>::NArray(int m, int n, int o) : dims{m, n, o}, size{m*n*o} {
-        assert(m > 0);
-        assert(n > 0);
-        assert(o > 0);
+        CHECK(m > 0, "m should be positive");
+        CHECK(n > 0, "n should be positive");
+        CHECK(o > 0, "o should be positive");
         data = new T[get_size()];
     }
     
     template<typename T>
     NArray<T>::NArray(int m, int n, int o, int k) : dims{m, n, o, k}, size{m*n*o*k} {
-        assert(m > 0);
-        assert(n > 0);
-        assert(o > 0);
-        assert(k > 0);
+        CHECK(m > 0, "m should be positive");
+        CHECK(n > 0, "n should be positive");
+        CHECK(o > 0, "o should be positive");
+        CHECK(k > 0, "k should be positive");
         data = new T[get_size()];
     }
     
     template<typename T>
     NArray<T>::NArray(vector<int> nums) : dims{nums} {
         for (auto m : nums) {
-            assert(m > 0);
+            CHECK(m > 0, "each dimension should be positive");
         }
         size = 1;
         for (auto d : dims) {
@@ -54,7 +54,7 @@ namespace gs
     
     template<typename T>
     void NArray<T>::copy_from(const vector<int> &dims, const T* data) {
-        assert(dims == this->dims);
+        CHECK(dims == this->dims, "the dimension should be equal");
         for (int i = 0; i < this->get_size(); i++) {
             this->data[i] = data[i];
         }
@@ -62,19 +62,22 @@ namespace gs
     }
 
     template<typename T>
-    void NArray<T>::copy_from(const vector<int> &dims, const SP_NArray<T> dataset) {
-        assert(dims.size() == this->get_dims()[0]);
-        assert(dataset->get_dims().size() == this->dims.size());
+    void NArray<T>::copy_from(const vector<int> &idxs, const SP_NArray<T> dataset) {
+        // copy a batch from dataset
+        auto dataset_dims = dataset->get_dims();
+        CHECK(idxs.size() == this->dims[0], "first dimension should be equal to batch size");
+        CHECK(dataset_dims.size() == this->dims.size(), "number of dimensions should be equal");
         for (int i = 1; i < this->dims.size(); i++) {
-            assert(this->dims[i] == dataset->get_dims()[i]);
+            CHECK(dataset_dims[i] == this->dims[i], "dimensions should be equal");
         }
-        int batch_size = dims.size();
+
+        int batch_size = idxs.size();
         int stride = this->get_size() / batch_size;
+        auto dataset_ptr = dataset->get_data();
         for (int i = 0; i < batch_size; i++) {
-            assert(dims[i] < dataset->get_dims()[0]);
-            auto dataset_ptr = dataset->get_data();
+            CHECK(idxs[i] < dataset_dims[0], "invalid index");
             for (int j = 0; j < stride; j++) {
-                this->data[i*stride + j] = dataset_ptr[dims[i]*stride + j];
+                this->data[i*stride + j] = dataset_ptr[idxs[i]*stride + j];
             }
         }
         setclear();
@@ -84,8 +87,8 @@ namespace gs
     template<typename T>
     void NArray<T>::normalize_for(int dim) {
         // currently, only two dimensional array are supported
-        assert(dim == NARRAY_DIM_ZERO || dim == NARRAY_DIM_ONE);
-        assert(this->dims.size() == 2);
+        CHECK(dim == NARRAY_DIM_ZERO || dim == NARRAY_DIM_ONE, "only support upto 2 dimensional array");
+        CHECK(this->dims.size() == 2, "only support upto 2 dimensional array");
         
         if (dim == NARRAY_DIM_ZERO) {
             for (int i = 0; i < this->dims[0]; i++) {
