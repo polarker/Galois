@@ -1,5 +1,5 @@
 CXX 	:= g++
-CFLAGS 	:= -g -std=c++11 -Wall
+CFLAGS 	:= -g -std=c++11 -Wall -O3
 
 SRCDIR 		:= src
 BUILDDIR 	:= build

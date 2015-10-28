@@ -98,9 +98,7 @@ namespace gs {
     
     template<typename T>
     void Net<T>::set_input_ids(const vector<string>& ids) {
-        for (auto id : ids) {
-            assert(!Contains(input_ids, id));
-        }
+        CHECK(input_ids.empty(), "input_ids should not be set");
         input_ids.insert(input_ids.end(), ids.begin(), ids.end());
         for (auto id : ids) {
             _remove_signal(id);
@@ -119,9 +117,7 @@ namespace gs {
     
     template<typename T>
     void Net<T>::set_output_ids(const vector<string>& ids) {
-        for (auto id : ids) {
-            assert(!Contains(output_ids, id));
-        }
+        CHECK(output_ids.empty(), "output_ids should not be set");
         output_ids.insert(output_ids.end(), ids.begin(), ids.end());
         for (auto id : ids) {
             _remove_signal(id);
@@ -131,10 +127,11 @@ namespace gs {
     template<typename T>
     void Net<T>::_set_fp_order(string out_id) {
         // input_ids should be non-empty
-        assert(!input_ids.empty());
+        CHECK(!input_ids.empty(), "input ids should have been set");
         if (Contains(input_ids, out_id)) {
             return;
         }
+        CHECK(bp_graph.count(out_id) == 1, "out_id should be in the keys of bp_graph");
         for (auto t : bp_graph[out_id]) {
             string in_id = get<0>(t);
             int link_idx = get<1>(t);
@@ -152,10 +149,11 @@ namespace gs {
     
     template<typename T>
     void Net<T>::_set_bp_order(string in_id) {
-        assert(!output_ids.empty());
+        CHECK(!output_ids.empty(), "output ids should have been set");
         if (Contains(output_ids, in_id)) {
             return;
         }
+        CHECK(fp_graph.count(in_id), "in_id should be in the keys of fp_graph");
         for (auto t : fp_graph[in_id]) {
             string out_id = get<0>(t);
             int link_idx = get<1>(t);
@@ -173,10 +171,10 @@ namespace gs {
     
     template<typename T>
     void Net<T>::set_p_order() {
-        assert(fp_order.empty());
-        assert(bp_order.empty());
-        assert(fp_filters.empty());
-        assert(bp_filters.empty());
+        CHECK(fp_order.empty(), "fp order should not be set");
+        CHECK(bp_order.empty(), "bp order should not be set");
+        CHECK(fp_filters.empty(), "fp filters should not be set");
+        CHECK(bp_filters.empty(), "bp filters should not be set");
         for (auto out_id : output_ids) {
             _set_fp_order(out_id);
         }
@@ -236,8 +234,8 @@ namespace gs {
     
     template<typename T>
     void Net<T>::set_dims(int batch_size) {
-        assert(!fp_order.empty());
-        assert(!bp_order.empty());
+        CHECK(!fp_order.empty(), "fp order should have been set");
+        CHECK(!bp_order.empty(), "bp order should have been set");
         for (auto link_idx : fp_order) {
             auto t = links[link_idx];
             auto filter = get<2>(t);
@@ -259,6 +257,7 @@ namespace gs {
     
     template<typename T>
     void Net<T>::forward() {
+        CHECK(!fp_filters.empty(), "fp filters should have been set");
         for (auto filter : fp_filters) {
             filter->forward();
         }
@@ -266,6 +265,7 @@ namespace gs {
 
     template<typename T>
     void Net<T>::backward() {
+        CHECK(!bp_filters.empty(), "bp filters should have been set");
         for (auto filter : bp_filters) {
             filter->backward();
         }
