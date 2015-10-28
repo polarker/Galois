@@ -33,6 +33,11 @@ namespace gs
 
     template<typename T>
     void Model<T>::add_link(const initializer_list<string> ins, const initializer_list<string> outs, SP_Filter<T> filter){
+        add_link(vector<string>(ins), vector<string>(outs), filter);
+    }
+    
+    template<typename T>
+    void Model<T>::add_link(const vector<string>& ins, const vector<string>& outs, SP_Filter<T> filter){
         net.add_link(ins, outs, filter);
     }
 
@@ -78,6 +83,8 @@ namespace gs
 
     template<typename T>
     void Model<T>::compile() {
+        net.set_p_order();
+        
         for (auto pfilter : net.get_pfilters()) {
             pfilters.push_back(pfilter);
         }
@@ -86,8 +93,6 @@ namespace gs
         CHECK(!input_ids.empty(), "input_ids should have been set");
         CHECK(!output_ids.empty(), "output_ids should have been set");
         net.install_signals(input_signals, output_signals);
-        
-        net.set_p_order();
         net.set_dims(batch_size);
         // todo: check the dimension of dataset
     }

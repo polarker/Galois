@@ -133,9 +133,9 @@ namespace gs
         virtual void backward() = 0;
         virtual void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) = 0;
         virtual void set_dims(int batch_size) = 0;
-        virtual void reopaque() = 0; // each filter only opaques its inner signal
-        //virtual const Filter *Share() const;
-        //virtual const Filter *Clone() const;
+        virtual void reopaque() = 0;    // each filter only opaques its inner signal
+        virtual shared_ptr<Filter<T>> share() = 0;  // return a SP_Filter<T>
+//        virtual Filter *Clone() = 0;
     };
     template<typename T>
     using SP_Filter = shared_ptr<Filter<T>>;

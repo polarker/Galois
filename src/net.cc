@@ -10,15 +10,15 @@ namespace gs {
             pfilters{},
             fp_graph{},
             bp_graph{},
-            fp_order{},
-            bp_order{},
             inner_signals{},
             input_ids{},
-            output_ids{} {
+            output_ids{},
+            fp_order{},
+            bp_order{} {
     }
     
     template<typename T>
-    void Net<T>::add_link(const initializer_list<string> ins, const initializer_list<string> outs, SP_Filter<T> filter){
+    void Net<T>::add_link(const vector<string> &ins, const vector<string> &outs, SP_Filter<T> filter){
         // add to links
         auto idx = links.size();
         links.push_back(tuple<const vector<string>,const vector<string>,SP_Filter<T>>
@@ -62,21 +62,6 @@ namespace gs {
                 inner_signals[s] = make_shared<Signal<T>>(InnerSignal);
             }
         }
-    }
-    
-    template<typename T>
-    void Net<T>::add_link(const initializer_list<string> ins, const string outs, SP_Filter<T> filter){
-        add_link(ins, {outs}, filter);
-    }
-    
-    template<typename T>
-    void Net<T>::add_link(const string ins, const initializer_list<string> outs, SP_Filter<T> filter){
-        add_link({ins}, outs, filter);
-    }
-    
-    template<typename T>
-    void Net<T>::add_link(const string ins, const string outs, SP_Filter<T> filter){
-        add_link({ins}, {outs}, filter);
     }
     
     template<typename T>
@@ -191,6 +176,30 @@ namespace gs {
             auto filter = get<2>(t);
             bp_filters.push_back(filter);
         }
+    }
+    
+    template<typename T>
+    SP_Filter<T> Net<T>::share() {
+        CHECK(!fp_order.empty(), "fp order should have been set");
+        CHECK(!bp_order.empty(), "bp order should have been set");
+        auto res = make_shared<Net<T>>();
+        for (auto t : this->links) {
+            auto ins = get<0>(t);
+            auto outs = get<1>(t);
+            auto filter = get<2>(t);
+            auto copy_of_filter = filter->share();
+            res->add_link(ins, outs, copy_of_filter);
+        }
+        res->set_input_ids(this->input_ids);
+        res->set_output_ids(this->output_ids);
+        res->set_p_order();
+        
+        CHECK(res->fp_graph == this->fp_graph &&
+              res->bp_graph == this->bp_graph &&
+              res->fp_order == this->fp_order &&
+              res->bp_order == this->bp_order, "these should be equal");
+        
+        return res;
     }
     
     template<typename T>

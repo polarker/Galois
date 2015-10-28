@@ -10,18 +10,24 @@ namespace gs {
     private:
         SP_Signal<T> in_signal = nullptr;
         SP_Signal<T> out_signal = nullptr;
-    public:
         int in_size = 0;
         int out_size = 0;
+        
+    public:
+        // these are public just for gradient check; should be private in the future
         SP_NArray<T> w = nullptr;
         SP_NArray<T> b = nullptr;
         SP_NArray<T> dw = nullptr;
         SP_NArray<T> db = nullptr;
         
-        Linear() = delete;
+    public:
+        Linear(const bool just_for_share) {}
         Linear(const Linear&) = delete;
         Linear& operator=(const Linear&) = delete;
         Linear(int in_size, int out_size);
+        
+        SP_Filter<T> share() override;
+        
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
         void set_dims(int batch_size) override;
         void reopaque() override;

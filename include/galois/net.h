@@ -13,6 +13,7 @@ using namespace std;
 
 namespace gs
 {
+    
     template<typename T>
     class Net : public GFilter<T>
     {
@@ -23,15 +24,15 @@ namespace gs
         map<string, vector<tuple<string, int>>> fp_graph;
         map<string, vector<tuple<string, int>>> bp_graph;
         
-        vector<int> fp_order;
-        vector<SP_Filter<T>> fp_filters;
-        vector<int> bp_order;
-        vector<SP_Filter<T>> bp_filters;
-        
         map<string, SP_Signal<T>> inner_signals;
         
         vector<string> input_ids;
         vector<string> output_ids;
+        
+        vector<int> fp_order;
+        vector<SP_Filter<T>> fp_filters;
+        vector<int> bp_order;
+        vector<SP_Filter<T>> bp_filters;
         
     public:
         Net();
@@ -40,10 +41,7 @@ namespace gs
         
         set<SP_PFilter<T>> get_pfilters() override { return pfilters; }
         
-        void add_link(const initializer_list<string>, const initializer_list<string>, SP_Filter<T>);
-        void add_link(const initializer_list<string>, const string, SP_Filter<T>);
-        void add_link(const string, const initializer_list<string>, SP_Filter<T>);
-        void add_link(const string, const string, SP_Filter<T>);
+        void add_link(const vector<string>&, const vector<string>&, SP_Filter<T>);
         void _remove_signal(string);
         void set_input_ids(const string);
         void set_input_ids(const initializer_list<string>);
@@ -54,6 +52,10 @@ namespace gs
         void _set_fp_order(const string);
         void _set_bp_order(const string);
         void set_p_order();
+        
+        // in order to share a net, methods above should be called and methods below should not be called
+        SP_Filter<T> share() override;
+        
         SP_Signal<T> _get_signal(string id,
                                  const vector<SP_Signal<T>> in_signals,
                                  const vector<SP_Signal<T>> out_signals);
@@ -65,7 +67,6 @@ namespace gs
         void reopaque() override;
         
         void forward() override;
-        
         void backward() override;
     };
 

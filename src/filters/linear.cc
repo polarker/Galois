@@ -7,7 +7,23 @@ using namespace std;
 namespace gs {
     
     template<typename T>
+    SP_Filter<T> Linear<T>::share() {
+        CHECK(in_signal == nullptr, "in signal should not be set");
+        CHECK(out_signal == nullptr, "out signal should not be set");
+        bool just_for_share = true;
+        auto res = make_shared<Linear<T>>(just_for_share);
+        res->in_size = this->in_size;
+        res->out_size = this->out_size;
+        res->w = this->w;
+        res->b = this->b;
+        res->dw = this->dw;
+        res->db = this->db;
+        return res;
+    }
+    
+    template<typename T>
     Linear<T>::Linear(int in_size, int out_size) : in_size(in_size), out_size(out_size) {
+        CHECK(in_size > 0 && out_size > 0, "both size should be positive");
         T s = sqrt(6. / (in_size + out_size));
         this->w  = make_shared<NArray<T>>(in_size, out_size);
         this->w->uniform(-s, s);

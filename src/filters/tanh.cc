@@ -5,6 +5,13 @@
 namespace gs {
     
     template<typename T>
+    SP_Filter<T> Tanh<T>::share() {
+        CHECK(in_signal == nullptr, "in signal should not be set");
+        CHECK(out_signal == nullptr, "out signal should not be set");
+        return make_shared<Tanh<T>>();
+    }
+    
+    template<typename T>
     void Tanh<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
         CHECK(in_signal == nullptr, "in signal should not be initialized");
         CHECK(out_signal == nullptr, "out signal should not be initialized");

@@ -30,6 +30,7 @@ namespace gs
     public:
         Model(int batch_size, int num_epoch, T learning_rate, string optimizer_name);
         
+        void add_link(const vector<string>&, const vector<string>&, SP_Filter<T>);
         void add_link(const initializer_list<string>, const initializer_list<string>, SP_Filter<T>);
         void add_link(const initializer_list<string>, const string, SP_Filter<T>);
         void add_link(const string, const initializer_list<string>, SP_Filter<T>);

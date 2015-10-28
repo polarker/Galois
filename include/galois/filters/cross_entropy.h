@@ -15,6 +15,8 @@ namespace gs {
         CrossEntropy(const CrossEntropy&) = delete;
         CrossEntropy& operator=(const CrossEntropy&) = delete;
         
+        SP_Filter<T> share() override;
+        
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
         void set_dims(int batch_size) override;
         
