@@ -249,9 +249,7 @@ namespace gs {
     void Net<T>::set_dims(int batch_size) {
         CHECK(!fp_order.empty(), "fp order should have been set");
         CHECK(!bp_order.empty(), "bp order should have been set");
-        for (auto link_idx : fp_order) {
-            auto t = links[link_idx];
-            auto filter = get<2>(t);
+        for (auto filter : fp_filters) {
             filter->set_dims(batch_size);
         }
     }
@@ -262,8 +260,7 @@ namespace gs {
             auto signal = kv.second;
             signal->reopaque();
         }
-        for (auto t : links) {
-            auto filter = get<2>(t);
+        for (auto filter : fp_filters) {
             filter->reopaque();
         }
     }
