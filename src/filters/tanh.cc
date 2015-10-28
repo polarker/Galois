@@ -1,6 +1,5 @@
 #include "galois/filters/tanh.h"
 #include <cmath>
-#include <cassert>
 
 namespace gs {
     

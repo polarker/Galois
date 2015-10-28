@@ -39,8 +39,6 @@ namespace gs
         Net(const Net& other) = delete;
         Net& operator=(const Net&) = delete;
         
-        set<SP_PFilter<T>> get_pfilters() override { return pfilters; }
-        
         void add_link(const vector<string>&, const vector<string>&, SP_Filter<T>);
         void _remove_signal(string);
         void set_input_ids(const string);
@@ -55,6 +53,7 @@ namespace gs
         
         // in order to share a net, methods above should be called and methods below should not be called
         SP_Filter<T> share() override;
+        set<SP_PFilter<T>> get_pfilters() override;
         
         SP_Signal<T> _get_signal(string id,
                                  const vector<SP_Signal<T>> in_signals,

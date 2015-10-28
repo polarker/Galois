@@ -5,7 +5,6 @@
 #include <random>
 #include <vector>
 #include <Accelerate/Accelerate.h>
-#include <cassert>
 
 using namespace std;
 

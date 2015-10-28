@@ -1,7 +1,6 @@
 #include "galois/net.h"
 #include "galois/utils.h"
 #include <vector>
-#include <cassert>
 
 namespace gs {
     
@@ -180,8 +179,7 @@ namespace gs {
     
     template<typename T>
     SP_Filter<T> Net<T>::share() {
-        CHECK(!fp_order.empty(), "fp order should have been set");
-        CHECK(!bp_order.empty(), "bp order should have been set");
+        CHECK(!fp_order.empty() && !bp_order.empty(), "these order should have been set and the net is fixed");
         auto res = make_shared<Net<T>>();
         for (auto t : this->links) {
             auto ins = get<0>(t);
@@ -200,6 +198,12 @@ namespace gs {
               res->bp_order == this->bp_order, "these should be equal");
         
         return res;
+    }
+    
+    template<typename T>
+    set<SP_PFilter<T>> Net<T>::get_pfilters() {
+        CHECK(!fp_order.empty() && !bp_order.empty(), "these order should have been set and the net is fixed");
+        return pfilters;
     }
     
     template<typename T>

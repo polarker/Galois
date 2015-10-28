@@ -1,5 +1,4 @@
 # include "galois/narray.h"
-# include <cassert>
 
 namespace gs
 {

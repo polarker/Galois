@@ -1,6 +1,5 @@
 #include "galois/narray.h"
 #include "galois/filters/linear.h"
-#include <cassert>
 
 using namespace std;
 
