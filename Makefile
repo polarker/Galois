@@ -32,8 +32,8 @@ $(EXAMPLEOBJ): $(EXAMPLESRC)
 	@mkdir -p $(@D)
 	$(CXX) $(CFLAGS) $(INC) -c $< -o $@
 
-$(TEST): $(TESTOBJ) $(OBJ)
-	$(CXX) $(CFLAGS) $(LIB) $(TESTOBJ) $(OBJ) -o $@
+$(TEST): $(BINDIR)/%: $(BUILDDIR)/test/%.o $(OBJ)
+	$(CXX) $(CFLAGS) $(LIB) $< $(OBJ) -o $@
 
 $(TESTOBJ): $(TESTSRC)
 	@mkdir -p $(@D)
