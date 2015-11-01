@@ -1,3 +1,6 @@
+#ifndef _GALOIS_MODEL_H_
+#define _GALOIS_MODEL_H_
+
 #include "galois/base.h"
 #include "galois/narray.h"
 #include "galois/net.h"
@@ -9,9 +12,9 @@ namespace gs
     template<typename T>
     class Model
     {
-    public:
         static default_random_engine galois_rn_generator;
         
+    private:
         Net<T> net;
         vector<SP_PFilter<T>> pfilters;
         vector<string> input_ids = {};
@@ -24,9 +27,10 @@ namespace gs
         T learning_rate;
         SP_Optimizer<T> optimizer;
         
-        int          train_count = 0;
+        int train_count = 0;
         vector<SP_NArray<T>> train_data = {};
         vector<SP_NArray<T>> train_target = {};
+        
     public:
         Model(int batch_size, int num_epoch, T learning_rate, string optimizer_name);
         
@@ -50,3 +54,5 @@ namespace gs
     default_random_engine Model<T>::galois_rn_generator(0);
     
 }
+
+#endif

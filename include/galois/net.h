@@ -3,7 +3,6 @@
 
 #include "galois/base.h"
 #include "galois/net.h"
-#include <iostream>
 #include <string>
 #include <vector>
 #include <set>
