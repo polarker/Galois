@@ -44,7 +44,7 @@ namespace gs
         void fit();
     };
     template<typename T>
-    default_random_engine Model<T>::galois_rn_generator(0);
+    default_random_engine MLPModel<T>::galois_rn_generator(0);
     
 }
 

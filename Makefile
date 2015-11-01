@@ -25,8 +25,8 @@ LIB 		:= -framework accelerate -lz
 
 all: $(EXAMPLE) $(TEST)
 
-$(EXAMPLE): $(EXAMPLEOBJ) $(OBJ)
-	$(CXX) $(CFLAGS) $(LIB) $(EXAMPLEOBJ) $(OBJ) -o $@
+$(EXAMPLE): $(BINDIR)/%: $(BUILDDIR)/example/%.o $(OBJ)
+	$(CXX) $(CFLAGS) $(LIB) $< $(OBJ) -o $@
 
 $(EXAMPLEOBJ): $(EXAMPLESRC)
 	@mkdir -p $(@D)
