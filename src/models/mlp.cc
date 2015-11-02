@@ -91,5 +91,8 @@ namespace gs
             printf("\n");
         }
     }
+
+    template class MLPModel<float>;
+    template class MLPModel<double>;
     
 }

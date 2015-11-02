@@ -87,7 +87,7 @@ namespace gs
     
     template<typename T>
     void Path<T>::backward() {
-        for (int i = links.size()-1; i >= 0; i++) {
+        for (int i = links.size()-1; i >= 0; i--) {
             auto filter = links[i];
             filter->backward();
         }

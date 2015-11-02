@@ -28,7 +28,7 @@ all: $(EXAMPLE) $(TEST)
 $(EXAMPLE): $(BINDIR)/%: $(BUILDDIR)/example/%.o $(OBJ)
 	$(CXX) $(CFLAGS) $(LIB) $< $(OBJ) -o $@
 
-$(EXAMPLEOBJ): $(EXAMPLESRC)
+$(EXAMPLEOBJ): $(BUILDDIR)/example/%.o: $(EXAMPLEDIR)/%.cc
 	@mkdir -p $(@D)
 	$(CXX) $(CFLAGS) $(INC) -c $< -o $@
 
