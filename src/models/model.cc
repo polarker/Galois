@@ -1,4 +1,4 @@
-#include "galois/model.h"
+#include "galois/models/model.h"
 
 namespace gs
 {

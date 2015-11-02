@@ -5,15 +5,15 @@
 namespace gs {
     
     template<typename T>
-    Net<T>::Net() : links{},
-            pfilters{},
-            fp_graph{},
-            bp_graph{},
-            inner_signals{},
-            input_ids{},
-            output_ids{},
-            fp_order{},
-            bp_order{} {
+    Net<T>::Net() : links{}
+            , pfilters{}
+            , fp_graph{}
+            , bp_graph{}
+            , inner_signals{}
+            , input_ids{}
+            , output_ids{}
+            , fp_order{}
+            , bp_order{}{
     }
     
     template<typename T>

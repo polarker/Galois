@@ -1,3 +1,6 @@
+#ifndef _GALOIS_OPTIMIZER_H_
+#define _GALOIS_OPTIMIZER_H_
+
 #include "galois/base.h"
 
 namespace gs
@@ -56,3 +59,5 @@ namespace gs
     };
     
 }
+
+#endif

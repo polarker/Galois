@@ -1,4 +1,4 @@
-#include "galois/model.h"
+#include "galois/models.h"
 #include "galois/filters.h"
 #include "galois/dataset/mnist.h"
 #include <cstdlib>

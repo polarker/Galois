@@ -14,6 +14,7 @@ namespace gs
 {
     enum SignalType { InnerSignal, InputSignal, OutputSignal };
     
+    // for performance reason, polymorphism is not used
     template<typename T>
     class Signal
     {

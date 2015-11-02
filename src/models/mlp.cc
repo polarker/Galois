@@ -1,4 +1,4 @@
-#include "galois/mlp_model.h"
+#include "galois/models/mlp.h"
 
 using namespace std;
 
