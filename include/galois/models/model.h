@@ -14,7 +14,7 @@ namespace gs
     {
         static default_random_engine galois_rn_generator;
         
-    private:
+    protected:
         Net<T> net;
         vector<SP_PFilter<T>> pfilters;
         vector<string> input_ids = {};
@@ -33,6 +33,8 @@ namespace gs
         
     public:
         Model(int batch_size, int num_epoch, T learning_rate, string optimizer_name);
+        Model(const Model& other) = delete;
+        Model& operator=(const Model&) = delete;
         
         void add_link(const vector<string>&, const vector<string>&, SP_Filter<T>);
         void add_link(const initializer_list<string>, const initializer_list<string>, SP_Filter<T>);
@@ -46,7 +48,11 @@ namespace gs
         void set_output_ids(const initializer_list<string>);
         void set_output_ids(const vector<string>);
         void compile();
-        void add_train_dataset(SP_NArray<T> data, SP_NArray<T> target);
+        void add_train_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
+        void add_train_dataset(const initializer_list<SP_NArray<T>> data, const SP_NArray<T> target);
+        void add_train_dataset(const SP_NArray<T> data, const initializer_list<SP_NArray<T>> target);
+        void add_train_dataset(const initializer_list<SP_NArray<T>> data, const initializer_list<SP_NArray<T>> target);
+        void add_train_dataset(const vector<SP_NArray<T>>& data, const vector<SP_NArray<T>>& target);
         T fit_one_batch(const bool update=true);
         void fit();
     };

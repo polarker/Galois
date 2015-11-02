@@ -17,7 +17,7 @@ namespace gs
     {
         static default_random_engine galois_rn_generator;
         
-    private:
+    protected:
         Path<T> path;
         SP_Signal<T> input_signal = nullptr;
         SP_Signal<T> output_signal = nullptr;
@@ -34,6 +34,8 @@ namespace gs
         
     public:
         MLPModel(int batch_size, int num_epoch, T learning_rate, string optimizer_name);
+        MLPModel(const MLPModel& other) = delete;
+        MLPModel& operator=(const MLPModel&) = delete;
         
         void add_filter(SP_Filter<T>);
         void compile();

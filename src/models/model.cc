@@ -98,14 +98,40 @@ namespace gs
     }
     
     template<typename T>
-    void Model<T>::add_train_dataset(SP_NArray<T> data, SP_NArray<T> target) {
-        CHECK(input_ids.size() == 1, "there should be only one input signal");
-        CHECK(output_ids.size() == 1, "there should be only one output signal");
-        CHECK(data->get_dims()[0] == target->get_dims()[0], "data and target should have the same number of samples");
-        
-        train_count = data->get_dims()[0];
-        train_data = vector<SP_NArray<T>>{data};
-        train_target = vector<SP_NArray<T>>{target};
+    void Model<T>::add_train_dataset(const SP_NArray<T> data, const SP_NArray<T> target) {
+        add_train_dataset({data}, {target});
+    }
+
+    template<typename T>
+    void Model<T>::add_train_dataset(const initializer_list<SP_NArray<T>> data, const SP_NArray<T> target) {
+        add_train_dataset(data, {target});
+    }
+
+    template<typename T>
+    void Model<T>::add_train_dataset(const SP_NArray<T> data, const initializer_list<SP_NArray<T>> target) {
+        add_train_dataset({data}, target);
+    }
+
+    template<typename T>
+    void Model<T>::add_train_dataset(const initializer_list<SP_NArray<T>> data, const initializer_list<SP_NArray<T>> target) {
+        add_train_dataset(vector<SP_NArray<T>>(data), vector<SP_NArray<T>>(target));
+    }
+
+    template<typename T>
+    void Model<T>::add_train_dataset(const vector<SP_NArray<T>>& data, const vector<SP_NArray<T>>& target) {
+        CHECK(input_ids.size() == data.size(), "number of input should be equal");
+        CHECK(output_ids.size() == target.size(), "number of output should be equal");
+        train_count = data[0]->get_dims()[0];
+        for (const auto& _data : data) {
+            CHECK(_data->get_dims()[0] == train_count, "data and target should have the same number of samples");
+        }
+        for (const auto& _target : target) {
+            CHECK(_target->get_dims()[0] == train_count, "data and target should have the same number of samples");
+        }
+
+        CHECK(train_data.empty() && train_target.empty(), "dataset should not be set before");
+        train_data.insert(train_data.end(), data.begin(), data.end());
+        train_target.insert(train_target.end(), target.begin(), target.end());
     }
     
     template<typename T>
