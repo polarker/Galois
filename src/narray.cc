@@ -51,14 +51,14 @@ namespace gs
         }
     }
     
-    template<typename T>
-    void NArray<T>::copy_from(const vector<int> &dims, const T* data) {
-        CHECK(dims == this->dims, "the dimension should be equal");
-        for (int i = 0; i < this->get_size(); i++) {
-            this->data[i] = data[i];
-        }
-        setclear();
-    }
+//    template<typename T>
+//    void NArray<T>::copy_from(const vector<int> &dims, const T* data) {
+//        CHECK(dims == this->dims, "the dimension should be equal");
+//        for (int i = 0; i < this->get_size(); i++) {
+//            this->data[i] = data[i];
+//        }
+//        setclear();
+//    }
 
     template<typename T>
     void NArray<T>::copy_from(const vector<int> &idxs, const SP_NArray<T> dataset) {
@@ -77,6 +77,28 @@ namespace gs
             CHECK(idxs[i] < dataset_dims[0], "invalid index");
             for (int j = 0; j < stride; j++) {
                 this->data[i*stride + j] = dataset_ptr[idxs[i]*stride + j];
+            }
+        }
+        setclear();
+    }
+    
+    template<typename T>
+    void NArray<T>::copy_from(const int start_from, const int copy_size, const SP_NArray<T> dataset) {
+        // copy a batch from dataset
+        auto dataset_dims = dataset->get_dims();
+        CHECK(copy_size == this->dims[0], "the size of copy should be equal to batch size");
+        CHECK(dataset_dims.size() == this->dims.size(), "number of dimensions should be equal");
+        for (int i = 1; i < this->dims.size(); i++) {
+            CHECK(dataset_dims[i] == this->dims[i], "dimensions should be equal");
+        }
+        CHECK(start_from >= 0 && start_from+copy_size-1 < dataset_dims[0], "offset is not valid");
+        
+        int batch_size = copy_size;
+        int stride = this->get_size() / batch_size;
+        auto dataset_ptr = dataset->get_data();
+        for (int i = 0; i < batch_size; i++) {
+            for (int j = 0; j < stride; j++) {
+                this->data[i*stride + j] = dataset_ptr[(start_from+i)*stride + j];
             }
         }
         setclear();

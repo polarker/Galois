@@ -14,13 +14,16 @@ namespace gs
     class RNN : protected Model<T>
     {
     protected:
-        int seq_length;
+        int max_len; // length of rnn
         int input_size;
         int output_size;
         vector<int> hidden_sizes;
 
+        int seq_len = 0; // length of dataset
+        SP_NArray<T> X = nullptr;
+        SP_NArray<T> Y = nullptr;
     public:
-        RNN(int seq_length,
+        RNN(int max_len,
             int input_size,
             int output_size,
             initializer_list<int> hidden_sizes,
@@ -30,6 +33,10 @@ namespace gs
             string optimizer_name);
         RNN(const RNN& other) = delete;
         RNN& operator=(const RNN&) = delete;
+        
+        void add_train_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
+        T fit_one_batch(const int start_from, const bool update=true);
+        void fit();
     };
 
 }

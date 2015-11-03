@@ -41,8 +41,9 @@ namespace gs
         void reopaque() { data_opaque = true; }
         void setclear() { data_opaque = false; }
         
-        void copy_from(const vector<int> &, const T*);
+//        void copy_from(const vector<int> &, const T*);
         void copy_from(const vector<int> &, const SP_NArray<T>);
+        void copy_from(const int start_from, const int copy_size, const SP_NArray<T>);
         void uniform(T lower, T upper) {
             // future : move random generator to a single file
             uniform_real_distribution<T> distribution(lower, upper);
