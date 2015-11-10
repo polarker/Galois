@@ -147,8 +147,11 @@ namespace gs
             T loss = 0;
             
             int len = seq_len - max_len + 1 - this->batch_size + 1;
-            for (int i = 0; i < len; i++) {
+            for (int i = 0; i < len; i += this->batch_size) {
                 loss += fit_one_batch(i);
+                if (i % 1000 == 0) {
+                    cout << " > " << i << endl;
+                }
             }
             loss /= T(len);
             

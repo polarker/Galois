@@ -72,7 +72,7 @@ namespace chartxt
                     }
                 }
                 if (i > 0) {
-                    target_sequence_ptr[i-1] == idx;
+                    target_sequence_ptr[i-1] = idx;
                 }
             }
             fin.close();
