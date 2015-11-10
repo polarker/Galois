@@ -86,19 +86,6 @@ namespace gs
         this->set_output_ids(y_ids);
 
         this->compile();
-
-        for (auto idx : this->net.fp_order) {
-            auto t = this->net.links[idx];
-            auto in_id = get<0>(t)[0];
-            auto out_id = get<1>(t)[0];
-            cout << in_id << " -> " << out_id << endl;
-        }
-        for (auto idx : this->net.bp_order) {
-            auto t = this->net.links[idx];
-            auto in_id = get<0>(t)[0];
-            auto out_id = get<1>(t)[0];
-            cout << in_id << " <- " << out_id << endl;
-        }
     }
     
     template<typename T>

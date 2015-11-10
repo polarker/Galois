@@ -34,6 +34,9 @@ namespace gs
         RNN(const RNN& other) = delete;
         RNN& operator=(const RNN&) = delete;
         
+        using Model<T>::get_params;
+        using Model<T>::get_grads;
+        
         void add_train_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
         T fit_one_batch(const int start_from, const bool update=true);
         void fit();
