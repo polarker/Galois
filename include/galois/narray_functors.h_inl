@@ -122,7 +122,6 @@ namespace gs
               B->get_data(), ldb,
               beta,
               C->get_data(), ldc);
-        C->setclear();
     }
     
     template<typename L>
