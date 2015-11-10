@@ -16,11 +16,15 @@ namespace gs
         
     protected:
         Net<T> net;
-        vector<SP_PFilter<T>> pfilters;
-        vector<string> input_ids = {};
-        vector<SP_Signal<T>> input_signals = {};
-        vector<string> output_ids = {};
-        vector<SP_Signal<T>> output_signals = {};
+        
+        vector<SP_PFilter<T>> pfilters = {};
+        vector<SP_NArray<T>>  params = {};
+        vector<SP_NArray<T>>  grads = {};
+        
+        vector<string>          input_ids = {};
+        vector<SP_Signal<T>>    input_signals = {};
+        vector<string>          output_ids = {};
+        vector<SP_Signal<T>>    output_signals = {};
         
         int batch_size;
         int num_epoch;

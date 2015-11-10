@@ -2,6 +2,7 @@
 #define _GALOIS_OPTIMIZER_H_
 
 #include "galois/base.h"
+#include "galois/utils.h"
 
 namespace gs
 {
@@ -11,13 +12,12 @@ namespace gs
     {
     protected:
         T lrate;
-        vector<SP_PFilter<T>>   pfilters;
-        vector<SP_NArray<T>>    params;
-        vector<SP_NArray<T>>    grads;
+        vector<SP_NArray<T>>    params = {};
+        vector<SP_NArray<T>>    grads = {};
     
     public:
         virtual void update() = 0;
-        virtual void compile(vector<SP_PFilter<T>> &pfs) = 0;
+        virtual void compile(vector<SP_NArray<T>> params, vector<SP_NArray<T>> grads) = 0;
     };
     template<typename T>
     using SP_Optimizer = shared_ptr<Optimizer<T>>;
@@ -28,22 +28,16 @@ namespace gs
     public:
         SGD_Optimizer(T lr) { this->lrate = lr; }
         
-        void compile(vector<SP_PFilter<T>> &pfs) override {
-            this->pfilters = pfs;
-            this->params = vector<SP_NArray<T>>{};
-            this->grads  = vector<SP_NArray<T>>{};
-            for (auto pfilter : this->pfilters) {
-                auto tmp_params = pfilter->get_params();
-                auto tmp_grads = pfilter->get_grads();
-                CHECK(tmp_params.size() == tmp_grads.size(), "numbers of params and grads should be equal");
-                for (int i = 0; i < tmp_params.size(); i++) {
-                    auto param = tmp_params[i];
-                    auto grad = tmp_grads[i];
-                    CHECK(param->get_dims() == grad->get_dims(), "param and grad should have the same dimensions");
-                    this->params.push_back(param);
-                    this->grads.push_back(grad);
-                }
+        void compile(vector<SP_NArray<T>> params, vector<SP_NArray<T>> grads) override {
+            CHECK(this->params.empty() && this->grads.empty(), "params and grads should not be set before");
+            CHECK(params.size() == grads.size(), "params and grads should have equal size");
+            for (int i = 0; i < params.size(); i++) {
+                CHECK(params[i]->get_dims() == grads[i]->get_dims(), "param and grad should have the same dimensions");
             }
+            this->params.insert(this->params.end(), params.begin(), params.end());
+            this->grads.insert(this->grads.end(), grads.begin(), grads.end());
+            cout << "The number of params: " << this->params.size() << endl;
+            cout << "The number of grads: " << this->grads.size() << endl;
         }
         
         void update() override {

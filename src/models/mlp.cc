@@ -25,10 +25,34 @@ namespace gs
     
     template<typename T>
     void MLPModel<T>::compile() {
+//        for (auto pfilter : path.get_pfilters()) {
+//            pfilters.push_back(pfilter);
+//        }
+//        optimizer->compile(pfilters);
+        CHECK(pfilters.empty() && params.empty() && grads.empty(), "these should not be set before");
         for (auto pfilter : path.get_pfilters()) {
             pfilters.push_back(pfilter);
         }
-        optimizer->compile(pfilters);
+        for (auto pfilter : pfilters) {
+            auto tmp_params = pfilter->get_params();
+            auto tmp_grads = pfilter->get_grads();
+            CHECK(tmp_params.size() == tmp_grads.size(), "numbers of params and grads should be equal");
+            for (int i = 0; i < tmp_params.size(); i++) {
+                auto param = tmp_params[i];
+                auto grad = tmp_grads[i];
+                CHECK(param->get_dims() == grad->get_dims(), "param and grad should have the same dimensions");
+                
+                // parameters might be shared by several pfilters
+                if (Contains(params, param)) {
+                    CHECK(Contains(grads, grad), "params and grads should match");
+                } else {
+                    CHECK(!Contains(grads, grad), "params and grads should match");
+                    params.push_back(param);
+                    grads.push_back(grad);
+                }
+            }
+        }
+        optimizer->compile(params, grads);
         
         CHECK(input_signal == nullptr && output_signal == nullptr, "these signals should not be set before");
         input_signal = make_shared<Signal<T>>(InputSignal);

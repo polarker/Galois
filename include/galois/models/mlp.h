@@ -21,7 +21,10 @@ namespace gs
         Path<T> path;
         SP_Signal<T> input_signal = nullptr;
         SP_Signal<T> output_signal = nullptr;
+        
         vector<SP_PFilter<T>> pfilters = {};
+        vector<SP_NArray<T>>  params = {};
+        vector<SP_NArray<T>>  grads = {};
         
         int batch_size;
         int num_epoch;
