@@ -24,7 +24,7 @@ namespace gs
     template<typename T>
     SP_Filter<T> Path<T>::share() {
         auto res = make_shared<Path<T>>();
-        for (auto const& filter : pfilters) {
+        for (auto const& filter : links) {
             auto copy_of_filter = filter->share();
             res->add_filter(copy_of_filter);
         }

@@ -97,7 +97,7 @@ namespace gs
             auto t = this->net.links[idx];
             auto in_id = get<0>(t)[0];
             auto out_id = get<1>(t)[0];
-            cout << out_id << " -> " << in_id << endl;
+            cout << in_id << " <- " << out_id << endl;
         }
     }
     
@@ -118,9 +118,11 @@ namespace gs
     T RNN<T>::fit_one_batch(const int start_from, bool update) {
         this->net.reopaque();
         for (int i = 0; i < this->input_signals.size(); i++) {
+            this->input_signals[i]->reopaque();
             this->input_signals[i]->get_data()->copy_from(start_from+i, this->batch_size, X);
         }
         for (int i = 0; i < this->output_signals.size(); i++) {
+            this->output_signals[i]->reopaque();
             this->output_signals[i]->get_target()->copy_from(start_from+i, this->batch_size, Y);
         }
         
@@ -148,7 +150,7 @@ namespace gs
             for (int i = 0; i < len; i++) {
                 loss += fit_one_batch(i);
             }
-            loss /= T(seq_len - max_len + 1);
+            loss /= T(len);
             
             auto end = chrono::system_clock::now();
             chrono::duration<double> eplased_time = end - start;
