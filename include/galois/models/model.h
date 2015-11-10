@@ -52,11 +52,20 @@ namespace gs
         void set_output_ids(const initializer_list<string>);
         void set_output_ids(const vector<string>);
         void compile();
+        
+        vector<SP_NArray<T>> get_params() {
+            return params;
+        }
+        vector<SP_NArray<T>> get_grads() {
+            return grads;
+        }
+        
         void add_train_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
         void add_train_dataset(const initializer_list<SP_NArray<T>> data, const SP_NArray<T> target);
         void add_train_dataset(const SP_NArray<T> data, const initializer_list<SP_NArray<T>> target);
         void add_train_dataset(const initializer_list<SP_NArray<T>> data, const initializer_list<SP_NArray<T>> target);
         void add_train_dataset(const vector<SP_NArray<T>>& data, const vector<SP_NArray<T>>& target);
+        
         T fit_one_batch(const bool update=true);
         void fit();
     };

@@ -43,6 +43,13 @@ namespace gs
         void add_filter(SP_Filter<T>);
         void compile();
         
+        vector<SP_NArray<T>> get_params() {
+            return params;
+        }
+        vector<SP_NArray<T>> get_grads() {
+            return grads;
+        }
+        
         void add_train_dataset(SP_NArray<T> data, SP_NArray<T> target);
         
         T fit_one_batch(const bool update=true);
