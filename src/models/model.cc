@@ -187,6 +187,8 @@ namespace gs
     
     template<typename T>
     void Model<T>::fit() {
+        compile();
+        
         for (int k = 1; k < num_epoch+1; k++) {
             printf("Epoch: %2d", k);
             auto start = chrono::system_clock::now();

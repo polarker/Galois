@@ -18,7 +18,6 @@ int main()
     model.add_filter(make_shared<Tanh<T>>());
     model.add_filter(make_shared<Linear<T>>(1024, 10));
     model.add_filter(make_shared<CrossEntropy<T>>());
-    model.compile();
 
     auto images = mnist::read_images<T>("./data/train-images-idx3-ubyte.gz");
     auto labels = mnist::read_labels<T>("./data/train-labels-idx1-ubyte.gz");

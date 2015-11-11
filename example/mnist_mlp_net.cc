@@ -20,7 +20,6 @@ int main()
     model.add_link("raw_h2", "predicitons", make_shared<CrossEntropy<T>>());
     model.set_input_ids("images");
     model.set_output_ids("predicitons");
-    model.compile();
 
     auto images = mnist::read_images<T>("./data/train-images-idx3-ubyte.gz");
     auto labels = mnist::read_labels<T>("./data/train-labels-idx1-ubyte.gz");
