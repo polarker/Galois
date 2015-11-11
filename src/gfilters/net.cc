@@ -133,9 +133,13 @@ namespace gs {
         // input_ids should be non-empty
         CHECK(!input_ids.empty(), "input ids should have been set");
         if (Contains(input_ids, out_id)) {
-            return;
+            if (bp_graph.count(out_id) == 0) {
+                return;
+            }
+        } else {
+            CHECK(bp_graph.count(out_id) == 1, "out_id should be in the keys of bp_graph");
         }
-        CHECK(bp_graph.count(out_id) == 1, "out_id should be in the keys of bp_graph");
+        
         for (auto t : bp_graph[out_id]) {
             string in_id = get<0>(t);
             int link_idx = get<1>(t);
@@ -155,9 +159,12 @@ namespace gs {
     void Net<T>::_set_bp_order(string in_id) {
         CHECK(!output_ids.empty(), "output ids should have been set");
         if (Contains(output_ids, in_id)) {
-            return;
+            if (fp_graph.count(in_id) == 0) {
+                return;
+            }
+        } else {
+            CHECK(fp_graph.count(in_id) == 1, "in_id should be in the keys of fp_graph");
         }
-        CHECK(fp_graph.count(in_id), "in_id should be in the keys of fp_graph");
         for (auto t : fp_graph[in_id]) {
             string out_id = get<0>(t);
             int link_idx = get<1>(t);
