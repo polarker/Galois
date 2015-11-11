@@ -1,4 +1,4 @@
-#include "galois/filters/tanh.h"
+#include "galois/filters/general_tanh.h"
 #include <cmath>
 
 namespace gs {
@@ -49,7 +49,7 @@ namespace gs {
         MAP(in_grad, [](T dy, T x){return dy*(1-tanh(x)*tanh(x));}, out_grad, in_data);
     }
     
-    template class Tanh<float>;
-    template class Tanh<double>;
+    template class GeneralTanh<float>;
+    template class GeneralTanh<double>;
     
 }

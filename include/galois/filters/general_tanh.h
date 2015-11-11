@@ -1,5 +1,5 @@
-#ifndef _GALOIS_TANH_H_
-#define _GALOIS_TANH_H_
+#ifndef _GALOIS_GENERALTANH_H_
+#define _GALOIS_GENERALTANH_H_
 
 #include "galois/base.h"
 
@@ -11,9 +11,9 @@ namespace gs {
         SP_Signal<T> in_signal = nullptr;
         SP_Signal<T> out_signal = nullptr;
     public:
-        Tanh() {}
-        Tanh(const Tanh&) = delete;
-        Tanh& operator=(const Tanh&) = delete;
+        GeneralTanh() {}
+        GeneralTanh(const GeneralTanh&) = delete;
+        GeneralTanh& operator=(const GeneralTanh&) = delete;
         
         SP_Filter<T> share() override;
         

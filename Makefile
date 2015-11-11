@@ -18,8 +18,17 @@ TESTOBJ 	:= $(patsubst $(TESTDIR)/%.cc, 		$(BUILDDIR)/test/%.o, 	$(TESTSRC))
 EXAMPLE 	:= $(patsubst $(EXAMPLEDIR)/%.cc, 	$(BINDIR)/%, $(EXAMPLESRC))
 TEST		:= $(patsubst $(TESTDIR)/%.cc, 		$(BINDIR)/%, $(TESTSRC))
 
-INC 		:= -I include
-LIB 		:= -framework accelerate -lz
+# platform detection
+OS := $(shell uname -s)
+
+ifeq ($(OS), Darwin)
+	INC 		:= -I include
+	LIB 		:= -lz -framework accelerate
+else
+	OPENBLASDIR := /opt/OpenBLAS # set /your_path/OpenBLAS
+	INC 		:= -I include -I $(OPENBLASDIR)/include
+	LIB			:= -lz -L $(OPENBLASDIR)/lib
+endif
 
 .PHONY: all clean
 
