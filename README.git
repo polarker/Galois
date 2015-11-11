@@ -1,1 +1,12 @@
-A general deep learning framework in C++
+Galois is a general deep learning framework in C++ using data flow graphs. The distinguish features of Galois is that it supports parameters sharing and dynamic network. Parameters sharing makes it very easy to implement recurrent neural network.
+
+Galois is a work in progress. It only supports CPU computing for the moment. It's also very efficient compared to the other popular frameworks. For user guide, please have a look at the example fold.
+
+Note that Galois only support osx for the moment, it uses accelerate framework of osx.
+
+Recent todo list (not in priority order):
+- add dynamic model
+- add lstm
+- add sequence encoder decoder
+- add new filters: embedding, dropout, cnn, etc
+- implement cuda version of narray

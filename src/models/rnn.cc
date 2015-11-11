@@ -124,7 +124,7 @@ namespace gs
             int len = seq_len - max_len + 1 - this->batch_size + 1;
             for (int i = 0; i < len; i += this->batch_size) {
                 loss += fit_one_batch(i);
-                if (i % 1000 == 0) {
+                if (i % 10000 == 0) {
                     cout << " > " << i << endl;
                 }
             }
