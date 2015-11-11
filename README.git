@@ -2,8 +2,6 @@ Galois is a general deep learning framework in C++ using data flow graphs. The d
 
 Galois is a work in progress. It only supports CPU computing for the moment. It's also very efficient compared to the other popular frameworks. For user guide, please have a look at the example fold.
 
-Note that Galois only support osx for the moment, it uses accelerate framework of osx.
-
 Recent todo list (not in priority order):
 - RMSprop, Adagrad
 - dynamic model
