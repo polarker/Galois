@@ -42,11 +42,14 @@ namespace gs {
     
     template<typename T>
     void Tanh<T>::backward() {
+        auto in_data = in_signal->get_data();
         auto in_grad = in_signal->get_grad();
-        auto out_data = out_signal->get_data();
+//        auto out_data = out_signal->get_data();
         auto out_grad = out_signal->get_grad();
         
-        MAP(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);
+        // todo: optimize this
+        MAP(in_grad, [](T dy, T x){return dy*(1-tanh(x)*tanh(x));}, out_grad, in_data);
+//        MAP(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);
     }
     
     template class Tanh<float>;

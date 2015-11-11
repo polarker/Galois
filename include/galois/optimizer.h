@@ -36,8 +36,6 @@ namespace gs
             }
             this->params.insert(this->params.end(), params.begin(), params.end());
             this->grads.insert(this->grads.end(), grads.begin(), grads.end());
-            cout << "The number of params: " << this->params.size() << endl;
-            cout << "The number of grads: " << this->grads.size() << endl;
         }
         
         void update() override {
