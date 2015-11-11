@@ -1,4 +1,4 @@
-#include "galois/path.h"
+#include "galois/gfilters/path.h"
 #include "galois/utils.h"
 
 namespace gs

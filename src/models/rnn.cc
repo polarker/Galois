@@ -1,5 +1,5 @@
 #include "galois/models/rnn.h"
-#include "galois/path.h"
+#include "galois/gfilters/path.h"
 #include "galois/filters.h"
 
 namespace gs

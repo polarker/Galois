@@ -1,4 +1,4 @@
-#include "galois/net.h"
+#include "galois/gfilters/net.h"
 #include "galois/utils.h"
 #include <vector>
 

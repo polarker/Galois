@@ -2,7 +2,6 @@
 #define _GALOIS_NET_H_
 
 #include "galois/base.h"
-#include "galois/net.h"
 #include <string>
 #include <vector>
 #include <set>

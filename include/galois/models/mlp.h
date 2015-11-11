@@ -3,7 +3,7 @@
 
 #include "galois/base.h"
 #include "galois/narray.h"
-#include "galois/path.h"
+#include "galois/gfilters/path.h"
 #include "galois/optimizer.h"
 #include <vector>
 
