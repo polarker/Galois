@@ -51,7 +51,7 @@ namespace chartxt
             target_sequence = make_shared<gs::NArray<T>>(num_chars-1);
             
             cout << "size of chars: " << num_chars << endl;
-            cout << "size of different chars: " << char2int.size() << ", " << int2char.size() << endl;
+            cout << "size of different chars: " << char2int.size() << endl;
             fin.open(file_name);
             CHECK(fin.is_open(), "can not open file");
             auto int_sequence_ptr = int_sequence->get_data();

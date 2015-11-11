@@ -5,22 +5,6 @@
 namespace gs
 {
 
-    template<typename T>
-    SP_Filter<T> linear_tanh(int in_size, int out_size) {
-        auto p = make_shared<Path<T>>();
-        p->add_filter(make_shared<Linear<T>>(in_size, out_size));
-        p->add_filter(make_shared<Tanh<T>>());
-        return p;
-    }
-
-    template<typename T>
-    SP_Filter<T> linear_entropy(int in_size, int out_size) {
-        auto p = make_shared<Path<T>>();
-        p->add_filter(make_shared<Linear<T>>(in_size, out_size));
-        p->add_filter(make_shared<CrossEntropy<T>>());
-        return p;
-    }
-
     string generate_id(string tag, int i) {
         return tag + "[" + to_string(i) + "]";
     }
@@ -43,22 +27,22 @@ namespace gs
             , input_size(_input_size)
             , output_size(_output_size)
             , hidden_sizes(_hidden_sizes) {
-        auto h2h = vector<SP_Filter<T>>();
+        auto h2hraw = vector<SP_Filter<T>>();
         for (auto hsize : hidden_sizes) {
-            h2h.push_back(linear_tanh<T>(hsize, hsize));
+            h2hraw.push_back(make_shared<Linear<T>>(hsize, hsize));
         }
-        auto x2h = vector<SP_Filter<T>>();
+        auto x2hraw = vector<SP_Filter<T>>();
         for (int i = 0; i < hidden_sizes.size(); i++) {
             if (i == 0) {
-                x2h.push_back(linear_tanh<T>(input_size, hidden_sizes[i]));
+                x2hraw.push_back(make_shared<Linear<T>>(input_size, hidden_sizes[i]));
             } else {
-                x2h.push_back(linear_tanh<T>(hidden_sizes[i-1], hidden_sizes[i]));
+                x2hraw.push_back(make_shared<Linear<T>>(hidden_sizes[i-1], hidden_sizes[i]));
             }
         }
-        auto h2y = linear_entropy<T>(hidden_sizes[hidden_sizes.size()-1], output_size);
+        auto h2yraw = make_shared<Linear<T>>(hidden_sizes.back(), output_size);
         for (int i = 0; i < max_len; i++) {
             for (int j = 0; j < hidden_sizes.size(); j++) {
-                string h = generate_id("h", i, j);
+                string hraw = generate_id("hraw", i, j);
                 string left_h = generate_id("h", i-1, j);
                 string down_h;
                 if (j == 0) {
@@ -67,13 +51,17 @@ namespace gs
                     down_h = generate_id("h", i, j-1);
                 }
                 if (i > 0) {
-                    this->add_link(left_h, h, h2h[j]->share());
+                    this->add_link(left_h, hraw, h2hraw[j]->share());
                 }
-                this->add_link(down_h, h, x2h[j]->share());
+                this->add_link(down_h, hraw, x2hraw[j]->share());
+                string h = generate_id("h", i, j);
+                this->add_link(hraw, h, make_shared<Tanh<T>>());
             }
-            string y = generate_id("y", i);
+            string yraw = generate_id("yraw", i);
             string down_h = generate_id("h", i, hidden_sizes.size()-1);
-            this->add_link(down_h, y, h2y->share());
+            this->add_link(down_h, yraw, h2yraw->share());
+            string y = generate_id("y", i);
+            this->add_link(yraw, y, make_shared<CrossEntropy<T>>());
         }
 
         auto x_ids = vector<string>();
