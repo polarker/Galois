@@ -39,6 +39,10 @@ namespace gs
         Net& operator=(const Net&) = delete;
         
         void add_link(const vector<string>&, const vector<string>&, SP_Filter<T>);
+        void add_link(const initializer_list<string>, const initializer_list<string>, SP_Filter<T>);
+        void add_link(const initializer_list<string>, const string, SP_Filter<T>);
+        void add_link(const string, const initializer_list<string>, SP_Filter<T>);
+        void add_link(const string, const string, SP_Filter<T>);
         void _remove_signal(string);
         void set_input_ids(const string);
         void set_input_ids(const initializer_list<string>);

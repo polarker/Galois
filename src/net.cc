@@ -64,6 +64,26 @@ namespace gs {
     }
     
     template<typename T>
+    void Net<T>::add_link(const initializer_list<string> ins, const initializer_list<string> outs, SP_Filter<T> filter){
+        add_link(vector<string>(ins), vector<string>(outs), filter);
+    }
+    
+    template<typename T>
+    void Net<T>::add_link(const initializer_list<string> ins, const string outs, SP_Filter<T> filter){
+        add_link(ins, {outs}, filter);
+    }
+    
+    template<typename T>
+    void Net<T>::add_link(const string ins, const initializer_list<string> outs, SP_Filter<T> filter){
+        add_link({ins}, outs, filter);
+    }
+    
+    template<typename T>
+    void Net<T>::add_link(const string ins, const string outs, SP_Filter<T> filter){
+        add_link({ins}, {outs}, filter);
+    }
+    
+    template<typename T>
     void Net<T>::_remove_signal(string id) {
         if (inner_signals.count(id) > 0) {
             inner_signals.erase(id);
