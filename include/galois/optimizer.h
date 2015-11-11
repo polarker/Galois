@@ -43,6 +43,7 @@ namespace gs
                 auto param = this->params[i];
                 auto grad = this->grads[i];
                 CHECK(!param->opaque(), "param should not be opaque");
+                CHECK(!grad->opaque(), "grad should not be opaque");
                 T lrate = this->lrate;
                 MAP(param, [=](T x){return -lrate*x;}, grad);
             }
