@@ -17,7 +17,6 @@ namespace gs
     {
     protected:
         vector<tuple<const vector<string>, const vector<string>, SP_Filter<T>>> links = {};
-        bool fixed = false;
         
         map<string, SP_Signal<T>> inner_signals = {};
         
@@ -25,6 +24,9 @@ namespace gs
         vector<string> output_ids = {};
         
         vector<SP_Filter<T>> fp_filters = {};
+        
+        // the network can be fixed only when members in above are set
+        bool fixed = false;
 
     protected:
         void _remove_signal(string);
@@ -168,7 +170,6 @@ namespace gs
     template<typename T>
     void NetBase<T>::forward() {
         CHECK(fixed, "network should be fixed");
-        CHECK(!fp_filters.empty(), "fp filters should have been set");
         for (auto filter : fp_filters) {
             filter->forward();
         }
@@ -177,7 +178,6 @@ namespace gs
     template<typename T>
     void NetBase<T>::backward() {
         CHECK(fixed, "network should be fixed");
-        CHECK(!fp_filters.empty(), "bp filters should have been set");
         for (int i = fp_filters.size()-1; i >= 0; i--) {
             auto filter = fp_filters[i];
             filter->backward();
