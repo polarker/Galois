@@ -15,7 +15,7 @@ namespace gs
     template<typename T>
     class Net : public GFilter<T>
     {
-    public:
+    private:
         vector<tuple<const vector<string>, const vector<string>, SP_Filter<T>>> links;
         set<SP_PFilter<T>> pfilters;
         
