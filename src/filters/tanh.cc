@@ -35,6 +35,7 @@ namespace gs {
     template<typename T>
     void Tanh<T>::forward() {
         auto in_data = in_signal->get_data();
+        CHECK(!in_data->opaque(), "in_data should not be opaque");
         auto out_data = out_signal->get_data();
         CHECK(out_data->opaque(), "This Tanh could not work in parallel with the other filters, please use GeneralTanh instead");
         
@@ -46,6 +47,7 @@ namespace gs {
         auto in_grad = in_signal->get_grad();
         auto out_data = out_signal->get_data();
         auto out_grad = out_signal->get_grad();
+        CHECK(!out_grad->opaque() && !out_data->opaque(), "these should not be opaque");
         
         MAP(in_grad, [](T dy, T y){return dy*(1-y*y);}, out_grad, out_data);
     }

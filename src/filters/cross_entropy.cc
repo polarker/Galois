@@ -38,6 +38,7 @@ namespace gs {
     template<typename T>
     void CrossEntropy<T>::forward() {
         auto in_data = in_signal->get_data();
+        CHECK(!in_data->opaque(), "in_data should not be opaque");
         auto out_data = out_signal->get_data();
         CHECK(out_data->opaque(), "out data should be opaque");
         
@@ -58,6 +59,7 @@ namespace gs {
         auto in_grad = in_signal->get_grad();
         auto out_data = out_signal->get_data();
         auto target = out_signal->get_target();
+        CHECK(!out_data->opaque() && !target->opaque(), "out_grad should not be opaque");
         int batch_size = in_signal->get_data_dims()[0];
         MAP(in_grad, [batch_size](T y){return y/static_cast<T>(batch_size);}, out_data);
         SUB_MAP(in_grad, [batch_size](T y){return -1/static_cast<T>(batch_size);}, in_grad, SP_NArray<T>(nullptr), target);

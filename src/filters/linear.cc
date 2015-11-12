@@ -76,6 +76,7 @@ namespace gs {
     template<typename T>
     void Linear<T>::forward() {
         auto in_data = in_signal->get_data();
+        CHECK(!in_data->opaque(), "in_data should not be opaque");
         auto out_data = out_signal->get_data();
         
         GEMM(out_data, 'N', 'N', in_data, w);
@@ -86,6 +87,7 @@ namespace gs {
     void Linear<T>::backward() {
         auto in_data = in_signal->get_data();
         auto out_grad = out_signal->get_grad();
+        CHECK(!out_grad->opaque(), "out_grad should not be opaque");
 
         GEMM(this->dw, 'T', 'N', in_data, out_grad);
         SUM_TO_ROW(this->db, out_grad);
