@@ -12,6 +12,8 @@ namespace gs
         *res = sum;
     }
     
+    // currently, only two dimensional array are supported
+    // b[n] +> Y[m,n]
     template<typename T>
     void ADD_TO_ROW (const SP_NArray<T> Y, const SP_NArray<T> b) {
         auto Y_dims = Y->get_dims();
@@ -40,6 +42,8 @@ namespace gs
         }
     }
     
+    // currently, only two dimensional array are supported
+    // Y[m,n] +> b[n]
     template<typename T>
     void SUM_TO_ROW (const SP_NArray<T> b, const SP_NArray<T> X) {
         auto b_dims = b->get_dims();
@@ -65,6 +69,75 @@ namespace gs
         for (int i = 1; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 b_ptr[j] += X_ptr[i*n + j];
+            }
+        }
+    }
+
+    // currently, only two dimensional array are supported
+    // X[m,n] -> Y[k,n] with k <= m
+    template<typename T>
+    void TAKE_ROWS(const SP_NArray<T> Y, const SP_NArray<T> indexs, const SP_NArray<T> X) {
+        auto X_dims = X->get_dims();
+        auto Y_dims = Y->get_dims();
+        auto indexs_dims = indexs->get_dims();
+        assert(X_dims.size() == 2 && Y_dims.size() == 2 && indexs_dims.size() == 1);
+        
+        int m = X_dims[0];
+        int n = X_dims[1];
+        assert(n == Y_dims[1]);
+        int k = indexs_dims[0];
+        assert(k == Y_dims[0]);
+        auto X_ptr = X->get_data();
+        auto Y_ptr = Y->get_data();
+        auto indexs_ptr = indexs->get_data();
+        
+        if (Y->opaque()) {
+            for (int i = 0; i < k; i++) {
+                int idx = int(indexs_ptr[i]);
+                assert(idx >= 0 && idx < m);
+                for (int j = 0; j < n; j++) {
+                    Y_ptr[i*n+j] = X_ptr[idx*n+j];
+                }
+            }
+            Y->setclear();
+        } else {
+            for (int i = 0; i < k; i++) {
+                int idx = int(indexs_ptr[i]);
+                assert(idx >= 0 && idx < m);
+                for (int j = 0; j < n; j++) {
+                    Y_ptr[i*n+j] += X_ptr[idx*n+j];
+                }
+            }
+        }
+    }
+    
+    // currently, only two dimensional array are supported
+    // Y[k,n] -> X[m,n] with k <= m
+    template<typename T>
+    void PUT_ROWS(const SP_NArray<T> X, const SP_NArray<T> indexs, const SP_NArray<T> Y) {
+        auto X_dims = X->get_dims();
+        auto Y_dims = Y->get_dims();
+        auto indexs_dims = indexs->get_dims();
+        assert(X_dims.size() == 2 && Y_dims.size() == 2 && indexs_dims.size() == 1);
+        
+        int m = X_dims[0];
+        int n = X_dims[1];
+        assert(n == Y_dims[1]);
+        int k = indexs_dims[0];
+        assert(k == Y_dims[0]);
+        auto X_ptr = X->get_data();
+        auto Y_ptr = Y->get_data();
+        auto indexs_ptr = indexs->get_data();
+        
+        if (X->opaque()) {
+            X->fill(T(0.0));
+            X->setclear();
+        }
+        for (int i = 0; i < k; i++) {
+            int idx = int(indexs_ptr[i]);
+            assert(idx >= 0 && idx < m);
+            for (int j = 0; j < n; j++) {
+                X_ptr[idx*n+j] += Y_ptr[i*n+j];
             }
         }
     }
@@ -334,12 +407,14 @@ namespace gs
                   const FUNC& f,
                   const SP_NArray<T> X,
                   const SP_NArray<T> a, const SP_NArray<T> b) {
-        if (Y->opaque()) {
-            _SUB_MAP(Y, f, X, a, b, true);
-            Y->setclear();
-        } else {
-            _SUB_MAP(Y, f, X, a, b, false);
-        }
+//        if (Y->opaque()) {
+//            _SUB_MAP(Y, f, X, a, b, true);
+//            Y->setclear();
+//        } else {
+//            _SUB_MAP(Y, f, X, a, b, false);
+//        }
+        CHECK(!Y->opaque(), "Submap currently only supports non-opaque output array");
+        _SUB_MAP(Y, f, X, a, b, false);
     }
 
 }

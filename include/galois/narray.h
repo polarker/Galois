@@ -98,6 +98,6 @@ namespace gs
     
 }
 
-#include "narray_functors.h_inl"
+#include "narray_functors.cpp"
 
 #endif
