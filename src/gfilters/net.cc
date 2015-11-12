@@ -5,7 +5,9 @@
 namespace gs {
     
     template<typename T>
-    void Net<T>::add_link(const vector<string> &ins, const vector<string> &outs, SP_Filter<T> filter){
+    void Net<T>::add_link(const vector<string> &ins, const vector<string> &outs, SP_Filter<T> filter) {
+        CHECK(!this->fixed, "network should not be fixed");
+        
         // add to links
         auto idx = this->links.size();
         this->links.push_back(tuple<const vector<string>,const vector<string>,SP_Filter<T>>
@@ -54,6 +56,7 @@ namespace gs {
     
     template<typename T>
     void Net<T>::set_input_ids(const vector<string>& ids) {
+        CHECK(!this->fixed, "network should not be fixed");
         CHECK(this->input_ids.empty(), "input_ids should not be set");
         this->input_ids.insert(this->input_ids.end(), ids.begin(), ids.end());
         for (auto id : ids) {
@@ -73,6 +76,7 @@ namespace gs {
     
     template<typename T>
     void Net<T>::set_output_ids(const vector<string>& ids) {
+        CHECK(!this->fixed, "network should not be fixed");
         CHECK(this->output_ids.empty(), "output_ids should not be set");
         this->output_ids.insert(this->output_ids.end(), ids.begin(), ids.end());
         for (auto id : ids) {
