@@ -25,10 +25,6 @@ namespace gs
     
     template<typename T>
     void MLPModel<T>::compile() {
-//        for (auto pfilter : path.get_pfilters()) {
-//            pfilters.push_back(pfilter);
-//        }
-//        optimizer->compile(pfilters);
         CHECK(pfilters.empty() && params.empty() && grads.empty(), "these should not be set before");
         for (auto pfilter : path.get_pfilters()) {
             pfilters.push_back(pfilter);
