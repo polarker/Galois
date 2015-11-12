@@ -29,14 +29,17 @@ int main()
     auto labels = mnist::read_labels<T>("./data/train-labels-idx1-ubyte.gz", 1);
     model.add_train_dataset(images, labels);
 
+    auto params = model.get_params();
+    auto grads = model.get_grads();
+
     srand(time(NULL));
     for (int k = 0; k < 10; k++) {
-        auto l = l1;
-        if (rand() % 2 == 1) l = l2;
-        auto p = l->w;
-        auto dp = l->dw;
-        if (rand() % 2 == 1) { p = l->b; dp = l->db; }
-        int idx = rand() % p->get_size();
+        int idx;
+        idx = rand() % params.size();
+        auto p = params[idx];
+        auto dp = grads[idx];
+
+        idx = rand() % p->get_size();
 
         auto old_pi = p->get_data()[idx];
         T delta = 1e-5;

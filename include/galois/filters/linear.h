@@ -13,8 +13,6 @@ namespace gs {
         int in_size = 0;
         int out_size = 0;
         
-    public:
-        // these are public just for gradient check; should be private in the future
         SP_NArray<T> w = nullptr;
         SP_NArray<T> b = nullptr;
         SP_NArray<T> dw = nullptr;
@@ -36,7 +34,6 @@ namespace gs {
         vector<SP_NArray<T>> get_grads() override;
         
         void forward() override;
-            
         void backward() override;
     };
     
