@@ -29,9 +29,6 @@ namespace gs
         SP_NArray<T> target = nullptr;
         shared_ptr<T> loss = nullptr;
         
-        // for optimization, might be vector in the future
-        SP_NArray<T> extra = nullptr;
-        
     public:
         Signal() = delete;
         explicit Signal(SignalType type) : type(type) {};
@@ -42,8 +39,7 @@ namespace gs
             return (data == nullptr) &&
                    (grad == nullptr) &&
                    (target == nullptr) &&
-                   (loss == nullptr) &&
-                   (extra == nullptr);
+                   (loss == nullptr);
         }
         
         SignalType      get_type()      { return type;  }
@@ -51,13 +47,11 @@ namespace gs
         SP_NArray<T>    get_grad()      { return grad;  }
         SP_NArray<T>    get_target()    { return target;}
         shared_ptr<T>   get_loss()      { return loss;  }
-        SP_NArray<T>    get_extra()     { return extra; }
         
         void reopaque() {
             if (data)   { data->reopaque(); }
             if (grad)   { grad->reopaque(); }
             if (target) { target->reopaque(); }
-            if (extra)  { extra->reopaque(); }
         }
         
         // set dims for data (and grad)
@@ -102,22 +96,6 @@ namespace gs
             CHECK(type == OutputSignal, "only OutputSignal could set loss");
             CHECK(!loss, "loss should be nullptr before initialization");
             loss = make_shared<T>(0);
-        }
-        // set dims for extra
-        void set_extra_dims(int m)                         { set_extra_dims({m}); }
-        void set_extra_dims(int m, int n)                  { set_extra_dims({m,n}); }
-        void set_extra_dims(int m, int n, int o)           { set_extra_dims({m,n,o}); }
-        void set_extra_dims(int m, int n, int o, int k)    { set_extra_dims({m,n,o,k}); }
-        void set_extra_dims(initializer_list<int> nums) {
-            set_extra_dims(vector<int>(nums));
-        }
-        void set_extra_dims(vector<int> nums) {
-            CHECK(!extra, "extra should be nullptr before initialization");
-            extra = make_shared<NArray<T>>(nums);
-        }
-        vector<int> get_extra_dims() {
-            CHECK(extra, "extra should be non-empty");
-            return extra->get_dims();
         }
     };
     template<typename T>

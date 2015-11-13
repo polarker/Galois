@@ -31,7 +31,6 @@ namespace gs {
         CHECK(out_signal->empty(), "out signal should be empty");
         out_signal->set_data_dims(in_dims);
         out_signal->set_target_dims(batch_size);
-        out_signal->set_extra_dims(batch_size);
         out_signal->initialize_loss();
     }
 
@@ -47,10 +46,8 @@ namespace gs {
         out_data->normalize_for(NARRAY_DIM_ZERO);
         
         auto target = out_signal->get_target();
-        auto losses = out_signal->get_extra();
-        PROJ_MAP(losses, [](T x){return -log(x);}, out_data, target);
         auto loss = out_signal->get_loss();
-        SUM_POSITIVE_VALUE(losses, loss.get());
+        PROJ_MAP_SUM(loss.get(), [](T x){return -log(x);}, out_data, target);
         *loss /= target->get_size();
     }
     

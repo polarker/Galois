@@ -2,7 +2,7 @@ namespace gs
 {
 
     template<typename T>
-    void SUM_POSITIVE_VALUE (const SP_NArray<T> A, T *res) {
+    void SUM_POSITIVE_VALUE (T *res, const SP_NArray<T> A) {
         T sum = 0;
         auto A_ptr = A->get_data();
         auto A_size = A->get_size();
@@ -318,6 +318,30 @@ namespace gs
         } else {
             _PROJ_MAP(Y, f, X, idx, false);
         }
+    }
+    
+    // currently, only two dimensional array are supported
+    // X[m][n] -> Y[m] -> T
+    template<typename T, typename FUNC>
+    void PROJ_MAP_SUM (T *res,
+                       const FUNC& f,
+                       const SP_NArray<T> X,
+                       const SP_NArray<T> idx) {
+        assert(X->get_dims().size() == 2);
+        int m = X->get_dims()[0];
+        int n = X->get_dims()[1];
+        assert(idx->get_dims().size() == 1);
+        assert(m == idx->get_dims()[0]);
+        
+        T sum = 0;
+        auto X_ptr = X->get_data();
+        auto idx_ptr = idx->get_data();
+        for (int i = 0; i < m; i++) {
+            int j = idx_ptr[i];
+            assert(j < n);
+            sum += f(X_ptr[i*n + j]);
+        }
+        *res = sum;
     }
     
     // currently, only two dimensional array are supported
