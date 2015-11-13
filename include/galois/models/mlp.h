@@ -34,6 +34,9 @@ namespace gs
         int train_count = 0;
         SP_NArray<T> train_data = nullptr;
         SP_NArray<T> train_target = nullptr;
+        int test_count = 0;
+        SP_NArray<T> test_data = nullptr;
+        SP_NArray<T> test_target = nullptr;
         
     public:
         MLPModel(int batch_size, int num_epoch, T learning_rate, string optimizer_name);
@@ -51,9 +54,12 @@ namespace gs
         }
         
         void add_train_dataset(SP_NArray<T> data, SP_NArray<T> target);
+        void add_test_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
         
-        T fit_one_batch(const bool update=true);
-        void fit();
+        T train_one_batch(const bool update=true);
+        double compute_correctness(SP_Signal<T>); // for most application, this one should be override
+        double test();
+        void fit(const bool run_test=false);
     };
     template<typename T>
     default_random_engine MLPModel<T>::galois_rn_generator(0);

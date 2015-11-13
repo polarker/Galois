@@ -284,7 +284,7 @@ namespace gs
             printf(", time: %.2fs", eplased_time.count());
             printf(", loss: %.6f", loss);
             if (run_test) {
-                printf(", accuracy: %.4f\%", accuracy*100);
+                printf(", accuracy: %.2f%%", accuracy*100);
             }
             printf("\n");
         }
