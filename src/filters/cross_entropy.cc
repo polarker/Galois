@@ -38,13 +38,19 @@ namespace gs {
     template<typename T>
     void CrossEntropy<T>::forward() {
         auto in_data = in_signal->get_data();
+        auto out_data = out_signal->get_data();
         CHECK(!in_data->opaque(), "in_data should not be opaque");
-        CHECK(softmax_output->opaque(), "out data should be opaque");
+        CHECK(out_data->opaque(), "out_data should be opaque");
+        CHECK(softmax_output->opaque(), "this should be opaque");
         
         // softmax function
         MAP(softmax_output, [](T x){return exp(x);}, in_data);
         softmax_output->normalize_for(NARRAY_DIM_ZERO);
         
+        // compute prediction
+        MAXIDX_EACH_ROW(out_data, softmax_output);
+        
+        // compute loss
         auto target = out_signal->get_target();
         auto loss = out_signal->get_loss();
         PROJ_MAP_SUM(loss.get(), [](T x){return -log(x);}, softmax_output, target);

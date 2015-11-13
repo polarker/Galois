@@ -97,8 +97,9 @@ namespace gs
                     maxval = val;
                 }
             }
-            Y_ptr[i] = maxidx;
+            Y_ptr[i] = T(maxidx);
         }
+        Y->setclear();
     }
 
     // currently, only two dimensional array are supported
