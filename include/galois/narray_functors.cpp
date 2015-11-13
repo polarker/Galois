@@ -72,6 +72,34 @@ namespace gs
             }
         }
     }
+    
+    // currently, only two dimensional array are supported
+    // X[m,n] -> Y[m]
+    template<typename T>
+    void MAXIDX_EACH_ROW(const SP_NArray<T> Y, const SP_NArray<T> X) {
+        CHECK(Y->opaque(), "Y should be opaque (not set before)");
+        auto X_dims = X->get_dims();
+        auto Y_dims = Y->get_dims();
+        assert(X_dims.size() == 2 && Y_dims.size() == 1);
+        
+        int m = X_dims[0];
+        int n = X_dims[1];
+        assert(m == Y_dims[0]);
+        auto X_ptr = X->get_data();
+        auto Y_ptr = Y->get_data();
+        for (int i = 0; i < m; i++) {
+            int maxidx = 0;
+            T maxval = X_ptr[i*n+0];
+            for (int j = 1; j < n; j++) {
+                auto val = X_ptr[i*n+j];
+                if (val > maxval) {
+                    maxidx = j;
+                    maxval = val;
+                }
+            }
+            Y_ptr[i] = maxidx;
+        }
+    }
 
     // currently, only two dimensional array are supported
     // X[m,n] -> Y[k,n] with k <= m

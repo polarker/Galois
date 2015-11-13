@@ -29,7 +29,8 @@ namespace gs {
         
         CHECK(out_signal->get_type() == OutputSignal, "OutputSignal is needed");
         CHECK(out_signal->empty(), "out signal should be empty");
-        out_signal->set_data_dims(in_dims);
+        softmax_output = make_shared<NArray<T>>(in_dims);
+        out_signal->set_data_dims(batch_size);
         out_signal->set_target_dims(batch_size);
         out_signal->initialize_loss();
     }
@@ -38,27 +39,25 @@ namespace gs {
     void CrossEntropy<T>::forward() {
         auto in_data = in_signal->get_data();
         CHECK(!in_data->opaque(), "in_data should not be opaque");
-        auto out_data = out_signal->get_data();
-        CHECK(out_data->opaque(), "out data should be opaque");
+        CHECK(softmax_output->opaque(), "out data should be opaque");
         
         // softmax function
-        MAP(out_data, [](T x){return exp(x);}, in_data);
-        out_data->normalize_for(NARRAY_DIM_ZERO);
+        MAP(softmax_output, [](T x){return exp(x);}, in_data);
+        softmax_output->normalize_for(NARRAY_DIM_ZERO);
         
         auto target = out_signal->get_target();
         auto loss = out_signal->get_loss();
-        PROJ_MAP_SUM(loss.get(), [](T x){return -log(x);}, out_data, target);
+        PROJ_MAP_SUM(loss.get(), [](T x){return -log(x);}, softmax_output, target);
         *loss /= target->get_size();
     }
     
     template<typename T>
     void CrossEntropy<T>::backward() {
         auto in_grad = in_signal->get_grad();
-        auto out_data = out_signal->get_data();
         auto target = out_signal->get_target();
-        CHECK(!out_data->opaque() && !target->opaque(), "out_grad should not be opaque");
+        CHECK(!softmax_output->opaque() && !target->opaque(), "out_grad should not be opaque");
         int batch_size = in_signal->get_data_dims()[0];
-        MAP(in_grad, [batch_size](T y){return y/static_cast<T>(batch_size);}, out_data);
+        MAP(in_grad, [batch_size](T y){return y/static_cast<T>(batch_size);}, softmax_output);
         SUB_MAP(in_grad, [batch_size](T y){return -1/static_cast<T>(batch_size);}, in_grad, SP_NArray<T>(nullptr), target);
     }
 

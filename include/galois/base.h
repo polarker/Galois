@@ -119,10 +119,7 @@ namespace gs
     using SP_Filter = shared_ptr<Filter<T>>;
     
     template<typename T>
-    class BFilter : public Filter<T> {
-    public:
-        void reopaque() override {}
-    };
+    class BFilter : public Filter<T> {};
     
     template<typename T>
     class PFilter : public Filter<T> {
