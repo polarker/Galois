@@ -153,9 +153,46 @@ namespace gs
         train_data.insert(train_data.end(), data.begin(), data.end());
         train_target.insert(train_target.end(), target.begin(), target.end());
     }
+
+    template<typename T>
+    void Model<T>::add_test_dataset(const SP_NArray<T> data, const SP_NArray<T> target) {
+        add_test_dataset({data}, {target});
+    }
+
+    template<typename T>
+    void Model<T>::add_test_dataset(const initializer_list<SP_NArray<T>> data, const SP_NArray<T> target) {
+        add_test_dataset(data, {target});
+    }
+
+    template<typename T>
+    void Model<T>::add_test_dataset(const SP_NArray<T> data, const initializer_list<SP_NArray<T>> target) {
+        add_test_dataset({data}, target);
+    }
+
+    template<typename T>
+    void Model<T>::add_test_dataset(const initializer_list<SP_NArray<T>> data, const initializer_list<SP_NArray<T>> target) {
+        add_test_dataset(vector<SP_NArray<T>>(data), vector<SP_NArray<T>>(target));
+    }
+
+    template<typename T>
+    void Model<T>::add_test_dataset(const vector<SP_NArray<T>>& data, const vector<SP_NArray<T>>& target) {
+        CHECK(input_ids.size() == data.size(), "number of input should be equal");
+        CHECK(output_ids.size() == target.size(), "number of output should be equal");
+        test_count = data[0]->get_dims()[0];
+        for (const auto& _data : data) {
+            CHECK(_data->get_dims()[0] == test_count, "data and target should have the same number of samples");
+        }
+        for (const auto& _target : target) {
+            CHECK(_target->get_dims()[0] == test_count, "data and target should have the same number of samples");
+        }
+
+        CHECK(test_data.empty() && test_target.empty(), "dataset should not be set before");
+        test_data.insert(test_data.end(), data.begin(), data.end());
+        test_target.insert(test_target.end(), target.begin(), target.end());
+    }
     
     template<typename T>
-    T Model<T>::fit_one_batch(const bool update) {
+    T Model<T>::train_one_batch(const bool update) {
         uniform_int_distribution<> distribution(0, train_count-1);
         vector<int> batch_ids(batch_size);
         for (int i = 0; i < batch_size; i++) {
@@ -184,24 +221,71 @@ namespace gs
         }
         return loss;
     }
+
+    template<typename T>
+    double Model<T>::compute_correctness(SP_Signal<T> output_signal) {
+        return COUNT_EQUAL(output_signal->get_data(), output_signal->get_target());
+    }
+
+    template<typename T>
+    double Model<T>::test() {
+        double correctness = 0;
+        
+        for (int i = 0; i < test_count; i += batch_size) {
+            vector<int> batch_ids(batch_size);
+            for (int j = 0; j < batch_size; j++) {
+                batch_ids[j] = i+j;
+            }
+            
+            net.reopaque();
+            for (int i = 0; i < input_signals.size(); i++) {
+                input_signals[i]->reopaque();
+                input_signals[i]->get_data()->copy_from(batch_ids, test_data[i]);
+            }
+            for (int i = 0; i < output_signals.size(); i++) {
+                output_signals[i]->reopaque();
+                output_signals[i]->get_target()->copy_from(batch_ids, test_target[i]);
+            }
+            net.forward();
+            
+            for (int i = 0; i < output_signals.size(); i++) {
+                correctness += compute_correctness(output_signals[i]);
+            }
+        }
+        
+        int test_num = test_count / batch_size * batch_size;
+        return double(correctness) / double(test_num);
+    }
     
     template<typename T>
-    void Model<T>::fit() {
+    void Model<T>::fit(const bool run_test) {
         compile();
+        CHECK(!train_data.empty() && !train_target.empty(), "training dataset should have been set");
+        if (run_test) {
+            CHECK(!test_data.empty() && !test_target.empty(), "testing dataset should have been set");
+        }
         
         for (int k = 1; k < num_epoch+1; k++) {
             printf("Epoch: %2d", k);
             auto start = chrono::system_clock::now();
             T loss = 0;
             for (int i = 0; i < train_count/batch_size; i++) {
-                loss += fit_one_batch();
+                loss += train_one_batch();
             }
             loss /= T(train_count/batch_size);
+            
+            double accuracy;
+            if (run_test) {
+                accuracy = test();
+            }
             
             auto end = chrono::system_clock::now();
             chrono::duration<double> eplased_time = end - start;
             printf(", time: %.2fs", eplased_time.count());
             printf(", loss: %.6f", loss);
+            if (run_test) {
+                printf(", accuracy: %.4f\%", accuracy*100);
+            }
             printf("\n");
         }
     }

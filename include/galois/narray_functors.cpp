@@ -2,6 +2,25 @@ namespace gs
 {
 
     template<typename T>
+    int COUNT_EQUAL(const SP_NArray<T> X, const SP_NArray<T> Y) {
+        CHECK(X != nullptr && Y != nullptr, "X and Y should not be null");
+        CHECK(!X->opaque() && !Y->opaque(), "X and Y should not be opaque");
+        auto X_dims = X->get_dims();
+        auto Y_dims = Y->get_dims();
+        CHECK(X_dims == Y_dims, "dims should match");
+
+        int equal = 0;
+        auto X_ptr = X->get_data();
+        auto Y_ptr = Y->get_data();
+        for (int i = 0; i < X->get_size(); i++) {
+            if (X_ptr[i] == Y_ptr[i]) {
+                equal += 1;
+            }
+        }
+        return equal;
+    }
+
+    template<typename T>
     void SUM_POSITIVE_VALUE (T *res, const SP_NArray<T> A) {
         T sum = 0;
         auto A_ptr = A->get_data();

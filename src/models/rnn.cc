@@ -83,10 +83,23 @@ namespace gs
         CHECK(data_dims[0] == target_dims[0], "length of data and target must match");
         CHECK(data_dims.size() == 2 && target_dims.size() == 1 && data_dims[1] == input_size, "sizes must match");
         
-        CHECK(X==nullptr && Y==nullptr, "dataset should not be set before");
-        seq_len = data_dims[0];
-        X = data;
-        Y = target;
+        CHECK(train_X==nullptr && train_Y==nullptr, "dataset should not be set before");
+        train_seq_len = data_dims[0];
+        train_X = data;
+        train_Y = target;
+    }
+
+    template<typename T>
+    void RNN<T>::add_test_dataset(const SP_NArray<T> data, const SP_NArray<T> target) {
+        auto data_dims = data->get_dims();
+        auto target_dims = target->get_dims();
+        CHECK(data_dims[0] == target_dims[0], "length of data and target must match");
+        CHECK(data_dims.size() == 2 && target_dims.size() == 1 && data_dims[1] == input_size, "sizes must match");
+        
+        CHECK(test_X==nullptr && test_Y==nullptr, "dataset should not be set before");
+        test_seq_len = data_dims[0];
+        test_X = data;
+        test_Y = target;
     }
     
     template<typename T>
@@ -94,11 +107,11 @@ namespace gs
         this->net.reopaque();
         for (int i = 0; i < this->input_signals.size(); i++) {
             this->input_signals[i]->reopaque();
-            this->input_signals[i]->get_data()->copy_from(start_from+i, this->batch_size, X);
+            this->input_signals[i]->get_data()->copy_from(start_from+i, this->batch_size, train_X);
         }
         for (int i = 0; i < this->output_signals.size(); i++) {
             this->output_signals[i]->reopaque();
-            this->output_signals[i]->get_target()->copy_from(start_from+i, this->batch_size, Y);
+            this->output_signals[i]->get_target()->copy_from(start_from+i, this->batch_size, train_Y);
         }
         
         this->net.forward();
@@ -121,7 +134,7 @@ namespace gs
             auto start = chrono::system_clock::now();
             T loss = 0;
             
-            int len = seq_len - max_len + 1 - this->batch_size + 1;
+            int len = train_seq_len - max_len + 1 - this->batch_size + 1;
             for (int i = 0; i < len; i += this->batch_size) {
                 loss += fit_one_batch(i);
                 if (i % 10000 == 0) {

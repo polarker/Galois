@@ -34,6 +34,9 @@ namespace gs
         int train_count = 0;
         vector<SP_NArray<T>> train_data = {};
         vector<SP_NArray<T>> train_target = {};
+        int test_count = 0;
+        vector<SP_NArray<T>> test_data = {};
+        vector<SP_NArray<T>> test_target = {};
         
     public:
         Model(int batch_size, int num_epoch, T learning_rate, string optimizer_name);
@@ -65,9 +68,16 @@ namespace gs
         void add_train_dataset(const SP_NArray<T> data, const initializer_list<SP_NArray<T>> target);
         void add_train_dataset(const initializer_list<SP_NArray<T>> data, const initializer_list<SP_NArray<T>> target);
         void add_train_dataset(const vector<SP_NArray<T>>& data, const vector<SP_NArray<T>>& target);
+        void add_test_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
+        void add_test_dataset(const initializer_list<SP_NArray<T>> data, const SP_NArray<T> target);
+        void add_test_dataset(const SP_NArray<T> data, const initializer_list<SP_NArray<T>> target);
+        void add_test_dataset(const initializer_list<SP_NArray<T>> data, const initializer_list<SP_NArray<T>> target);
+        void add_test_dataset(const vector<SP_NArray<T>>& data, const vector<SP_NArray<T>>& target);
         
-        T fit_one_batch(const bool update=true);
-        void fit();
+        T train_one_batch(const bool update=true);
+        double compute_correctness(SP_Signal<T>); // for most application, this one should be override
+        double test();
+        void fit(const bool run_test=false);
     };
     template<typename T>
     default_random_engine Model<T>::galois_rn_generator(0);
