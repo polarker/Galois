@@ -19,6 +19,8 @@ namespace gs
         int output_size;
         vector<int> hidden_sizes;
 
+        bool use_embedding = false;
+
         int train_seq_len = 0;
         SP_NArray<T> train_X = nullptr;
         SP_NArray<T> train_Y = nullptr;
@@ -33,7 +35,8 @@ namespace gs
             int batch_size,
             int num_epoch,
             T learning_rate,
-            string optimizer_name);
+            string optimizer_name,
+            bool use_embedding=false);
         RNN(const RNN& other) = delete;
         RNN& operator=(const RNN&) = delete;
         
@@ -42,7 +45,7 @@ namespace gs
         
         void add_train_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
         void add_test_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
-        T fit_one_batch(const int start_from, const bool update=true);
+        T train_one_batch(const int start_from, const bool update=true);
         void fit();
     };
 

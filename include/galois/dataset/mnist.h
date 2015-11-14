@@ -43,7 +43,8 @@ namespace mnist
     template<typename T>
     gs::SP_NArray<T> read_images(const string &file_name, int num_samples=INT_MAX) {
         GzipFile gf(file_name.c_str(), "rb");
-        int magic = gf.read_int();
+        // int magic = gf.read_int();
+        gf.read_int(); // read magic number
         int count = gf.read_int();
         int rows  = gf.read_int();
         int cols  = gf.read_int();
@@ -67,7 +68,8 @@ namespace mnist
     template<typename T>
     gs::SP_NArray<T> read_labels(const string &file_name,  int num_samples=INT_MAX) {
         GzipFile gf(file_name.c_str(), "rb");
-        int magic = gf.read_int();
+        // int magic = gf.read_int();
+        gf.read_int(); // read magic number
         int count = gf.read_int();
         // cout << "Lable: magic=" << magic << ", count=" << count << endl;
         

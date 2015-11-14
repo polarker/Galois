@@ -21,12 +21,14 @@ namespace gs
                 int _batch_size,
                 int _num_epoch,
                 T _learning_rate,
-                string optimizer_name)
-            : Model<T>(_batch_size, _num_epoch, _learning_rate, optimizer_name)
+                string _optimizer_name,
+                bool _use_embedding)
+            : Model<T>(_batch_size, _num_epoch, _learning_rate, _optimizer_name)
             , max_len(_max_len)
             , input_size(_input_size)
             , output_size(_output_size)
-            , hidden_sizes(_hidden_sizes) {
+            , hidden_sizes(_hidden_sizes)
+            , use_embedding(_use_embedding) {
         auto h2hraw = vector<SP_Filter<T>>();
         for (auto hsize : hidden_sizes) {
             h2hraw.push_back(make_shared<Linear<T>>(hsize, hsize));
@@ -34,7 +36,11 @@ namespace gs
         auto x2hraw = vector<SP_Filter<T>>();
         for (int i = 0; i < hidden_sizes.size(); i++) {
             if (i == 0) {
-                x2hraw.push_back(make_shared<Linear<T>>(input_size, hidden_sizes[i]));
+                if (use_embedding) {
+                    x2hraw.push_back(make_shared<Embedding<T>>(input_size, hidden_sizes[i]));
+                } else {
+                    x2hraw.push_back(make_shared<Linear<T>>(input_size, hidden_sizes[i]));
+                }
             } else {
                 x2hraw.push_back(make_shared<Linear<T>>(hidden_sizes[i-1], hidden_sizes[i]));
             }
@@ -103,7 +109,7 @@ namespace gs
     }
     
     template<typename T>
-    T RNN<T>::fit_one_batch(const int start_from, bool update) {
+    T RNN<T>::train_one_batch(const int start_from, bool update) {
         this->net.reopaque();
         for (int i = 0; i < this->input_signals.size(); i++) {
             this->input_signals[i]->reopaque();
@@ -127,6 +133,7 @@ namespace gs
         return loss;
     }
     
+    // test dataset is not support for the moment
     template<typename T>
     void RNN<T>::fit() {
         for (int k = 1; k < this->num_epoch+1; k++) {
@@ -136,7 +143,7 @@ namespace gs
             
             int len = train_seq_len - max_len + 1 - this->batch_size + 1;
             for (int i = 0; i < len; i += this->batch_size) {
-                loss += fit_one_batch(i);
+                loss += train_one_batch(i);
                 if (i % 10000 == 0) {
                     cout << " > " << i << endl;
                 }

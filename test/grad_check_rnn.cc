@@ -38,14 +38,14 @@ int main()
 
         auto old_pi = p->get_data()[idx];
         T delta = 1e-5;
-        model.fit_one_batch(start_idx, false);
+        model.train_one_batch(start_idx, false);
         auto grad = dp->get_data()[idx];
 
         p->get_data()[idx] = old_pi + delta;
-        auto loss1 = model.fit_one_batch(start_idx, false);
+        auto loss1 = model.train_one_batch(start_idx, false);
 
         p->get_data()[idx] = old_pi - delta;
-        auto loss2 = model.fit_one_batch(start_idx, false);
+        auto loss2 = model.train_one_batch(start_idx, false);
 
         auto grad_ = (loss1-loss2) / (2*delta);
         auto diff = abs(grad - grad_);

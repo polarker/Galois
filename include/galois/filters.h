@@ -1,4 +1,5 @@
 #include "galois/filters/tanh.h"
 #include "galois/filters/general_tanh.h"
 #include "galois/filters/linear.h"
+#include "galois/filters/embedding.h"
 #include "galois/filters/cross_entropy.h"
