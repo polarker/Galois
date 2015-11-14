@@ -17,8 +17,9 @@ int main()
     int batch_size = 100;
     int num_epoch = 10;
     T learning_rate = 0.01;
-    RNN<T> model(seq_length, input_size, output_size, hidden_sizes, batch_size, num_epoch, learning_rate, "sgd");
+    bool use_embedding = true;
+    RNN<T> model(seq_length, input_size, output_size, hidden_sizes, batch_size, num_epoch, learning_rate, "sgd", use_embedding);
     
-    model.add_train_dataset(article.get_vectorized_sequence(), article.get_target_sequence());
+    model.add_train_dataset(article.get_input_sequence(), article.get_target_sequence());
     model.fit();
 }

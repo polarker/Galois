@@ -21,9 +21,7 @@ namespace chartxt
         map<int, char> int2char = {};
         
         int sequence_length = 0;
-        gs::SP_NArray<T> int_sequence = nullptr;
-        gs::SP_NArray<T> vectorized_sequence = nullptr;
-        gs::SP_NArray<T> target_sequence = nullptr;
+        gs::SP_NArray<T> sequence = nullptr;
         
     public:
         explicit Article(const string &file_name) {
@@ -46,34 +44,18 @@ namespace chartxt
             
             num_diff_chars = char2int.size();
             sequence_length = num_chars - 1;
-            int_sequence = make_shared<gs::NArray<T>>(num_chars);
-            vectorized_sequence = make_shared<gs::NArray<T>>(num_chars-1, num_diff_chars);
-            target_sequence = make_shared<gs::NArray<T>>(num_chars-1);
+            sequence = make_shared<gs::NArray<T>>(num_chars);
             
             cout << "size of chars: " << num_chars << endl;
             cout << "size of different chars: " << char2int.size() << endl;
             fin.open(file_name);
             CHECK(fin.is_open(), "can not open file");
-            auto int_sequence_ptr = int_sequence->get_data();
-            auto vectorized_sequence_ptr = vectorized_sequence->get_data();
-            auto target_sequence_ptr = target_sequence->get_data();
+            auto sequence_ptr = sequence->get_data();
             for (int i = 0; i < num_chars; i++) {
                 fin >> noskipws >> ch;
                 int idx = char2int[ch];
                 
-                int_sequence_ptr[i] = idx;
-                if (i < num_chars - 1) {
-                    for (int j = 0; j < num_diff_chars; j++) {
-                        if (j == idx) {
-                            vectorized_sequence_ptr[i*num_diff_chars + j] = 1;
-                        } else {
-                            vectorized_sequence_ptr[i*num_diff_chars + j] = 0;
-                        }
-                    }
-                }
-                if (i > 0) {
-                    target_sequence_ptr[i-1] = idx;
-                }
+                sequence_ptr[i] = idx;
             }
             fin.close();
         }
@@ -84,16 +66,41 @@ namespace chartxt
         int get_num_diff_chars() {
             return num_diff_chars;
         }
+
+        gs::SP_NArray<T> get_input_sequence() {
+            auto input_sequence = make_shared<gs::NArray<T>>(sequence_length);
+            auto input_sequence_ptr = input_sequence->get_data();
+            auto sequence_ptr = sequence->get_data();
+            for (int i = 0; i < sequence_length; i++) {
+                input_sequence_ptr[i] = sequence_ptr[i];
+            }
+            return input_sequence;
+        }
         
-//        int get_sequence_length {
-//            return sequence_length;
-//        }
-        
-        gs::SP_NArray<T> get_vectorized_sequence() {
-            return vectorized_sequence;
+        gs::SP_NArray<T> get_vectorized_input_sequence() {
+            auto vectorized_input_sequence = make_shared<gs::NArray<T>>(sequence_length, num_diff_chars);
+            auto vectorized_input_sequence_ptr = vectorized_input_sequence->get_data();
+            auto sequence_ptr = sequence->get_data();
+            for (int i = 0; i < sequence_length; i++) {
+                int idx = int(sequence_ptr[i]);
+                for (int j = 0; j < num_diff_chars; j++) {
+                    if (j == idx) {
+                        vectorized_input_sequence_ptr[i*num_diff_chars + j] = 1;
+                    } else {
+                        vectorized_input_sequence_ptr[i*num_diff_chars + j] = 0;
+                    }
+                }
+            }
+            return vectorized_input_sequence;
         }
         
         gs::SP_NArray<T> get_target_sequence() {
+            auto target_sequence = make_shared<gs::NArray<T>>(sequence_length);
+            auto target_sequence_ptr = target_sequence->get_data();
+            auto sequence_ptr = sequence->get_data();
+            for (int i = 0; i < sequence_length; i++) {
+                target_sequence_ptr[i] = sequence_ptr[i+1];
+            }
             return target_sequence;
         }
     };

@@ -87,7 +87,6 @@ namespace gs
         auto data_dims = data->get_dims();
         auto target_dims = target->get_dims();
         CHECK(data_dims[0] == target_dims[0], "length of data and target must match");
-        CHECK(data_dims.size() == 2 && target_dims.size() == 1 && data_dims[1] == input_size, "sizes must match");
         
         CHECK(train_X==nullptr && train_Y==nullptr, "dataset should not be set before");
         train_seq_len = data_dims[0];
