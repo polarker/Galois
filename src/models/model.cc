@@ -258,32 +258,37 @@ namespace gs
     }
     
     template<typename T>
-    void Model<T>::fit(const bool run_test) {
+    void Model<T>::fit() {
         compile();
         CHECK(!train_data.empty() && !train_target.empty(), "training dataset should have been set");
-        if (run_test) {
-            CHECK(!test_data.empty() && !test_target.empty(), "testing dataset should have been set");
+        bool run_test = false;
+        if (!test_data.empty() && !test_target.empty()) {
+            run_test = true;
+        }
+        else if (!test_data.empty() && !test_target.empty()) {
+            run_test = false;
+        }
+        else {
+            CHECK(false, "testing dataset is not correctly set");
         }
         
         for (int k = 1; k < num_epoch+1; k++) {
             printf("Epoch: %2d", k);
             auto start = chrono::system_clock::now();
+
             T loss = 0;
             for (int i = 0; i < train_count/batch_size; i++) {
                 loss += train_one_batch();
             }
             loss /= T(train_count/batch_size);
             
-            double accuracy;
-            if (run_test) {
-                accuracy = test();
-            }
-            
             auto end = chrono::system_clock::now();
             chrono::duration<double> eplased_time = end - start;
             printf(", time: %.2fs", eplased_time.count());
             printf(", loss: %.6f", loss);
             if (run_test) {
+                double accuracy;
+                accuracy = test();
                 printf(", accuracy: %.2f%%", accuracy*100);
             }
             printf("\n");

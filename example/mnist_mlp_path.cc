@@ -26,5 +26,5 @@ int main()
     auto test_labels = mnist::read_labels<T>("./data/t10k-labels-idx1-ubyte.gz");
     model.add_test_dataset(test_images, test_labels);
 
-    model.fit(true);
+    model.fit();
 }

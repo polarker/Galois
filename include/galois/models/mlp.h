@@ -59,7 +59,7 @@ namespace gs
         T train_one_batch(const bool update=true);
         double compute_correctness(SP_Signal<T>); // for most application, this one should be override
         double test();
-        void fit(const bool run_test=false);
+        void fit();
     };
     template<typename T>
     default_random_engine MLPModel<T>::galois_rn_generator(0);
