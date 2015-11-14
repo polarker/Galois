@@ -47,7 +47,7 @@ namespace mnist
         int count = gf.read_int();
         int rows  = gf.read_int();
         int cols  = gf.read_int();
-        cout << "Image: magic=" << magic << ", count=" << count << ", rows=" << rows << ", cols=" << cols << endl;
+        // cout << "Image: magic=" << magic << ", count=" << count << ", rows=" << rows << ", cols=" << cols << endl;
         
         if (num_samples == INT_MAX) {
             num_samples = count;
@@ -69,7 +69,7 @@ namespace mnist
         GzipFile gf(file_name.c_str(), "rb");
         int magic = gf.read_int();
         int count = gf.read_int();
-        cout << "Lable: magic=" << magic << ", count=" << count << endl;
+        // cout << "Lable: magic=" << magic << ", count=" << count << endl;
         
         if (num_samples == INT_MAX) {
             num_samples = count;
