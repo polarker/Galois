@@ -1,6 +1,6 @@
-Galois is a general deep learning framework in C++ using data flow graphs. The distinguish features of Galois is that it aims for dynamic network.
+Galois is a general deep learning framework in C++ using data flow graphs. The distinguish features of Galois is that it aims for dynamic nuerual network. The guiding principles of design includes both efficiency both convenience. For user guide, please have a look at the example fold.
 
-Galois is a work in progress. It only supports CPU computing for the moment. It's very efficient compared to the other popular frameworks. For user guide, please have a look at the example fold.
+Galois is a work in progress. It only supports CPU computing for the moment. For the same mnist_mlp model (from torch demos), the consumed time of each epoch is: torch ~ 40s; keras ~ 110s; galois ~ 30s.
 
 Todo list (not in priority order):
 - RMSprop, Adagrad
