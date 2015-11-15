@@ -7,7 +7,7 @@ using namespace gs;
 
 int main()
 {
-    using T = double;
+    using T = float;
 
     int batch_size = 10;
     int num_epoch = 10;

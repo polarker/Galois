@@ -145,6 +145,8 @@ namespace gs
         else {
             CHECK(false, "testing dataset is not correctly set");
         }
+
+        printf("Start training\n");
         
         for (int k = 1; k < num_epoch+1; k++) {
             printf("Epoch: %2d", k);

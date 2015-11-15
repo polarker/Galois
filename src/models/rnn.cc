@@ -135,6 +135,8 @@ namespace gs
     // test dataset is not support for the moment
     template<typename T>
     void RNN<T>::fit() {
+        printf("Start training\n");
+
         for (int k = 1; k < this->num_epoch+1; k++) {
             printf("Epoch: %2d", k);
             auto start = chrono::system_clock::now();

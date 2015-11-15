@@ -1,6 +1,6 @@
 Galois is a general deep learning framework in C++ using dataflow graphs. The distinguish features of Galois is that it aims for dynamic neural network. The guiding principles of design includes both efficiency both convenience. For user guide, please have a look at the example fold.
 
-Galois is a work in progress. It only supports CPU computing for the moment. It uses extensively new features of C++11, especially lambda function, to reduce lines of code. Using Galois is just as simple as drawing dataflow graphs. In particular, it's easy to implement recurrent neural network with Galois. Galois is also efficient. For the same mnist_mlp model (from torch demos), the consumed time of each epoch is: Torch ~ 40s; Keras ~ 110s; Galois ~ 30s.
+Galois is a work in progress. It only supports CPU computing for the moment. It uses extensively new features of C++11, especially lambda function, to reduce lines of code. Using Galois is just as simple as drawing dataflow graphs. In particular, it's easy to implement recurrent neural network with Galois. Galois is also efficient. For the same mnist_mlp model (from torch demos) on Mac Pro, the consumed time of each epoch is: Torch ~ 40s; Keras ~ 60s; Galois ~ 30s.
 
 Todo list (not in priority order):
 - RMSprop, Adagrad
