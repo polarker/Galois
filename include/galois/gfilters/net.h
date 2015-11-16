@@ -2,7 +2,7 @@
 #define _GALOIS_NET_H_
 
 #include "galois/base.h"
-#include "galois/gfilters/netbase.h"
+#include "galois/gfilters/base_net.h"
 #include <string>
 #include <vector>
 #include <set>
@@ -14,7 +14,7 @@ namespace gs
 {
     
     template<typename T>
-    class Net : public NetBase<T>
+    class Net : public BaseNet<T>
     {
     private:
         map<string, vector<tuple<string, int>>> fp_graph = {};
@@ -41,5 +41,5 @@ namespace gs
     };
 
 }
-            
+
 #endif

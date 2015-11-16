@@ -2,7 +2,7 @@
 #define _GALOIS_ORDEREDNET_H_
 
 #include "galois/base.h"
-#include "galois/gfilters/netbase.h"
+#include "galois/gfilters/base_net.h"
 
 using namespace std;
 
@@ -10,7 +10,7 @@ namespace gs
 {
     
     template<typename T>
-    class OrderedNet : public NetBase<T>
+    class OrderedNet : public BaseNet<T>
     {
     public:
         OrderedNet() {}
@@ -31,8 +31,8 @@ namespace gs
         SP_Filter<T> share() override;
         
         // propagation could just apply to the subnet that contains only those links with index not less than idx
-        using NetBase<T>::forward;
-        using NetBase<T>::backward;
+        using BaseNet<T>::forward;
+        using BaseNet<T>::backward;
         void forward(int idx);
         void backward(int idx);
     };

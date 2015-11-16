@@ -1,5 +1,5 @@
-#ifndef _GALOIS_NETBASE_H_
-#define _GALOIS_NETBASE_H_
+#ifndef _GALOIS_BASENET_H_
+#define _GALOIS_BASENET_H_
 
 #include "galois/base.h"
 #include <string>
@@ -13,7 +13,7 @@ namespace gs
 {
     
     template<typename T>
-    class NetBase : public GFilter<T>
+    class BaseNet : public GFilter<T>
     {
     protected:
         vector<tuple<const vector<string>, const vector<string>, SP_Filter<T>>> links = {};
@@ -38,9 +38,9 @@ namespace gs
                                          const vector<SP_Signal<T>> out_signals);
         
     public:
-        NetBase() {}
-        NetBase(const NetBase& other) = delete;
-        NetBase& operator=(const NetBase&) = delete;
+        BaseNet() {}
+        BaseNet(const BaseNet& other) = delete;
+        BaseNet& operator=(const BaseNet&) = delete;
         
         virtual void add_link(const vector<string>&, const vector<string>&, SP_Filter<T>) = 0;
         void add_link(const initializer_list<string>, const initializer_list<string>, SP_Filter<T>);
@@ -60,38 +60,38 @@ namespace gs
     };
     
     template<typename T>
-    void NetBase<T>::add_link(const initializer_list<string> ins, const initializer_list<string> outs, SP_Filter<T> filter){
+    void BaseNet<T>::add_link(const initializer_list<string> ins, const initializer_list<string> outs, SP_Filter<T> filter){
         CHECK(!fixed, "network should not be fixed");
         add_link(vector<string>(ins), vector<string>(outs), filter);
     }
     
     template<typename T>
-    void NetBase<T>::add_link(const initializer_list<string> ins, const string outs, SP_Filter<T> filter){
+    void BaseNet<T>::add_link(const initializer_list<string> ins, const string outs, SP_Filter<T> filter){
         CHECK(!fixed, "network should not be fixed");
         add_link(ins, {outs}, filter);
     }
     
     template<typename T>
-    void NetBase<T>::add_link(const string ins, const initializer_list<string> outs, SP_Filter<T> filter){
+    void BaseNet<T>::add_link(const string ins, const initializer_list<string> outs, SP_Filter<T> filter){
         CHECK(!fixed, "network should not be fixed");
         add_link({ins}, outs, filter);
     }
     
     template<typename T>
-    void NetBase<T>::add_link(const string ins, const string outs, SP_Filter<T> filter){
+    void BaseNet<T>::add_link(const string ins, const string outs, SP_Filter<T> filter){
         CHECK(!fixed, "network should not be fixed");
         add_link({ins}, {outs}, filter);
     }
     
     template<typename T>
-    void NetBase<T>::_remove_signal(string id) {
+    void BaseNet<T>::_remove_signal(string id) {
         if (inner_signals.count(id) > 0) {
             inner_signals.erase(id);
         }
     }
     
     template<typename T>
-    SP_Signal<T> NetBase<T>::_get_signal(string id,
+    SP_Signal<T> BaseNet<T>::_get_signal(string id,
                                          const vector<SP_Signal<T>> in_signals,
                                          const vector<SP_Signal<T>> out_signals) {
         auto in_idx = find(input_ids.begin(), input_ids.end(), id);
@@ -108,7 +108,7 @@ namespace gs
     }
     
     template<typename T>
-    vector<SP_Signal<T>> NetBase<T>::_get_signal(vector<string> ids,
+    vector<SP_Signal<T>> BaseNet<T>::_get_signal(vector<string> ids,
                                                  const vector<SP_Signal<T>> in_signals,
                                                  const vector<SP_Signal<T>> out_signals) {
         vector<SP_Signal<T>> res{};
@@ -119,7 +119,7 @@ namespace gs
     }
     
     template<typename T>
-    set<SP_PFilter<T>> NetBase<T>::get_pfilters() {
+    set<SP_PFilter<T>> BaseNet<T>::get_pfilters() {
         CHECK(fixed, "network should be fixed");
         set<SP_PFilter<T>> pfilters{};
         for (auto filter : fp_filters) {
@@ -135,7 +135,7 @@ namespace gs
     }
     
     template<typename T>
-    void NetBase<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
+    void BaseNet<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
         CHECK(fixed, "network should be fixed");
         for (auto t : links) {
             auto ins = get<0>(t);
@@ -147,7 +147,7 @@ namespace gs
     }
     
     template<typename T>
-    void NetBase<T>::set_dims(int batch_size) {
+    void BaseNet<T>::set_dims(int batch_size) {
         CHECK(fixed, "network should be fixed");
         CHECK(!fp_filters.empty(), "fp filters should have been set");
         for (auto filter : fp_filters) {
@@ -156,7 +156,7 @@ namespace gs
     }
     
     template<typename T>
-    void NetBase<T>::reopaque() {
+    void BaseNet<T>::reopaque() {
         CHECK(fixed, "network should be fixed");
         for (auto &kv : inner_signals) {
             auto signal = kv.second;
@@ -168,7 +168,7 @@ namespace gs
     }
     
     template<typename T>
-    void NetBase<T>::forward() {
+    void BaseNet<T>::forward() {
         CHECK(fixed, "network should be fixed");
         for (auto filter : fp_filters) {
             filter->forward();
@@ -176,7 +176,7 @@ namespace gs
     }
     
     template<typename T>
-    void NetBase<T>::backward() {
+    void BaseNet<T>::backward() {
         CHECK(fixed, "network should be fixed");
         for (int i = fp_filters.size()-1; i >= 0; i--) {
             auto filter = fp_filters[i];
