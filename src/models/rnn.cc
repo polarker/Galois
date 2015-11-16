@@ -76,8 +76,8 @@ namespace gs
             x_ids.push_back(generate_id("x", i));
             y_ids.push_back(generate_id("y", i));
         }
-        this->set_input_ids(x_ids);
-        this->set_output_ids(y_ids);
+        this->add_input_ids(x_ids);
+        this->add_output_ids(y_ids);
 
         this->compile();
     }

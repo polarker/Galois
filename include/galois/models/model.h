@@ -48,12 +48,12 @@ namespace gs
         void add_link(const initializer_list<string>, const string, SP_Filter<T>);
         void add_link(const string, const initializer_list<string>, SP_Filter<T>);
         void add_link(const string, const string, SP_Filter<T>);
-        void set_input_ids(const string);
-        void set_input_ids(const initializer_list<string>);
-        void set_input_ids(const vector<string>);
-        void set_output_ids(const string);
-        void set_output_ids(const initializer_list<string>);
-        void set_output_ids(const vector<string>);
+        void add_input_ids(const string);
+        void add_input_ids(const initializer_list<string>);
+        void add_input_ids(const vector<string>);
+        void add_output_ids(const string);
+        void add_output_ids(const initializer_list<string>);
+        void add_output_ids(const vector<string>);
         void compile();
         
         vector<SP_NArray<T>> get_params() {

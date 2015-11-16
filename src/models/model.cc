@@ -42,19 +42,19 @@ namespace gs
     }
 
     template<typename T>
-    void Model<T>::set_input_ids(const string id) {
-        set_input_ids({id});
+    void Model<T>::add_input_ids(const string id) {
+        add_input_ids({id});
     }
     
     template<typename T>
-    void Model<T>::set_input_ids(const initializer_list<string> ids) {
-        set_input_ids(vector<string>(ids));
+    void Model<T>::add_input_ids(const initializer_list<string> ids) {
+        add_input_ids(vector<string>(ids));
     }
     
     template<typename T>
-    void Model<T>::set_input_ids(const vector<string> ids) {
+    void Model<T>::add_input_ids(const vector<string> ids) {
         CHECK(input_ids.empty(), "input_ids should not be set before");
-        net.set_input_ids(ids);
+        net.add_input_ids(ids);
         input_ids = ids;
         for (int i = 0; i < input_ids.size(); i++) {
             input_signals.push_back(make_shared<Signal<T>>(InputSignal));
@@ -62,19 +62,19 @@ namespace gs
     }
 
     template<typename T>
-    void Model<T>::set_output_ids(const string id) {
-        set_output_ids({id});
+    void Model<T>::add_output_ids(const string id) {
+        add_output_ids({id});
     }
     
     template<typename T>
-    void Model<T>::set_output_ids(const initializer_list<string> ids) {
-        set_output_ids(vector<string>(ids));
+    void Model<T>::add_output_ids(const initializer_list<string> ids) {
+        add_output_ids(vector<string>(ids));
     }
     
     template<typename T>
-    void Model<T>::set_output_ids(const vector<string> ids) {
+    void Model<T>::add_output_ids(const vector<string> ids) {
         CHECK(output_ids.empty(), "output_ids should not be set before");
-        net.set_output_ids(ids);
+        net.add_output_ids(ids);
         output_ids = ids;
         for (int j = 0; j < output_ids.size(); j++) {
             output_signals.push_back(make_shared<Signal<T>>(OutputSignal));

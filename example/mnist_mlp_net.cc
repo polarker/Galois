@@ -18,8 +18,8 @@ int main()
     model.add_link("raw_h1", "h1", make_shared<Tanh<T>>());
     model.add_link("h1", "raw_h2", make_shared<Linear<T>>(1024, 10));
     model.add_link("raw_h2", "predicitons", make_shared<CrossEntropy<T>>());
-    model.set_input_ids("images");
-    model.set_output_ids("predicitons");
+    model.add_input_ids("images");
+    model.add_output_ids("predicitons");
 
     auto train_images = mnist::read_images<T>("./data/train-images-idx3-ubyte.gz");
     auto train_labels = mnist::read_labels<T>("./data/train-labels-idx1-ubyte.gz");

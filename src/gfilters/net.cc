@@ -45,17 +45,17 @@ namespace gs {
     }
     
     template<typename T>
-    void Net<T>::set_input_ids(const string id) {
-        set_input_ids({id});
+    void Net<T>::add_input_ids(const string id) {
+        add_input_ids({id});
     }
     
     template<typename T>
-    void Net<T>::set_input_ids(const initializer_list<string> ids) {
-        set_input_ids(vector<string>(ids));
+    void Net<T>::add_input_ids(const initializer_list<string> ids) {
+        add_input_ids(vector<string>(ids));
     }
     
     template<typename T>
-    void Net<T>::set_input_ids(const vector<string>& ids) {
+    void Net<T>::add_input_ids(const vector<string>& ids) {
         CHECK(!this->fixed, "network should not be fixed");
         CHECK(this->input_ids.empty(), "input_ids should not be set");
         this->input_ids.insert(this->input_ids.end(), ids.begin(), ids.end());
@@ -65,17 +65,17 @@ namespace gs {
     }
     
     template<typename T>
-    void Net<T>::set_output_ids(const string id) {
-        set_output_ids({id});
+    void Net<T>::add_output_ids(const string id) {
+        add_output_ids({id});
     }
     
     template<typename T>
-    void Net<T>::set_output_ids(const initializer_list<string> ids) {
-        set_output_ids(vector<string>(ids));
+    void Net<T>::add_output_ids(const initializer_list<string> ids) {
+        add_output_ids(vector<string>(ids));
     }
     
     template<typename T>
-    void Net<T>::set_output_ids(const vector<string>& ids) {
+    void Net<T>::add_output_ids(const vector<string>& ids) {
         CHECK(!this->fixed, "network should not be fixed");
         CHECK(this->output_ids.empty(), "output_ids should not be set");
         this->output_ids.insert(this->output_ids.end(), ids.begin(), ids.end());
@@ -139,8 +139,8 @@ namespace gs {
             auto copy_of_filter = filter->share();
             res->add_link(ins, outs, copy_of_filter);
         }
-        res->set_input_ids(this->input_ids);
-        res->set_output_ids(this->output_ids);
+        res->add_input_ids(this->input_ids);
+        res->add_output_ids(this->output_ids);
         res->set_p_order();
         
         CHECK(res->fp_filters == this->fp_filters, "these should be equal");
