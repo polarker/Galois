@@ -51,18 +51,20 @@ namespace gs
         }
     }
     
-//    template<typename T>
-//    void NArray<T>::copy_from(const vector<int> &dims, const T* data) {
-//        CHECK(dims == this->dims, "the dimension should be equal");
-//        for (int i = 0; i < this->get_size(); i++) {
-//            this->data[i] = data[i];
-//        }
-//        setclear();
-//    }
+    template<typename T>
+    void NArray<T>::copy_from(const SP_NArray<T> other) {
+        auto other_dims = other->get_dims();
+        CHECK(other_dims == this->dims, "the dimension should be equal");
+
+        auto other_ptr = other->get_data();
+        for (int i = 0; i < this->get_size(); i++) {
+            this->data[i] = other_ptr[i];
+        }
+        setclear();
+    }
 
     template<typename T>
     void NArray<T>::copy_from(const vector<int> &idxs, const SP_NArray<T> dataset) {
-        // copy a batch from dataset
         auto dataset_dims = dataset->get_dims();
         CHECK(idxs.size() == this->dims[0], "first dimension should be equal to batch size");
         CHECK(dataset_dims.size() == this->dims.size(), "number of dimensions should be equal");
@@ -81,10 +83,32 @@ namespace gs
         }
         setclear();
     }
+
+    template<typename T>
+    void NArray<T>::copy_from(const vector<int> &idx0s, int idx1, const SP_NArray<T> dataset) {
+        auto dataset_dims = dataset->get_dims();
+        CHECK(idx0s.size() == this->dims[0], "first dimension should be equal to batch size");
+        CHECK(dataset_dims.size() == this->dims.size()+1, "number of dimensions should be equal");
+        for (int i = 2; i < this->dims.size(); i++) {
+            CHECK(dataset_dims[i] == this->dims[i-1], "dimensions should be equal");
+        }
+        CHECK(idx1 >= 0 && idx1 < this->dims[1], "invalid index");
+
+        int batch_size = this->dims[0];
+        int stride = this->get_size() / batch_size;
+        int dataset_stride = dataset->get_size() / dataset_dims[0];
+        auto dataset_ptr = dataset->get_data();
+        for (int i = 0; i < batch_size; i++) {
+            CHECK(idx0s[i] >= 0 && idx0s[i] < dataset_dims[0], "invalid index");
+            for (int j = 0; j < stride; j++) {
+                this->data[i*stride + j] = dataset_ptr[idx0s[i]*dataset_stride + idx1*stride + j];
+            }
+        }
+        setclear();
+    }
     
     template<typename T>
     void NArray<T>::copy_from(const int start_from, const int copy_size, const SP_NArray<T> dataset) {
-        // copy a batch from dataset
         auto dataset_dims = dataset->get_dims();
         CHECK(copy_size == this->dims[0], "the size of copy should be equal to batch size");
         CHECK(dataset_dims.size() == this->dims.size(), "number of dimensions should be equal");

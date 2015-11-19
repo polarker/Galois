@@ -66,6 +66,12 @@ namespace gs
     void OrderedNet<T>::fix_net() {
         CHECK(!this->fixed, "network should not be fixed");
         this->fixed = true;
+
+//        for (auto t : this->links) {
+//            auto in_ids = get<0>(t);
+//            auto out_ids = get<1>(t);
+//            cout << in_ids[0] << " -> " << out_ids[0] <<endl;
+//        }
     }
     
     template<typename T>
@@ -89,19 +95,15 @@ namespace gs
     template<typename T>
     void OrderedNet<T>::forward(int idx) {
         CHECK(this->fixed, "network should be fixed");
-        for (int i = idx; i < this->fp_filters.size(); i++) {
-            auto filter = this->fp_filters[i];
-            filter->forward();
-        }
+        auto filter = this->fp_filters[idx];
+        filter->forward();
     }
     
     template<typename T>
     void OrderedNet<T>::backward(int idx) {
         CHECK(this->fixed, "network should be fixed");
-        for (int i = this->fp_filters.size()-1; i >= idx; i--) {
-            auto filter = this->fp_filters[i];
-            filter->backward();
-        }
+        auto filter = this->fp_filters[idx];
+        filter->forward();
     }
     
     template class OrderedNet<float>;

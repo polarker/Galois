@@ -1,3 +1,5 @@
 #include "galois/models/model.h"
+#include "galois/models/ordered_model.h"
 #include "galois/models/mlp.h"
 #include "galois/models/rnn.h"
+#include "galois/models/seq_encoder_decoder.h"
