@@ -100,6 +100,6 @@ namespace gs
     
 }
 
-#include "narray_functors.cpp"
+#include "narray_functors.cc"
 
 #endif

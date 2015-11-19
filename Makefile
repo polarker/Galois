@@ -1,33 +1,34 @@
-CXX 	:= g++
-CFLAGS 	:= -g -std=c++11 -Wall -O3
+CXX     := g++
+CFLAGS  := -g -std=c++11 -Wall -O3
 
-SRCDIR 		:= src
-BUILDDIR 	:= build
-BINDIR 		:= bin
-EXAMPLEDIR 	:= example
-TESTDIR 	:= test
+SRCDIR      := src
+INCDIR      := include/galois
+BUILDDIR    := build
+BINDIR      := bin
+EXAMPLEDIR  := example
+TESTDIR     := test
 
-SRC 		:= $(wildcard $(SRCDIR)/*.cc 		$(SRCDIR)/*/*.cc)
-EXAMPLESRC 	:= $(wildcard $(EXAMPLEDIR)/*.cc 	$(EXAMPLEDIR)/*/*.cc)
-TESTSRC		:= $(wildcard $(TESTDIR)/*.cc 		$(TESTDIR)/*/*.cc)
+SRC         := $(wildcard $(SRCDIR)/*.cc        $(SRCDIR)/*/*.cc)
+EXAMPLESRC  := $(wildcard $(EXAMPLEDIR)/*.cc    $(EXAMPLEDIR)/*/*.cc)
+TESTSRC     := $(wildcard $(TESTDIR)/*.cc       $(TESTDIR)/*/*.cc)
 
-OBJ 		:= $(patsubst $(SRCDIR)/%.cc, 		$(BUILDDIR)/%.o, 		$(SRC))
-EXAMPLEOBJ 	:= $(patsubst $(EXAMPLEDIR)/%.cc, 	$(BUILDDIR)/example/%.o, $(EXAMPLESRC))
-TESTOBJ 	:= $(patsubst $(TESTDIR)/%.cc, 		$(BUILDDIR)/test/%.o, 	$(TESTSRC))
+OBJ         := $(patsubst $(SRCDIR)/%.cc,       $(BUILDDIR)/%.o,        $(SRC))
+EXAMPLEOBJ  := $(patsubst $(EXAMPLEDIR)/%.cc,   $(BUILDDIR)/example/%.o, $(EXAMPLESRC))
+TESTOBJ     := $(patsubst $(TESTDIR)/%.cc,      $(BUILDDIR)/test/%.o,   $(TESTSRC))
 
-EXAMPLE 	:= $(patsubst $(EXAMPLEDIR)/%.cc, 	$(BINDIR)/%, $(EXAMPLESRC))
-TEST		:= $(patsubst $(TESTDIR)/%.cc, 		$(BINDIR)/%, $(TESTSRC))
+EXAMPLE     := $(patsubst $(EXAMPLEDIR)/%.cc,   $(BINDIR)/%, $(EXAMPLESRC))
+TEST        := $(patsubst $(TESTDIR)/%.cc,      $(BINDIR)/%, $(TESTSRC))
 
 # platform detection
 OS := $(shell uname -s)
 
 ifeq ($(OS), Darwin)
-	INC 		:= -I include
-	LIB 		:= -lz -framework accelerate
+	INC         := -I include
+	LIB         := -lz -framework accelerate
 else
 	OPENBLASDIR := /opt/OpenBLAS # set /your_path/OpenBLAS
-	INC 		:= -I include -I $(OPENBLASDIR)/include
-	LIB			:= -lz -L $(OPENBLASDIR)/lib
+	INC         := -I include -I $(OPENBLASDIR)/include
+	LIB         := -lz -L $(OPENBLASDIR)/lib
 endif
 
 .PHONY: all clean
@@ -48,11 +49,12 @@ $(TESTOBJ): $(BUILDDIR)/test/%.o: $(TESTDIR)/%.cc
 	@mkdir -p $(@D)
 	$(CXX) $(CFLAGS) $(INC) -c $< -o $@
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.cc
+$(OBJ): $(BUILDDIR)/%.o: $(SRCDIR)/%.cc $(INCDIR)/%.h
 	@mkdir -p $(@D)
 	$(CXX) $(CFLAGS) $(INC) -c $< -o $@
+
+$(BUILDDIR)/narray.o: $(INCDIR)/narray_functors.cc
 
 clean:
 	rm -r $(BUILDDIR)/*
 	rm -r $(BINDIR)/*
-
