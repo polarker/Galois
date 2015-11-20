@@ -35,7 +35,6 @@ namespace gs {
         CHECK(out_signals.size() == 1, "only need 1 out signal");
         
         in_signal = in_signals[0];
-        CHECK(in_signal->get_type() == InputSignal, "in signal should be type inputsignal");
         out_signal = out_signals[0];
     }
 

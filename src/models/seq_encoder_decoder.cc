@@ -48,7 +48,7 @@ namespace gs
         auto x2hraw_decoder = vector<SP_Filter<T>>();
         for (int i = 0; i < hidden_sizes.size(); i++) {
             if (i == 0) {
-                    x2hraw_decoder.push_back(make_shared<Embedding<T>>(input_size, hidden_sizes[i]));
+                    x2hraw_decoder.push_back(make_shared<Embedding<T>>(output_size, hidden_sizes[i]));
             } else {
                 x2hraw_decoder.push_back(make_shared<Linear<T>>(hidden_sizes[i-1], hidden_sizes[i]));
             }

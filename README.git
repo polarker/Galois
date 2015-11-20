@@ -5,6 +5,6 @@ Galois is a work in progress. It only supports CPU computing for the moment. It 
 Todo list (not in priority order):
 - RMSprop, Adagrad
 - dynamic model
-- sequence encoder decoder
 - filters: lstm, dropout, cnn, etc
 - narray: better api, cuda version
+- more I/O utils
