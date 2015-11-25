@@ -36,6 +36,7 @@ endif
 all: $(EXAMPLE) $(TEST)
 
 $(EXAMPLE): $(BINDIR)/%: $(BUILDDIR)/example/%.o $(OBJ)
+	@mkdir -p $(@D)
 	$(CXX) $(CFLAGS) $(LIB) $< $(OBJ) -o $@
 
 $(EXAMPLEOBJ): $(BUILDDIR)/example/%.o: $(EXAMPLEDIR)/%.cc
@@ -43,6 +44,7 @@ $(EXAMPLEOBJ): $(BUILDDIR)/example/%.o: $(EXAMPLEDIR)/%.cc
 	$(CXX) $(CFLAGS) $(INC) -c $< -o $@
 
 $(TEST): $(BINDIR)/%: $(BUILDDIR)/test/%.o $(OBJ)
+	@mkdir -p $(@D)
 	$(CXX) $(CFLAGS) $(LIB) $< $(OBJ) -o $@
 
 $(TESTOBJ): $(BUILDDIR)/test/%.o: $(TESTDIR)/%.cc
