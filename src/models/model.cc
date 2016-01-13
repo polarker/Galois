@@ -231,10 +231,10 @@ namespace gs
     double Model<T>::test() {
         double correctness = 0;
         
-        for (int i = 0; i < test_count; i += batch_size) {
+        for (int start_idx = 0; start_idx < test_count; start_idx += batch_size) {
             vector<int> batch_ids(batch_size);
-            for (int j = 0; j < batch_size; j++) {
-                batch_ids[j] = i+j;
+            for (int offset = 0; offset < batch_size; offset++) {
+                batch_ids[offset] = start_idx+offset;
             }
             
             net.reopaque();
@@ -253,8 +253,7 @@ namespace gs
             }
         }
         
-        int test_num = test_count / batch_size * batch_size;
-        return double(correctness) / double(test_num);
+        return double(correctness) / double(test_count);
     }
     
     template<typename T>
