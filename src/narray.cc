@@ -67,10 +67,7 @@ namespace gs
     void NArray<T>::copy_from(const vector<int> &idxs, const SP_NArray<T> dataset) {
         auto dataset_dims = dataset->get_dims();
         CHECK(idxs.size() == this->dims[0], "first dimension should be equal to batch size");
-        CHECK(dataset_dims.size() == this->dims.size(), "number of dimensions should be equal");
-        for (int i = 1; i < this->dims.size(); i++) {
-            CHECK(dataset_dims[i] == this->dims[i], "dimensions should be equal");
-        }
+        CHECK((dataset->get_size() / dataset->get_dims()[0]) == this->get_size() / this->dims[0], "rest dimensions should be equal")
 
         int batch_size = idxs.size();
         int stride = this->get_size() / batch_size;

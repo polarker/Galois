@@ -78,7 +78,7 @@ namespace gs
     
     template<typename T>
     T MLPModel<T>::train_one_batch(const bool update) {
-        uniform_int_distribution<> distribution(0, train_count-1);
+        uniform_int_distribution<int> distribution(0, train_count-1);
         vector<int> batch_ids(batch_size);
         for (int i = 0; i < batch_size; i++) {
             batch_ids[i] = distribution(galois_rn_generator);
@@ -111,7 +111,7 @@ namespace gs
     double MLPModel<T>::test() {
         double correctness = 0;
         
-        for (int i = 0; i < test_count; i += batch_size) {
+        for (int i = 0; i + batch_size <= test_count; i += batch_size) {
             vector<int> batch_ids(batch_size);
             for (int j = 0; j < batch_size; j++) {
                 batch_ids[j] = i+j;

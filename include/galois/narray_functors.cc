@@ -218,23 +218,24 @@ namespace gs
                const L beta, const SP_NArray<L> C) {
         assert(tA == 'T' || tA == 'N');
         assert(tB == 'T' || tB == 'N');
-        assert(A->get_dims().size() == 2);
-        assert(B->get_dims().size() == 2);
-        auto A_dims = A->get_dims();
-        auto B_dims = B->get_dims();
-        auto C_dims = C->get_dims();
+        int A0 = A->get_dims()[0];
+        int A1 = A->get_size() / A0;
+        int B0 = B->get_dims()[0];
+        int B1 = B->get_size() / B0;
+        int C0 = C->get_dims()[0];
+        int C1 = C->get_size() / C0;
         auto t_A = tA=='T' ? CblasTrans : CblasNoTrans;
         auto t_B = tB=='T' ? CblasTrans : CblasNoTrans;
-        auto M   = tA=='T' ? A_dims[1] : A_dims[0];
-        auto K_A = tA=='T' ? A_dims[0] : A_dims[1];
-        auto K_B = tB=='T' ? B_dims[1] : B_dims[0];
-        auto N   = tB=='T' ? B_dims[0] : B_dims[1];
+        auto M   = tA=='T' ? A1 : A0;
+        auto K_A = tA=='T' ? A0 : A1;
+        auto K_B = tB=='T' ? B1 : B0;
+        auto N   = tB=='T' ? B0 : B1;
         assert(K_A == K_B);
-        assert(C->get_dims() == vector<int>({M, N}));
+        assert(C0 == M && C1 == N);
         auto K   = K_A;
-        auto lda = A_dims[1];
-        auto ldb = B_dims[1];
-        auto ldc = C_dims[1];
+        auto lda = A1;
+        auto ldb = B1;
+        auto ldc = C1;
         _GEMM(CblasRowMajor,
               t_A, t_B,
               M, N, K,

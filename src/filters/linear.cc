@@ -48,7 +48,10 @@ namespace gs {
         if (in_signal->empty()) {
             in_signal->set_data_dims(batch_size, in_size);
         } else {
-            CHECK(in_signal->get_data_dims() ==  vector<int>({batch_size, in_size}), "the dimension of in signal is wrong");
+            auto in_dims = in_signal->get_data_dims();
+            int in_batch_size = in_dims[0];
+            int in_rest_dim = in_signal->get_data()->get_size() / in_batch_size;
+            CHECK(in_dims.size() >= 2 && in_batch_size == batch_size && in_rest_dim == in_size, "the dimension of in signal is wrong");
         }
         if (out_signal->empty()) {
             out_signal->set_data_dims(batch_size, out_size);

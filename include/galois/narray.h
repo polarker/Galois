@@ -73,28 +73,11 @@ namespace gs
     
     template<typename T>
     ostream& operator<<(std::ostream &strm, const SP_NArray<T> M) {
-        // currently, only surpport matrix
-        auto M_dims = M->get_dims();
         auto M_ptr = M->get_data();
-        CHECK(M_dims.size() <= 2, "only support upto 2 dimensional array");
-        int m = 0;
-        int n = 0;
-        if (M_dims.size() == 1) {
-            m = 1;
-            n = M_dims[0];
-        } else {
-            m = M_dims[0];
-            n = M_dims[1];
+        for (int i = 0; i < M->get_size(); i++) {
+            strm << M_ptr[i] << '\t';
         }
-        
-        strm << '[' << endl;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                strm << M_ptr[i*n + j] << '\t';
-            }
-            strm << endl;
-        }
-        strm << ']' << endl;
+        strm << endl;
         return strm;
     }
     

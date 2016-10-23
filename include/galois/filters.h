@@ -3,3 +3,5 @@
 #include "galois/filters/linear.h"
 #include "galois/filters/embedding.h"
 #include "galois/filters/cross_entropy.h"
+#include "galois/filters/convolution.h"
+#include "galois/filters/max_pooling.h"

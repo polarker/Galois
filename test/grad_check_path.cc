@@ -16,11 +16,13 @@ int main()
     T learning_rate = 0.01;
     MLPModel<T> model(batch_size, num_epoch, learning_rate, "sgd");
 
-    auto l1 = make_shared<Linear<T>>(28*28, 1024);
-    auto l2 = make_shared<Linear<T>>(1024, 10);
+    auto l1 = make_shared<Convolution<T>>(28, 28, 1, 20, 5, 5);
+    auto lm = make_shared<MaxPooling<T>>(2, 2, 2, 2);
+    auto l2 = make_shared<Linear<T>>(20*12*12, 10);
 
     model.add_filter(l1);
     model.add_filter(make_shared<Tanh<T>>());
+    model.add_filter(lm);
     model.add_filter(l2);
     model.add_filter(make_shared<CrossEntropy<T>>());
     model.compile();
@@ -33,7 +35,7 @@ int main()
     auto grads = model.get_grads();
 
     srand(time(NULL));
-    for (int k = 0; k < 10; k++) {
+    for (int k = 0; k < 100; k++) {
         int idx;
         idx = rand() % params.size();
         auto p = params[idx];
@@ -42,7 +44,7 @@ int main()
         idx = rand() % p->get_size();
 
         auto old_pi = p->get_data()[idx];
-        T delta = 1e-5;
+        T delta = 1e-6;
         model.train_one_batch(false);
         auto grad = dp->get_data()[idx];
 
