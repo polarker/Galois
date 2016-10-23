@@ -1,3 +1,5 @@
+#include "galois/narray.h"
+#include "galois/narray_functors.h"
 #include "galois/filters/general_tanh.h"
 #include <cmath>
 

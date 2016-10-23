@@ -1,3 +1,9 @@
+#ifndef _GALOIS_NARRAY_FUNCTORS_H_
+#define _GALOIS_NARRAY_FUNCTORS_H_
+
+#include <vector>
+#include <Accelerate/Accelerate.h>
+
 namespace gs
 {
 
@@ -491,3 +497,5 @@ namespace gs
     }
 
 }
+
+#endif

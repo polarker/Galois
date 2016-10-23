@@ -1,6 +1,7 @@
 #include "galois/models.h"
 #include "galois/dataset/chartxt.h"
 #include <cstdlib>
+#include <cassert>
 #include <cmath>
 
 using namespace std;

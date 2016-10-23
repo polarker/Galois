@@ -4,7 +4,6 @@
 #include "galois/utils.h"
 #include <random>
 #include <vector>
-#include <Accelerate/Accelerate.h>
 
 using namespace std;
 
@@ -82,7 +81,5 @@ namespace gs
     }
     
 }
-
-#include "narray_functors.cc"
 
 #endif

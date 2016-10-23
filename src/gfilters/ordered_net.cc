@@ -1,3 +1,5 @@
+#include "galois/narray.h"
+#include "galois/narray_functors.h"
 #include "galois/gfilters/ordered_net.h"
 
 namespace gs

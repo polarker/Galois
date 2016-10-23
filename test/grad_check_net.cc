@@ -2,6 +2,7 @@
 #include "galois/filters.h"
 #include "galois/dataset/mnist.h"
 #include <cstdlib>
+#include <cassert>
 #include <cmath>
 
 using namespace std;
