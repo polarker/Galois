@@ -10,7 +10,7 @@ using namespace gs;
 int main()
 {
     using T = double;
-    
+
     chartxt::Article<T> article("./data/tinyshakespeare.txt");
 
     int seq_length = 3;
@@ -25,7 +25,7 @@ int main()
 
     auto params = model.get_params();
     auto grads = model.get_grads();
-    
+
     model.add_train_dataset(article.get_input_sequence(), article.get_target_sequence());
 
     srand(time(NULL));

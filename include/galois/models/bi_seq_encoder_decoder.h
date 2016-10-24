@@ -9,12 +9,12 @@
 
 namespace gs
 {
-    
+
     template<typename T>
     class BiSeqEncoderDecoder : protected OrderedModel<T>
     {
         static default_random_engine galois_rn_generator;
-        
+
     protected:
         int max_len_one;
         int max_len_another;
@@ -37,10 +37,10 @@ namespace gs
             string optimizer_name);
         BiSeqEncoderDecoder(const BiSeqEncoderDecoder& other) = delete;
         BiSeqEncoderDecoder& operator=(const BiSeqEncoderDecoder&) = delete;
-        
+
         using OrderedModel<T>::get_params;
         using OrderedModel<T>::get_grads;
-        
+
         void add_train_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
         T train_one_batch(const bool update=true);
         void fit();

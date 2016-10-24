@@ -3,16 +3,16 @@
 #include <vector>
 
 namespace gs {
-    
+
     template<typename T>
     void Net<T>::add_link(const vector<string> &ins, const vector<string> &outs, SP_Filter<T> filter) {
         CHECK(!this->fixed, "network should not be fixed");
-        
+
         // add to links
         auto idx = this->links.size();
         this->links.push_back(tuple<const vector<string>,const vector<string>,SP_Filter<T>>
                         (vector<string>{ins}, vector<string>{outs}, filter));
-        
+
         // add to graph
         for (auto s : ins) {
             if (fp_graph.count(s) == 0) {
@@ -30,7 +30,7 @@ namespace gs {
                 bp_graph[s2].push_back(tuple<string,int>(s1, idx));
             }
         }
-        
+
         // initial signals
         for (auto s : ins) {
             if (!Contains(this->input_ids, s) && (this->inner_signals.count(s) == 0)) {
@@ -43,17 +43,17 @@ namespace gs {
             }
         }
     }
-    
+
     template<typename T>
     void Net<T>::add_input_ids(const string id) {
         add_input_ids({id});
     }
-    
+
     template<typename T>
     void Net<T>::add_input_ids(const initializer_list<string> ids) {
         add_input_ids(vector<string>(ids));
     }
-    
+
     template<typename T>
     void Net<T>::add_input_ids(const vector<string>& ids) {
         CHECK(!this->fixed, "network should not be fixed");
@@ -63,17 +63,17 @@ namespace gs {
             this->_remove_signal(id);
         }
     }
-    
+
     template<typename T>
     void Net<T>::add_output_ids(const string id) {
         add_output_ids({id});
     }
-    
+
     template<typename T>
     void Net<T>::add_output_ids(const initializer_list<string> ids) {
         add_output_ids(vector<string>(ids));
     }
-    
+
     template<typename T>
     void Net<T>::add_output_ids(const vector<string>& ids) {
         CHECK(!this->fixed, "network should not be fixed");
@@ -83,7 +83,7 @@ namespace gs {
             this->_remove_signal(id);
         }
     }
-    
+
     template<typename T>
     void Net<T>::_set_fp_order(string out_id, vector<int> &fp_order) {
         if (Contains(this->input_ids, out_id)) {
@@ -93,7 +93,7 @@ namespace gs {
         } else {
             CHECK(bp_graph.count(out_id) == 1, "out_id should be in the keys of bp_graph");
         }
-        
+
         for (auto t : bp_graph[out_id]) {
             string in_id = get<0>(t);
             int link_idx = get<1>(t);
@@ -108,7 +108,7 @@ namespace gs {
             }
         }
     }
-    
+
     template<typename T>
     void Net<T>::set_p_order() {
         CHECK(!this->fixed, "network should not be fixed");
@@ -116,7 +116,7 @@ namespace gs {
         CHECK(!this->output_ids.empty(), "output ids should have been set");
         CHECK(this->fp_filters.empty(), "fp filters should not be set");
         this->fixed = true;
-        
+
         vector<int> fp_order{};
         for (auto out_id : this->output_ids) {
             _set_fp_order(out_id, fp_order);
@@ -127,7 +127,7 @@ namespace gs {
             this->fp_filters.push_back(filter);
         }
     }
-    
+
     template<typename T>
     SP_Filter<T> Net<T>::share() {
         CHECK(this->fixed, "the network should be fixed");
@@ -142,13 +142,13 @@ namespace gs {
         res->add_input_ids(this->input_ids);
         res->add_output_ids(this->output_ids);
         res->set_p_order();
-        
+
         CHECK(res->fp_filters == this->fp_filters, "these should be equal");
-        
+
         return res;
     }
-    
+
     template class Net<float>;
     template class Net<double>;
-    
+
 }

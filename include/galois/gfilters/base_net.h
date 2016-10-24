@@ -11,20 +11,20 @@ using namespace std;
 
 namespace gs
 {
-    
+
     template<typename T>
     class BaseNet : public GFilter<T>
     {
     protected:
         vector<tuple<const vector<string>, const vector<string>, SP_Filter<T>>> links = {};
-        
+
         map<string, SP_Signal<T>> inner_signals = {};
-        
+
         vector<string> input_ids = {};
         vector<string> output_ids = {};
-        
+
         vector<SP_Filter<T>> fp_filters = {};
-        
+
         // the network can be fixed only when members in above are set
         bool fixed = false;
 
@@ -36,60 +36,60 @@ namespace gs
         vector<SP_Signal<T>> _get_signal(vector<string> id,
                                          const vector<SP_Signal<T>> in_signals,
                                          const vector<SP_Signal<T>> out_signals);
-        
+
     public:
         BaseNet() {}
         BaseNet(const BaseNet& other) = delete;
         BaseNet& operator=(const BaseNet&) = delete;
-        
+
         virtual void add_link(const vector<string>&, const vector<string>&, SP_Filter<T>) = 0;
         void add_link(const initializer_list<string>, const initializer_list<string>, SP_Filter<T>);
         void add_link(const initializer_list<string>, const string, SP_Filter<T>);
         void add_link(const string, const initializer_list<string>, SP_Filter<T>);
         void add_link(const string, const string, SP_Filter<T>);
-        
+
         // in order to share a net, methods above should be called and methods below should not be called
         set<SP_PFilter<T>> get_pfilters() override;
-        
+
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
         void set_dims(int batch_size) override;
         void reopaque() override;
-        
+
         void forward() override;
         void backward() override;
     };
-    
+
     template<typename T>
     void BaseNet<T>::add_link(const initializer_list<string> ins, const initializer_list<string> outs, SP_Filter<T> filter){
         CHECK(!fixed, "network should not be fixed");
         add_link(vector<string>(ins), vector<string>(outs), filter);
     }
-    
+
     template<typename T>
     void BaseNet<T>::add_link(const initializer_list<string> ins, const string outs, SP_Filter<T> filter){
         CHECK(!fixed, "network should not be fixed");
         add_link(ins, {outs}, filter);
     }
-    
+
     template<typename T>
     void BaseNet<T>::add_link(const string ins, const initializer_list<string> outs, SP_Filter<T> filter){
         CHECK(!fixed, "network should not be fixed");
         add_link({ins}, outs, filter);
     }
-    
+
     template<typename T>
     void BaseNet<T>::add_link(const string ins, const string outs, SP_Filter<T> filter){
         CHECK(!fixed, "network should not be fixed");
         add_link({ins}, {outs}, filter);
     }
-    
+
     template<typename T>
     void BaseNet<T>::_remove_signal(string id) {
         if (inner_signals.count(id) > 0) {
             inner_signals.erase(id);
         }
     }
-    
+
     template<typename T>
     SP_Signal<T> BaseNet<T>::_get_signal(string id,
                                          const vector<SP_Signal<T>> in_signals,
@@ -106,7 +106,7 @@ namespace gs
         }
         return inner_signals[id];
     }
-    
+
     template<typename T>
     vector<SP_Signal<T>> BaseNet<T>::_get_signal(vector<string> ids,
                                                  const vector<SP_Signal<T>> in_signals,
@@ -117,7 +117,7 @@ namespace gs
         }
         return res;
     }
-    
+
     template<typename T>
     set<SP_PFilter<T>> BaseNet<T>::get_pfilters() {
         CHECK(fixed, "network should be fixed");
@@ -133,7 +133,7 @@ namespace gs
         }
         return pfilters;
     }
-    
+
     template<typename T>
     void BaseNet<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
         CHECK(fixed, "network should be fixed");
@@ -145,7 +145,7 @@ namespace gs
                                     _get_signal(outs, in_signals, out_signals));
         }
     }
-    
+
     template<typename T>
     void BaseNet<T>::set_dims(int batch_size) {
         CHECK(fixed, "network should be fixed");
@@ -154,7 +154,7 @@ namespace gs
             filter->set_dims(batch_size);
         }
     }
-    
+
     template<typename T>
     void BaseNet<T>::reopaque() {
         CHECK(fixed, "network should be fixed");
@@ -166,7 +166,7 @@ namespace gs
             filter->reopaque();
         }
     }
-    
+
     template<typename T>
     void BaseNet<T>::forward() {
         CHECK(fixed, "network should be fixed");
@@ -174,7 +174,7 @@ namespace gs
             filter->forward();
         }
     }
-    
+
     template<typename T>
     void BaseNet<T>::backward() {
         CHECK(fixed, "network should be fixed");
@@ -185,5 +185,5 @@ namespace gs
     }
 
 }
-            
+
 #endif

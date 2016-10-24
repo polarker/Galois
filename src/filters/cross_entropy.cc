@@ -4,31 +4,31 @@
 #include <cmath>
 
 namespace gs {
-    
+
     template<typename T>
     SP_Filter<T> CrossEntropy<T>::share() {
         CHECK(in_signal == nullptr, "in signal should not be set");
         CHECK(out_signal == nullptr, "out signal should not be set");
         return make_shared<CrossEntropy<T>>();
     }
-    
+
     template<typename T>
     void CrossEntropy<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
         CHECK(in_signal == nullptr, "in_signal should not be initialized before");
         CHECK(out_signal == nullptr, "out_signal should not be initialized before");
         CHECK(in_signals.size() == 1, "only need 1 in signal");
         CHECK(out_signals.size() == 1, "only need 1 out signal");
-        
+
         in_signal = in_signals[0];
         out_signal = out_signals[0];
         CHECK(out_signal->get_type() == OutputSignal, "OutputSignal is needed");
     }
-    
+
     template<typename T>
     void CrossEntropy<T>::set_dims(int batch_size) {
         CHECK(!in_signal->empty(), "in signal should be empty");
         auto in_dims = in_signal->get_data_dims();
-        
+
         CHECK(out_signal->get_type() == OutputSignal, "OutputSignal is needed");
         CHECK(out_signal->empty(), "out signal should be empty");
         softmax_output = make_shared<NArray<T>>(in_dims);
@@ -44,21 +44,21 @@ namespace gs {
         CHECK(!in_data->opaque(), "in_data should not be opaque");
         CHECK(out_data->opaque(), "out_data should be opaque");
         CHECK(softmax_output->opaque(), "this should be opaque");
-        
+
         // softmax function
         MAP(softmax_output, [](T x){return exp(x);}, in_data);
         softmax_output->normalize_for(NARRAY_DIM_ZERO);
-        
+
         // compute prediction
         MAXIDX_EACH_ROW(out_data, softmax_output);
-        
+
         // compute loss
         auto target = out_signal->get_target();
         auto loss = out_signal->get_loss();
         PROJ_MAP_SUM(loss.get(), [](T x){return -log(x);}, softmax_output, target);
         *loss /= target->get_size();
     }
-    
+
     template<typename T>
     void CrossEntropy<T>::backward() {
         auto in_grad = in_signal->get_grad();

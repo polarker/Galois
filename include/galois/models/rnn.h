@@ -9,7 +9,7 @@
 
 namespace gs
 {
-    
+
     template<typename T>
     class RNN : protected Model<T>
     {
@@ -39,10 +39,10 @@ namespace gs
             bool use_embedding=false);
         RNN(const RNN& other) = delete;
         RNN& operator=(const RNN&) = delete;
-        
+
         using Model<T>::get_params;
         using Model<T>::get_grads;
-        
+
         void add_train_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
         void add_test_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
         T train_one_batch(const int start_from, const bool update=true);

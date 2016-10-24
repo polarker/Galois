@@ -10,7 +10,7 @@
 using namespace std;
 
 namespace gs {
-    
+
     template <typename T>
     const bool Contains(vector<T>& Vec, const T& Element)
     {
@@ -19,7 +19,7 @@ namespace gs {
         else
             return false;
     }
-    
+
 }
 
 #endif

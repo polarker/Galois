@@ -13,47 +13,47 @@ using namespace std;
 namespace gs
 {
     enum SignalType { InnerSignal, InputSignal, OutputSignal };
-    
+
     // for performance reason, polymorphism is not used
     template<typename T>
     class Signal
     {
     private:
         const SignalType type;
-        
+
         SP_NArray<T> data = nullptr;
         // only for inner signal
         SP_NArray<T> grad = nullptr;
-        
+
         // only for output signal
         SP_NArray<T> target = nullptr;
         shared_ptr<T> loss = nullptr;
-        
+
     public:
         Signal() = delete;
         explicit Signal(SignalType type) : type(type) {};
         Signal(const Signal& other) = delete;
         Signal& operator=(const Signal&) = delete;
-        
+
         bool empty() {
             return (data == nullptr) &&
                    (grad == nullptr) &&
                    (target == nullptr) &&
                    (loss == nullptr);
         }
-        
+
         SignalType      get_type()      { return type;  }
         SP_NArray<T>    get_data()      { return data;  }
         SP_NArray<T>    get_grad()      { return grad;  }
         SP_NArray<T>    get_target()    { return target;}
         shared_ptr<T>   get_loss()      { return loss;  }
-        
+
         void reopaque() {
             if (data)   { data->reopaque(); }
             if (grad)   { grad->reopaque(); }
             if (target) { target->reopaque(); }
         }
-        
+
         // set dims for data (and grad)
         void set_data_dims(int m)                        { set_data_dims({m}); }
         void set_data_dims(int m, int n)                 { set_data_dims({m,n}); }
@@ -100,8 +100,8 @@ namespace gs
     };
     template<typename T>
     using SP_Signal = shared_ptr<Signal<T>>;
-    
-    
+
+
     // Filter does forward/backward propagation
     template<typename T>
     class Filter
@@ -117,26 +117,40 @@ namespace gs
     };
     template<typename T>
     using SP_Filter = shared_ptr<Filter<T>>;
-    
+
     template<typename T>
     class BFilter : public Filter<T> {};
-    
+
     template<typename T>
-    class PFilter : public Filter<T> {
+    class PFilter : public Filter<T>
+    {
+    private:
+        bool params_fixed = false;
     public:
         virtual vector<SP_NArray<T>> get_params() = 0;
         virtual vector<SP_NArray<T>> get_grads() = 0;
+        void fix_params() { params_fixed = true; }
+        bool is_params_fixed() { return params_fixed; }
     };
     template<typename T>
     using SP_PFilter = shared_ptr<PFilter<T>>;
-    
+
     template<typename T>
     class GFilter : public Filter<T>
     {
+    private:
+        bool params_fixed = false;
     public:
         virtual set<SP_PFilter<T>> get_pfilters() = 0;
+        void fix_params() {
+            for (auto sp : get_pfilters()) {
+                sp->fix_params();
+            }
+            params_fixed = true;
+        }
+        bool is_params_fixed() { return params_fixed; }
     };
-    
+
 }
 
 #endif

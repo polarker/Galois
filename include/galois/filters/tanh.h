@@ -4,7 +4,7 @@
 #include "galois/base.h"
 
 namespace gs {
-    
+
     template<typename T>
     class Tanh : public BFilter<T> {
     private:
@@ -14,17 +14,17 @@ namespace gs {
         Tanh() {}
         Tanh(const Tanh&) = delete;
         Tanh& operator=(const Tanh&) = delete;
-        
+
         SP_Filter<T> share() override;
         void reopaque() override {}
-        
+
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
         void set_dims(int batch_size) override;
 
         void forward() override;
         void backward() override;
     };
-    
+
 }
 
 #endif

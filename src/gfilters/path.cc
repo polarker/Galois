@@ -3,11 +3,11 @@
 
 namespace gs
 {
-    
+
     template<typename T>
     void Path<T>::add_filter(SP_Filter<T> filter) {
         links.push_back(filter);
-        
+
         if (auto p = dynamic_pointer_cast<PFilter<T>>(filter)) {
             pfilters.insert(p);
         }
@@ -15,12 +15,12 @@ namespace gs
             auto s = g->get_pfilters();
             pfilters.insert(s.begin(), s.end());
         }
-        
+
         if (links.size() > 1) {
             inner_signals.push_back(make_shared<Signal<T>>(InnerSignal));
         }
     }
-    
+
     template<typename T>
     SP_Filter<T> Path<T>::share() {
         auto res = make_shared<Path<T>>();
@@ -30,12 +30,12 @@ namespace gs
         }
         return res;
     }
-    
+
     template<typename T>
     set<SP_PFilter<T>> Path<T>::get_pfilters() {
         return pfilters;
     }
-    
+
     template<typename T>
     void Path<T>::install_signals(const vector<SP_Signal<T>>& in_signals, const vector<SP_Signal<T>>& out_signals) {
         CHECK(in_signals.size() == 1 && out_signals.size() == 1, "Only support 1 in signal and 1 out signal right now");
@@ -59,7 +59,7 @@ namespace gs
             filter->install_signals(vector<SP_Signal<T>>{in}, vector<SP_Signal<T>>{out});
         }
     }
-    
+
     template<typename T>
     void Path<T>::set_dims(int batch_size) {
         CHECK(links.size() == inner_signals.size()+1, "The number of filters and inner signals does not match");
@@ -67,7 +67,7 @@ namespace gs
             filter->set_dims(batch_size);
         }
     }
-    
+
     template<typename T>
     void Path<T>::reopaque() {
         for (auto const& signal : inner_signals) {
@@ -77,14 +77,14 @@ namespace gs
             filter->reopaque();
         }
     }
-    
+
     template<typename T>
     void Path<T>::forward() {
         for (auto const& filter : links) {
             filter->forward();
         }
     }
-    
+
     template<typename T>
     void Path<T>::backward() {
         for (int i = links.size()-1; i >= 0; i--) {
@@ -92,8 +92,8 @@ namespace gs
             filter->backward();
         }
     }
-    
+
     template class Path<float>;
     template class Path<double>;
-    
+
 }

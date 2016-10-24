@@ -54,7 +54,7 @@ namespace gs
             }
         }
         auto h2yraw_decoder = make_shared<Linear<T>>(hidden_sizes.back(), output_size);
-        
+
         for (int i = 0; i < max_len_encoder; i++) {
             for (int j = 0; j < hidden_sizes.size(); j++) {
                 string hraw = seq_generate_id("hraw_encoder", i, j);
@@ -120,7 +120,7 @@ namespace gs
 
         this->compile();
     }
-    
+
     template<typename T>
     void SeqEncoderDecoder<T>::add_train_dataset(const SP_NArray<T> data, const SP_NArray<T> target) {
         auto data_dims = data->get_dims();
@@ -128,7 +128,7 @@ namespace gs
         CHECK(data_dims[0] == target_dims[0], "length of data and target must match");
         CHECK(data_dims.size() == 2 && target_dims.size() == 2, "both should be an array of sentences");
         CHECK(data_dims[1] == max_len_encoder && target_dims[1] == max_len_decoder, "these should match");
-        
+
         CHECK(train_X==nullptr && train_Y==nullptr, "dataset should not be set before");
         train_seq_count = data_dims[0];
         train_X = data;
@@ -142,13 +142,13 @@ namespace gs
         CHECK(data_dims[0] == target_dims[0], "length of data and target must match");
         CHECK(data_dims.size() == 2 && target_dims.size() == 2, "both should be an array of sentences");
         CHECK(data_dims[1] == max_len_encoder && target_dims[1] == max_len_decoder, "these should match");
-        
+
         CHECK(test_X==nullptr && test_Y==nullptr, "dataset should not be set before");
         test_seq_count = data_dims[0];
         test_X = data;
         test_Y = target;
     }
-    
+
     template<typename T>
     T SeqEncoderDecoder<T>::train_one_batch(bool update) {
         uniform_int_distribution<> distribution(0, train_seq_count-1);
@@ -156,14 +156,14 @@ namespace gs
         for (int i = 0; i < this->batch_size; i++) {
             batch_ids[i] = distribution(galois_rn_generator);
         }
-        
+
         this->net.reopaque();
-        
+
         for (int i = 0; i < max_len_encoder; i++) {
             this->input_signals[i]->get_data()->copy_from(batch_ids, i, train_X);
         }
         this->input_signals[max_len_encoder]->get_data()->fill(0); // <EOS> characters
-        
+
 //        this->net.forward();
         int num1 = hidden_sizes.size()*2 + (max_len_encoder-1)*hidden_sizes.size()*3;
         for (int i = 0; i < num1; i++) {
@@ -184,14 +184,14 @@ namespace gs
         if (update) {
             this->optimizer->update();
         }
-        
+
         T loss = 0;
         for (auto output_signal : this->output_signals) {
             loss += *output_signal->get_loss();
         }
         return loss;
     }
-    
+
     // test dataset is not support for the moment
     template<typename T>
     void SeqEncoderDecoder<T>::fit() {
@@ -201,7 +201,7 @@ namespace gs
             printf("Epoch: %2d", k);
             auto start = chrono::system_clock::now();
             T loss = 0;
-            
+
             int len = train_seq_count;
             for (int i = 0; i < len; i += this->batch_size) {
                 loss += train_one_batch(i);
@@ -210,7 +210,7 @@ namespace gs
                 }
             }
             loss /= T(len);
-            
+
             auto end = chrono::system_clock::now();
             chrono::duration<double> eplased_time = end - start;
             printf(", time: %.2fs", eplased_time.count());

@@ -77,9 +77,9 @@ namespace gs
     private:
         int max_len;
         int num_hidden_layer;
-        
+
         SP_Signal<T> initial_input_signal;
-        
+
     public:
         Decoder(const Decoder& other) = delete;
         Decoder& operator=(const Decoder&) = delete;
@@ -99,7 +99,7 @@ namespace gs
                 }
             }
             auto h2yraw = make_shared<Linear<T>>(hidden_sizes.back(), input_size);
-            
+
             for (int i = 0; i < max_len; i++) {
                 for (int j = 0; j < hidden_sizes.size(); j++) {
                     string hraw = bi_seq_generate_id("hraw", i, j);
@@ -124,7 +124,7 @@ namespace gs
                 string y = bi_seq_generate_id("y", i);
                 BaseNet<T>::add_link(yraw, y, make_shared<CrossEntropy<T>>());
             }
-            
+
             auto x_ids = vector<string>();
             auto y_ids = vector<string>();
             for (int i = 0; i < max_len; i++) {
@@ -138,14 +138,14 @@ namespace gs
             this->add_output_ids(y_ids);
 
             this->fix_net();
-            
+
             initial_input_signal = make_shared<Signal<T>>(InputSignal);
         }
 
         SP_Filter<T> share() override {
             throw "to be implemented";
         }
-        
+
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override {
             cout << "virtual function installing signals" << endl;
             auto new_in_signals = vector<SP_Signal<T>>();
@@ -154,7 +154,7 @@ namespace gs
             new_in_signals.insert(new_in_signals.end(), in_signals.begin(), in_signals.end());
             OrderedNet<T>::install_signals(new_in_signals, out_signals);
         }
-        
+
         void forward() override {
             initial_input_signal->get_data()->fill(0);
             OrderedNet<T>::forward();
@@ -222,7 +222,7 @@ namespace gs
 
         this->compile();
     }
-    
+
     template<typename T>
     void BiSeqEncoderDecoder<T>::add_train_dataset(const SP_NArray<T> one, const SP_NArray<T> another) {
         auto one_dims = one->get_dims();
@@ -230,13 +230,13 @@ namespace gs
         CHECK(one_dims[0] == another_dims[0], "length of data and target must match");
         CHECK(one_dims.size() == 2 && another_dims.size() == 2, "both should be an array of sentences");
         CHECK(one_dims[1] == max_len_one && another_dims[1] == max_len_another, "these should match");
-        
+
         CHECK(train_one==nullptr && train_another==nullptr, "dataset should not be set before");
         train_seq_count = one_dims[0];
         train_one = one;
         train_another = another;
     }
-    
+
     template<typename T>
     T BiSeqEncoderDecoder<T>::train_one_batch(bool update) {
         uniform_int_distribution<> distribution(0, train_seq_count-1);
@@ -244,29 +244,29 @@ namespace gs
         for (int i = 0; i < this->batch_size; i++) {
             batch_ids[i] = distribution(galois_rn_generator);
         }
-        
+
         this->net.reopaque();
-        
+
         for (int i = 0; i < max_len_one; i++) {
             this->input_signals[i]->get_data()->copy_from(batch_ids, i, train_one);
         }
         for (int i = max_len_one; i < max_len_one+max_len_another; i++) {
             this->input_signals[i]->get_data()->copy_from(batch_ids, i, train_another);
         }
-        
+
         this->net.forward();
         this->net.backward();
         if (update) {
             this->optimizer->update();
         }
-        
+
         T loss = 0;
         for (auto output_signal : this->output_signals) {
             loss += *output_signal->get_loss();
         }
         return loss;
     }
-    
+
     // test dataset is not support for the moment
     template<typename T>
     void BiSeqEncoderDecoder<T>::fit() {
@@ -276,7 +276,7 @@ namespace gs
             printf("Epoch: %2d", k);
             auto start = chrono::system_clock::now();
             T loss = 0;
-            
+
             int len = train_seq_count;
             for (int i = 0; i < len; i += this->batch_size) {
                 loss += train_one_batch(i);
@@ -285,7 +285,7 @@ namespace gs
                 }
             }
             loss /= T(len);
-            
+
             auto end = chrono::system_clock::now();
             chrono::duration<double> eplased_time = end - start;
             printf(", time: %.2fs", eplased_time.count());

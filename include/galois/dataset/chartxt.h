@@ -11,7 +11,7 @@ using namespace std;
 
 namespace chartxt
 {
-    
+
     template<typename T>
     class Article
     {
@@ -19,16 +19,16 @@ namespace chartxt
         int num_diff_chars = 0;
         map<char, int> char2int = {};
         map<int, char> int2char = {};
-        
+
         int sequence_length = 0;
         gs::SP_NArray<T> sequence = nullptr;
-        
+
     public:
         explicit Article(const string &file_name) {
             ifstream fin;
             char ch;
             int num_chars;
-            
+
             fin.open(file_name);
             CHECK(fin.is_open(), "can not open file");
             num_chars = 0;
@@ -41,11 +41,11 @@ namespace chartxt
                 }
             }
             fin.close();
-            
+
             num_diff_chars = char2int.size();
             sequence_length = num_chars - 1;
             sequence = make_shared<gs::NArray<T>>(num_chars);
-            
+
             cout << "size of chars: " << num_chars << endl;
             cout << "size of different chars: " << char2int.size() << endl;
             fin.open(file_name);
@@ -54,7 +54,7 @@ namespace chartxt
             for (int i = 0; i < num_chars; i++) {
                 fin >> noskipws >> ch;
                 int idx = char2int[ch];
-                
+
                 sequence_ptr[i] = idx;
             }
             fin.close();
@@ -62,7 +62,7 @@ namespace chartxt
         Article() = delete;
         Article(const Article&) = delete;
         Article& operator=(Article &) = delete;
-        
+
         int get_num_diff_chars() {
             return num_diff_chars;
         }
@@ -76,7 +76,7 @@ namespace chartxt
             }
             return input_sequence;
         }
-        
+
         gs::SP_NArray<T> get_vectorized_input_sequence() {
             auto vectorized_input_sequence = make_shared<gs::NArray<T>>(sequence_length, num_diff_chars);
             auto vectorized_input_sequence_ptr = vectorized_input_sequence->get_data();
@@ -93,7 +93,7 @@ namespace chartxt
             }
             return vectorized_input_sequence;
         }
-        
+
         gs::SP_NArray<T> get_target_sequence() {
             auto target_sequence = make_shared<gs::NArray<T>>(sequence_length);
             auto target_sequence_ptr = target_sequence->get_data();
@@ -104,7 +104,7 @@ namespace chartxt
             return target_sequence;
         }
     };
-    
+
 }
 
 #endif

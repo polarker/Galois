@@ -36,7 +36,7 @@ namespace gs
         }
         *res = sum;
     }
-    
+
     // currently, only two dimensional array are supported
     // b[n] +> Y[m,n]
     template<typename T>
@@ -46,7 +46,7 @@ namespace gs
         assert(Y_dims.size() == 2);
         assert(b_dims.size() == 1);
         assert(Y_dims[1] == b_dims[0]);
-        
+
         auto m = Y_dims[0];
         auto n = Y_dims[1];
         auto Y_ptr = Y->get_data();
@@ -66,7 +66,7 @@ namespace gs
             }
         }
     }
-    
+
     // currently, only two dimensional array are supported
     // Y[m,n] +> b[n]
     template<typename T>
@@ -97,7 +97,7 @@ namespace gs
             }
         }
     }
-    
+
     // currently, only two dimensional array are supported
     // X[m,n] -> Y[m]
     template<typename T>
@@ -106,7 +106,7 @@ namespace gs
         auto X_dims = X->get_dims();
         auto Y_dims = Y->get_dims();
         assert(X_dims.size() == 2 && Y_dims.size() == 1);
-        
+
         int m = X_dims[0];
         int n = X_dims[1];
         assert(m == Y_dims[0]);
@@ -135,7 +135,7 @@ namespace gs
         auto Y_dims = Y->get_dims();
         auto indexs_dims = indexs->get_dims();
         assert(X_dims.size() == 2 && Y_dims.size() == 2 && indexs_dims.size() == 1);
-        
+
         int m = X_dims[0];
         int n = X_dims[1];
         assert(n == Y_dims[1]);
@@ -144,7 +144,7 @@ namespace gs
         auto X_ptr = X->get_data();
         auto Y_ptr = Y->get_data();
         auto indexs_ptr = indexs->get_data();
-        
+
         if (Y->opaque()) {
             for (int i = 0; i < k; i++) {
                 int idx = int(indexs_ptr[i]);
@@ -164,7 +164,7 @@ namespace gs
             }
         }
     }
-    
+
     // currently, only two dimensional array are supported
     // Y[k,n] -> X[m,n] with k <= m
     template<typename T>
@@ -173,7 +173,7 @@ namespace gs
         auto Y_dims = Y->get_dims();
         auto indexs_dims = indexs->get_dims();
         assert(X_dims.size() == 2 && Y_dims.size() == 2 && indexs_dims.size() == 1);
-        
+
         int m = X_dims[0];
         int n = X_dims[1];
         assert(n == Y_dims[1]);
@@ -182,7 +182,7 @@ namespace gs
         auto X_ptr = X->get_data();
         auto Y_ptr = Y->get_data();
         auto indexs_ptr = indexs->get_data();
-        
+
         if (X->opaque()) {
             X->fill(T(0.0));
             X->setclear();
@@ -195,7 +195,7 @@ namespace gs
             }
         }
     }
-    
+
     inline void _GEMM(const enum CBLAS_ORDER _order,
                       const enum CBLAS_TRANSPOSE _tranA, const enum CBLAS_TRANSPOSE _tranB,
                       const int _M, const int _N, const int _K,
@@ -206,7 +206,7 @@ namespace gs
                       float *_C, const int _ldc) {
         cblas_sgemm(_order, _tranA, _tranB, _M, _N, _K, _alpha, _A, _lda, _B, _ldb, _beta, _C, _ldc);
     }
-    
+
     inline void _GEMM(const enum CBLAS_ORDER _order,
                       const enum CBLAS_TRANSPOSE _tranA, const enum CBLAS_TRANSPOSE _tranB,
                       const int _M, const int _N, const int _K,
@@ -217,7 +217,7 @@ namespace gs
                       double *_C, const int _ldc) {
         cblas_dgemm(_order, _tranA, _tranB, _M, _N, _K, _alpha, _A, _lda, _B, _ldb, _beta, _C, _ldc);
     }
-    
+
     template<typename L>
     void GEMM (const char tA, const char tB,
                const L alpha, const SP_NArray<L> A, const SP_NArray<L> B,
@@ -251,7 +251,7 @@ namespace gs
               beta,
               C->get_data(), ldc);
     }
-    
+
     template<typename L>
     void GEMM (const SP_NArray<L> Y,
                const char tA, const char tB,
@@ -263,7 +263,7 @@ namespace gs
             GEMM(tA, tB, static_cast<L>(1.0), A, B, static_cast<L>(1.0), Y);
         }
     }
-    
+
     template<typename T, typename FUNC>
     void _MAP (const SP_NArray<T> Y,
                const FUNC& f,
@@ -282,7 +282,7 @@ namespace gs
             }
         }
     }
-    
+
     template<typename T, typename FUNC>
     void _MAP (const SP_NArray<T> Y,
                const FUNC& f,
@@ -303,7 +303,7 @@ namespace gs
             }
         }
     }
-    
+
     template<typename T, typename FUNC>
     void MAP (const SP_NArray<T> Y, const FUNC& f, const SP_NArray<T> X) {
         if (Y->opaque()) {
@@ -313,7 +313,7 @@ namespace gs
             _MAP(Y, f, X, false);
         }
     }
-    
+
     template<typename T, typename FUNC>
     void MAP (const SP_NArray<T> Y,
               const FUNC& f,
@@ -325,7 +325,7 @@ namespace gs
             _MAP(Y, f, X, Z, false);
         }
     }
-    
+
     // currently, only two dimensional array are supported
     // X[m][n] -> Y[m]
     template<typename T, typename FUNC>
@@ -341,7 +341,7 @@ namespace gs
         assert(m == Y->get_dims()[0]);
         assert(idx->get_dims().size() == 1);
         assert(m == idx->get_dims()[0]);
-        
+
         auto Y_ptr = Y->get_data();
         auto X_ptr = X->get_data();
         auto idx_ptr = idx->get_data();
@@ -359,7 +359,7 @@ namespace gs
             }
         }
     }
-    
+
     // currently, only two dimensional array are supported
     // X[m][n] -> Y[m]
     template<typename T, typename FUNC>
@@ -374,7 +374,7 @@ namespace gs
             _PROJ_MAP(Y, f, X, idx, false);
         }
     }
-    
+
     // currently, only two dimensional array are supported
     // X[m][n] -> Y[m] -> T
     template<typename T, typename FUNC>
@@ -387,7 +387,7 @@ namespace gs
         int n = X->get_dims()[1];
         assert(idx->get_dims().size() == 1);
         assert(m == idx->get_dims()[0]);
-        
+
         T sum = 0;
         auto X_ptr = X->get_data();
         auto idx_ptr = idx->get_data();
@@ -398,7 +398,7 @@ namespace gs
         }
         *res = sum;
     }
-    
+
     // currently, only two dimensional array are supported
     // to be fixed
     template<typename T, typename FUNC>
@@ -413,7 +413,7 @@ namespace gs
         auto n = Y->get_dims()[1];
         auto Y_ptr = Y->get_data();
         auto X_ptr = X->get_data();
-        
+
         if (a == nullptr) {
             if (b == nullptr) {
                 assert(m == n);
@@ -479,7 +479,7 @@ namespace gs
             }
         }
     }
-    
+
     // currently, only two dimensional array are supported
     template<typename T, typename FUNC>
     void SUB_MAP (const SP_NArray<T> Y,

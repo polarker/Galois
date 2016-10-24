@@ -181,6 +181,40 @@ namespace gs {
         int dw_s2 = dw_s1 * dw_size[2];
         int dw_s3 = dw_s2 * dw_size[1];
         int batch_size = in_data->get_dims()[0];
+
+        if (in_signal->get_type() == InnerSignal) {
+            auto in_grad = in_signal->get_grad();
+            auto in_grad_ptr = in_grad->get_data();
+            auto w_ptr = this->w->get_data();
+            bool dx_overwrite = in_grad->opaque();
+            // D(X)[s, t, ic] = sum(m, n, oc)(D(Y)[s-m, t-n, oc] * w[m, n, ic, oc])
+            for (int batch = 0; batch < batch_size; batch++) {
+                for (int s = 0; s < num_rows; s++) {
+                    for (int t = 0; t < num_columns; t++) {
+                        for (int ic = 0; ic < in_channels; ic++) {
+                            T sum = 0;
+                            for (int m = 0; m < kernel_rows; m++) {
+                                for (int n = 0; n < kernel_rows; n++) {
+                                    for (int oc = 0; oc < out_channels; oc++) {
+                                        if ((s - m) >= 0 && (s - m) < out_size[1] && (t - n) >= 0 && (t - n) < out_size[2]) {
+                                            sum += out_grad_ptr[batch*out_s3 + (s-m)*out_s2 + (t-n)*out_s1 + oc] *
+                                                w_ptr[m*dw_s3 + n*dw_s2 + ic*dw_s1 + oc];
+                                        }
+                                    }
+                                }
+                            }
+                            if (dx_overwrite) {
+                                in_grad_ptr[batch*in_s3 + s*in_s2 + t*in_s1 + ic] = sum;
+                            } else {
+                                in_grad_ptr[batch*in_s3 + s*in_s2 + t*in_s1 + ic] += sum;
+                            }
+                        }
+                    }
+                }
+            }
+            in_grad->setclear();
+        }
+
         // D(w)[m, n, ic, oc] = sum(i, j)(D(Y)[i, j, oc] * X[i+m, j+n, ic])
         bool dw_overwrite = this->dw->opaque();
         for (int m = 0; m < kernel_rows; m++) {
@@ -225,38 +259,6 @@ namespace gs {
             }
         }
         this->db->setclear();
-
-        if (in_signal->get_type() != InnerSignal) return;
-        // D(X)[s, t, ic] = sum(m, n, oc)(D(Y)[s-m, t-n, oc] * w[m, n, ic, oc])
-        auto in_grad = in_signal->get_grad();
-        auto in_grad_ptr = in_grad->get_data();
-        auto w_ptr = this->w->get_data();
-        bool dx_overwrite = in_grad->opaque();
-        for (int batch = 0; batch < batch_size; batch++) {
-            for (int s = 0; s < num_rows; s++) {
-                for (int t = 0; t < num_columns; t++) {
-                    for (int ic = 0; ic < in_channels; ic++) {
-                        T sum = 0;
-                        for (int m = 0; m < kernel_rows; m++) {
-                            for (int n = 0; n < kernel_rows; n++) {
-                                for (int oc = 0; oc < out_channels; oc++) {
-                                    if ((s - m) >= 0 && (s - m) < out_size[1] && (t - n) >= 0 && (t - n) < out_size[2]) {
-                                        sum += out_grad_ptr[batch*out_s3 + (s-m)*out_s2 + (t-n)*out_s1 + oc] *
-                                               w_ptr[m*dw_s3 + n*dw_s2 + ic*dw_s1 + oc];
-                                    }
-                                }
-                            }
-                        }
-                        if (dx_overwrite) {
-                            in_grad_ptr[batch*in_s3 + s*in_s2 + t*in_s1 + ic] = sum;
-                        } else {
-                            in_grad_ptr[batch*in_s3 + s*in_s2 + t*in_s1 + ic] += sum;
-                        }
-                    }
-                }
-            }
-        }
-        in_grad->setclear();
     }
 
     template class Convolution<float>;

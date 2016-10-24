@@ -6,7 +6,7 @@
 
 namespace gs
 {
-    
+
     template<typename T>
     class Optimizer
     {
@@ -14,20 +14,20 @@ namespace gs
         T lrate;
         vector<SP_NArray<T>>    params = {};
         vector<SP_NArray<T>>    grads = {};
-    
+
     public:
         virtual void update() = 0;
         virtual void compile(vector<SP_NArray<T>> params, vector<SP_NArray<T>> grads) = 0;
     };
     template<typename T>
     using SP_Optimizer = shared_ptr<Optimizer<T>>;
-    
+
     template<typename T>
     class SGD_Optimizer : public Optimizer<T>
     {
     public:
         SGD_Optimizer(T lr) { this->lrate = lr; }
-        
+
         void compile(vector<SP_NArray<T>> params, vector<SP_NArray<T>> grads) override {
             CHECK(this->params.empty() && this->grads.empty(), "params and grads should not be set before");
             CHECK(params.size() == grads.size(), "params and grads should have equal size");
@@ -37,7 +37,7 @@ namespace gs
             this->params.insert(this->params.end(), params.begin(), params.end());
             this->grads.insert(this->grads.end(), grads.begin(), grads.end());
         }
-        
+
         void update() override {
             for (int i = 0; i < this->params.size(); i++) {
                 auto param = this->params[i];
@@ -48,9 +48,9 @@ namespace gs
                 MAP(param, [=](T x){return -lrate*x;}, grad);
             }
         }
-        
+
     };
-    
+
 }
 
 #endif

@@ -9,12 +9,12 @@
 
 namespace gs
 {
-    
+
     template<typename T>
     class SeqEncoderDecoder : protected OrderedModel<T>
     {
         static default_random_engine galois_rn_generator;
-        
+
     protected:
         int max_len_encoder;
         int max_len_decoder;
@@ -40,10 +40,10 @@ namespace gs
             string optimizer_name);
         SeqEncoderDecoder(const SeqEncoderDecoder& other) = delete;
         SeqEncoderDecoder& operator=(const SeqEncoderDecoder&) = delete;
-        
+
         using OrderedModel<T>::get_params;
         using OrderedModel<T>::get_grads;
-        
+
         void add_train_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
         void add_test_dataset(const SP_NArray<T> data, const SP_NArray<T> target);
         T train_one_batch(const bool update=true);
