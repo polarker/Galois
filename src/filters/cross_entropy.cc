@@ -7,15 +7,11 @@ namespace gs {
 
     template<typename T>
     SP_Filter<T> CrossEntropy<T>::share() {
-        CHECK(in_signal == nullptr, "in signal should not be set");
-        CHECK(out_signal == nullptr, "out signal should not be set");
         return make_shared<CrossEntropy<T>>();
     }
 
     template<typename T>
     void CrossEntropy<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
-        CHECK(in_signal == nullptr, "in_signal should not be initialized before");
-        CHECK(out_signal == nullptr, "out_signal should not be initialized before");
         CHECK(in_signals.size() == 1, "only need 1 in signal");
         CHECK(out_signals.size() == 1, "only need 1 out signal");
 

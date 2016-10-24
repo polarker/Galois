@@ -32,6 +32,16 @@ namespace gs
     }
 
     template<typename T>
+    SP_Filter<T> Path<T>::clone() {
+        auto res = make_shared<Path<T>>();
+        for (auto const& filter : links) {
+            auto clone_of_filter = filter->clone();
+            res->add_filter(clone_of_filter);
+        }
+        return res;
+    }
+
+    template<typename T>
     set<SP_PFilter<T>> Path<T>::get_pfilters() {
         return pfilters;
     }

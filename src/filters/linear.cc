@@ -8,8 +8,6 @@ namespace gs {
 
     template<typename T>
     SP_Filter<T> Linear<T>::share() {
-        CHECK(in_signal == nullptr, "in signal should not be set");
-        CHECK(out_signal == nullptr, "out signal should not be set");
         bool just_for_share = true;
         auto res = make_shared<Linear<T>>(just_for_share);
         res->in_size = this->in_size;
@@ -18,6 +16,21 @@ namespace gs {
         res->b = this->b;
         res->dw = this->dw;
         res->db = this->db;
+        return res;
+    }
+
+    template<typename T>
+    SP_Filter<T> Linear<T>::clone() {
+        bool for_clone_or_share = true;
+        auto res = make_shared<Linear<T>>(for_clone_or_share);
+        res->in_size = this->in_size;
+        res->out_size = this->out_size;
+        res->w = make_shared<NArray<T>>(this->w->get_dims());
+        res->w->copy_from(this->w);
+        res->b = make_shared<NArray<T>>(this->b->get_dims());
+        res->b->copy_from(this->b);
+        res->dw = make_shared<NArray<T>>(this->dw->get_dims());
+        res->db = make_shared<NArray<T>>(this->db->get_dims());
         return res;
     }
 
@@ -35,8 +48,6 @@ namespace gs {
 
     template<typename T>
     void Linear<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
-        CHECK(in_signal == nullptr, "in signal should not be initialized");
-        CHECK(out_signal == nullptr, "out signal should not be initialized");
         CHECK(in_signals.size() == 1, "only need 1 in signal");
         CHECK(out_signals.size() == 1, "only need 1 out signal");
 

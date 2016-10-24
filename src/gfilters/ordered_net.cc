@@ -95,6 +95,24 @@ namespace gs
     }
 
     template<typename T>
+    SP_Filter<T> OrderedNet<T>::clone() {
+        CHECK(this->fixed, "network should be fixed");
+        auto res = make_shared<OrderedNet<T>>();
+        for (auto t : this->links) {
+            auto ins = get<0>(t);
+            auto outs = get<1>(t);
+            auto filter = get<2>(t);
+            auto clone_of_filter = filter->clone();
+            res->add_link(ins, outs, clone_of_filter);
+        }
+        res->add_input_ids(this->input_ids);
+        res->add_output_ids(this->output_ids);
+        res->fix_net();
+
+        return res;
+    }
+
+    template<typename T>
     void OrderedNet<T>::forward(int idx) {
         CHECK(this->fixed, "network should be fixed");
         auto filter = this->fp_filters[idx];

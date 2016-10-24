@@ -8,14 +8,24 @@ namespace gs {
 
     template<typename T>
     SP_Filter<T> Embedding<T>::share() {
-        CHECK(in_signal == nullptr, "in signal should not be set");
-        CHECK(out_signal == nullptr, "out signal should not be set");
         bool just_for_share = true;
         auto res = make_shared<Embedding<T>>(just_for_share);
         res->in_size = this->in_size;
         res->out_size = this->out_size;
         res->w = this->w;
         res->dw = this->dw;
+        return res;
+    }
+
+    template<typename T>
+    SP_Filter<T> Embedding<T>::clone() {
+        bool just_for_clone = true;
+        auto res = make_shared<Embedding<T>>(just_for_clone);
+        res->in_size = this->in_size;
+        res->out_size = this->out_size;
+        res->w = make_shared<NArray<T>>(this->w->get_dims());
+        res->w->copy_from(this->w);
+        res->dw = make_shared<NArray<T>>(this->dw->get_dims());
         return res;
     }
 
@@ -30,8 +40,6 @@ namespace gs {
 
     template<typename T>
     void Embedding<T>::install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) {
-        CHECK(in_signal == nullptr, "in signal should not be initialized");
-        CHECK(out_signal == nullptr, "out signal should not be initialized");
         CHECK(in_signals.size() == 1, "only need 1 in signal");
         CHECK(out_signals.size() == 1, "only need 1 out signal");
 

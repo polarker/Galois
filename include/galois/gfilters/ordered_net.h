@@ -29,6 +29,7 @@ namespace gs
 
         // in order to share a net, methods above should be called and methods below should not be called
         SP_Filter<T> share() override;
+        SP_Filter<T> clone() override;
 
         // propagation could just apply to the subnet that contains only those links with index not less than idx
         using BaseNet<T>::forward;

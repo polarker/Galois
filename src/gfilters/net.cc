@@ -148,6 +148,24 @@ namespace gs {
         return res;
     }
 
+    template<typename T>
+    SP_Filter<T> Net<T>::clone() {
+        CHECK(this->fixed, "the network should be fixed");
+        auto res = make_shared<Net<T>>();
+        for (auto t : this->links) {
+            auto ins = get<0>(t);
+            auto outs = get<1>(t);
+            auto filter = get<2>(t);
+            auto clone_of_filter = filter->clone();
+            res->add_link(ins, outs, clone_of_filter);
+        }
+        res->add_input_ids(this->input_ids);
+        res->add_output_ids(this->output_ids);
+        res->set_p_order();
+
+        return res;
+    }
+
     template class Net<float>;
     template class Net<double>;
 

@@ -29,6 +29,28 @@ namespace gs {
     }
 
     template<typename T>
+    SP_Filter<T> Convolution<T>::clone() {
+        bool for_clone_or_share = true;
+        auto res = make_shared<Convolution<T>>(for_clone_or_share);
+
+        res->num_rows = this->num_rows;
+        res->num_columns = this->num_columns;
+        res->in_channels = this->in_channels;
+        res->out_channels = this->out_channels;
+        res->kernel_rows = this->kernel_rows;
+        res->kernel_columns = this->kernel_columns;
+
+        res->w = make_shared<NArray<T>>(this->w->get_dims());
+        res->w->copy_from(this->w);
+        res->b = make_shared<NArray<T>>(this->b->get_dims());
+        res->b->copy_from(this->b);
+        res->dw = make_shared<NArray<T>>(this->dw->get_dims());
+        res->db = make_shared<NArray<T>>(this->db->get_dims());
+
+        return res;
+    }
+
+    template<typename T>
     Convolution<T>::Convolution(
         int num_rows,
         int num_columns,

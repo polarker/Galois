@@ -113,13 +113,15 @@ namespace gs
         virtual void set_dims(int batch_size) = 0;
         virtual void reopaque() = 0;    // each filter only opaques its inner signal
         virtual shared_ptr<Filter<T>> share() = 0;  // return a SP_Filter<T>
-//        virtual Filter *Clone() = 0;
+        virtual shared_ptr<Filter<T>> clone() = 0;  // return a SP_Filter<T>
     };
     template<typename T>
     using SP_Filter = shared_ptr<Filter<T>>;
 
     template<typename T>
-    class BFilter : public Filter<T> {};
+    class BFilter : public Filter<T> {
+        shared_ptr<Filter<T>> clone() override { return this->share(); }
+    };
 
     template<typename T>
     class PFilter : public Filter<T>

@@ -38,6 +38,7 @@ namespace gs
         void set_p_order();
 
         SP_Filter<T> share() override;
+        SP_Filter<T> clone() override;
     };
 
 }

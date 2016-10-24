@@ -29,6 +29,7 @@ namespace gs
         void add_filter(SP_Filter<T> filter);
 
         SP_Filter<T> share() override;
+        SP_Filter<T> clone() override;
         set<SP_PFilter<T>> get_pfilters() override;
 
         void install_signals(const vector<SP_Signal<T>>& in_signals, const vector<SP_Signal<T>>& out_signals) override;

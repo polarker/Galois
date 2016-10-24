@@ -27,12 +27,13 @@ namespace gs {
         SP_NArray<T> db = nullptr;
 
     public:
-        Convolution(const bool just_for_share) {}
+        Convolution(const bool for_clone_or_share) {}
         Convolution(const Convolution&) = delete;
         Convolution& operator=(const Convolution&) = delete;
         Convolution(int num_rows, int num_columns, int in_channels, int out_channels, int kernel_w, int kernel_h);
 
         SP_Filter<T> share() override;
+        SP_Filter<T> clone() override;
 
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
         void set_dims(int batch_size) override;

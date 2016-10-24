@@ -19,12 +19,13 @@ namespace gs {
         SP_NArray<T> db = nullptr;
 
     public:
-        Linear(const bool just_for_share) {}
+        Linear(const bool for_clone_or_share) {}
         Linear(const Linear&) = delete;
         Linear& operator=(const Linear&) = delete;
         Linear(int in_size, int out_size);
 
         SP_Filter<T> share() override;
+        SP_Filter<T> clone() override;
 
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
         void set_dims(int batch_size) override;
