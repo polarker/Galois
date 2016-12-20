@@ -2,6 +2,8 @@
 #include "galois/gfilters/path.h"
 #include "galois/filters.h"
 
+#include <chrono>
+
 namespace gs
 {
 
@@ -38,7 +40,7 @@ namespace gs
             h2hraw_decoder.push_back(make_shared<Linear<T>>(hsize, hsize));
         }
         auto x2hraw_encoder = vector<SP_Filter<T>>();
-        for (int i = 0; i < hidden_sizes.size(); i++) {
+        for (size_t i = 0; i < hidden_sizes.size(); i++) {
             if (i == 0) {
                     x2hraw_encoder.push_back(make_shared<Embedding<T>>(input_size, hidden_sizes[i]));
             } else {
@@ -46,7 +48,7 @@ namespace gs
             }
         }
         auto x2hraw_decoder = vector<SP_Filter<T>>();
-        for (int i = 0; i < hidden_sizes.size(); i++) {
+        for (size_t i = 0; i < hidden_sizes.size(); i++) {
             if (i == 0) {
                     x2hraw_decoder.push_back(make_shared<Embedding<T>>(output_size, hidden_sizes[i]));
             } else {
@@ -56,14 +58,14 @@ namespace gs
         auto h2yraw_decoder = make_shared<Linear<T>>(hidden_sizes.back(), output_size);
 
         for (int i = 0; i < max_len_encoder; i++) {
-            for (int j = 0; j < hidden_sizes.size(); j++) {
+            for (size_t j = 0; j < hidden_sizes.size(); j++) {
                 string hraw = seq_generate_id("hraw_encoder", i, j);
                 string left_h = seq_generate_id("h_encoder", i-1, j);
                 if (i > 0) {
                     this->add_link(left_h, hraw, h2hraw_encoder[j]->share());
                 }
             }
-            for (int j = 0; j < hidden_sizes.size(); j++) {
+            for (size_t j = 0; j < hidden_sizes.size(); j++) {
                 string hraw = seq_generate_id("hraw_encoder", i, j);
                 string down_h;
                 if (j == 0) {
@@ -77,7 +79,7 @@ namespace gs
             }
         }
         for (int i = 0; i < max_len_decoder; i++) {
-            for (int j = 0; j < hidden_sizes.size(); j++) {
+            for (size_t j = 0; j < hidden_sizes.size(); j++) {
                 string hraw = seq_generate_id("hraw_decoder", i, j);
                 string left_h;
                 if (i == 0) {
@@ -87,7 +89,7 @@ namespace gs
                 }
                 this->add_link(left_h, hraw, h2hraw_decoder[j]->share());
             }
-            for (int j = 0; j < hidden_sizes.size(); j++) {
+            for (size_t j = 0; j < hidden_sizes.size(); j++) {
                 string hraw = seq_generate_id("hraw_decoder", i, j);
                 string down_h;
                 if (j == 0) {
@@ -176,7 +178,7 @@ namespace gs
                 input_data->copy_from(prev_output_data);
             }
             int num2 = num1+i*(hidden_sizes.size()*3 + 2);
-            for (int j = num2; j < hidden_sizes.size()*3 + 2; j++) {
+            for (size_t j = num2; j < hidden_sizes.size()*3 + 2; j++) {
                 this->net.forward(i);
             }
         }

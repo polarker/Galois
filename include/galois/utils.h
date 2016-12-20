@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdio>
 #include <cstdlib>
+#include <algorithm>
 
 #define CHECK(A, M, ...) if(!(A)) { fprintf(stderr, "[ERROR] %s:%d: " M "\n", __FILE__, __LINE__, ##__VA_ARGS__); exit(EXIT_FAILURE); }
 

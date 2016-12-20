@@ -2,6 +2,8 @@
 #include "galois/narray_functors.h"
 #include "galois/models/model.h"
 
+#include <chrono>
+
 namespace gs
 {
 
@@ -58,7 +60,7 @@ namespace gs
         CHECK(input_ids.empty(), "input_ids should not be set before");
         net.add_input_ids(ids);
         input_ids = ids;
-        for (int i = 0; i < input_ids.size(); i++) {
+        for (size_t i = 0; i < input_ids.size(); i++) {
             input_signals.push_back(make_shared<Signal<T>>(InputSignal));
         }
     }
@@ -78,7 +80,7 @@ namespace gs
         CHECK(output_ids.empty(), "output_ids should not be set before");
         net.add_output_ids(ids);
         output_ids = ids;
-        for (int j = 0; j < output_ids.size(); j++) {
+        for (size_t j = 0; j < output_ids.size(); j++) {
             output_signals.push_back(make_shared<Signal<T>>(OutputSignal));
         }
     }
@@ -97,7 +99,7 @@ namespace gs
             auto tmp_params = pfilter->get_params();
             auto tmp_grads = pfilter->get_grads();
             CHECK(tmp_params.size() == tmp_grads.size(), "numbers of params and grads should be equal");
-            for (int i = 0; i < tmp_params.size(); i++) {
+            for (size_t i = 0; i < tmp_params.size(); i++) {
                 auto param = tmp_params[i];
                 auto grad = tmp_grads[i];
                 CHECK(param->get_dims() == grad->get_dims(), "param and grad should have the same dimensions");
@@ -204,11 +206,11 @@ namespace gs
         }
 
         net.reopaque();
-        for (int i = 0; i < input_signals.size(); i++) {
+        for (size_t i = 0; i < input_signals.size(); i++) {
             input_signals[i]->reopaque();
             input_signals[i]->get_data()->copy_from(batch_ids, train_data[i]);
         }
-        for (int i = 0; i < output_signals.size(); i++) {
+        for (size_t i = 0; i < output_signals.size(); i++) {
             output_signals[i]->reopaque();
             output_signals[i]->get_target()->copy_from(batch_ids, train_target[i]);
         }
@@ -242,17 +244,17 @@ namespace gs
             }
 
             net.reopaque();
-            for (int i = 0; i < input_signals.size(); i++) {
+            for (size_t i = 0; i < input_signals.size(); i++) {
                 input_signals[i]->reopaque();
                 input_signals[i]->get_data()->copy_from(batch_ids, test_data[i]);
             }
-            for (int i = 0; i < output_signals.size(); i++) {
+            for (size_t i = 0; i < output_signals.size(); i++) {
                 output_signals[i]->reopaque();
                 output_signals[i]->get_target()->copy_from(batch_ids, test_target[i]);
             }
             net.forward();
 
-            for (int i = 0; i < output_signals.size(); i++) {
+            for (size_t i = 0; i < output_signals.size(); i++) {
                 correctness += compute_correctness(output_signals[i]);
             }
         }

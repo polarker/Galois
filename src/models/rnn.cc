@@ -2,6 +2,8 @@
 #include "galois/gfilters/path.h"
 #include "galois/filters.h"
 
+#include <chrono>
+
 namespace gs
 {
 
@@ -34,7 +36,7 @@ namespace gs
             h2hraw.push_back(make_shared<Linear<T>>(hsize, hsize));
         }
         auto x2hraw = vector<SP_Filter<T>>();
-        for (int i = 0; i < hidden_sizes.size(); i++) {
+        for (size_t i = 0; i < hidden_sizes.size(); i++) {
             if (i == 0) {
                 if (use_embedding) {
                     x2hraw.push_back(make_shared<Embedding<T>>(input_size, hidden_sizes[i]));
@@ -47,7 +49,7 @@ namespace gs
         }
         auto h2yraw = make_shared<Linear<T>>(hidden_sizes.back(), output_size);
         for (int i = 0; i < max_len; i++) {
-            for (int j = 0; j < hidden_sizes.size(); j++) {
+            for (size_t j = 0; j < hidden_sizes.size(); j++) {
                 string hraw = generate_id("hraw", i, j);
                 string left_h = generate_id("h", i-1, j);
                 string down_h;
@@ -110,11 +112,11 @@ namespace gs
     template<typename T>
     T RNN<T>::train_one_batch(const int start_from, bool update) {
         this->net.reopaque();
-        for (int i = 0; i < this->input_signals.size(); i++) {
+        for (size_t i = 0; i < this->input_signals.size(); i++) {
             this->input_signals[i]->reopaque();
             this->input_signals[i]->get_data()->copy_from(start_from+i, this->batch_size, train_X);
         }
-        for (int i = 0; i < this->output_signals.size(); i++) {
+        for (size_t i = 0; i < this->output_signals.size(); i++) {
             this->output_signals[i]->reopaque();
             this->output_signals[i]->get_target()->copy_from(start_from+i, this->batch_size, train_Y);
         }

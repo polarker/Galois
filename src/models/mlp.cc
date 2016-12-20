@@ -2,6 +2,8 @@
 #include "galois/narray_functors.h"
 #include "galois/models/mlp.h"
 
+#include <chrono>
+
 using namespace std;
 
 namespace gs
@@ -37,7 +39,7 @@ namespace gs
             auto tmp_params = pfilter->get_params();
             auto tmp_grads = pfilter->get_grads();
             CHECK(tmp_params.size() == tmp_grads.size(), "numbers of params and grads should be equal");
-            for (int i = 0; i < tmp_params.size(); i++) {
+            for (size_t i = 0; i < tmp_params.size(); i++) {
                 auto param = tmp_params[i];
                 auto grad = tmp_grads[i];
                 CHECK(param->get_dims() == grad->get_dims(), "param and grad should have the same dimensions");

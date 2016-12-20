@@ -31,7 +31,7 @@ namespace gs
         void compile(vector<SP_NArray<T>> params, vector<SP_NArray<T>> grads) override {
             CHECK(this->params.empty() && this->grads.empty(), "params and grads should not be set before");
             CHECK(params.size() == grads.size(), "params and grads should have equal size");
-            for (int i = 0; i < params.size(); i++) {
+            for (size_t i = 0; i < params.size(); i++) {
                 CHECK(params[i]->get_dims() == grads[i]->get_dims(), "param and grad should have the same dimensions");
             }
             this->params.insert(this->params.end(), params.begin(), params.end());
@@ -39,7 +39,7 @@ namespace gs
         }
 
         void update() override {
-            for (int i = 0; i < this->params.size(); i++) {
+            for (size_t i = 0; i < this->params.size(); i++) {
                 auto param = this->params[i];
                 auto grad = this->grads[i];
                 CHECK(!param->opaque(), "param should not be opaque");

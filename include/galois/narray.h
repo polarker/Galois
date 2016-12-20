@@ -3,6 +3,8 @@
 
 #include "galois/utils.h"
 #include <random>
+#include <memory>
+#include <iostream>
 #include <vector>
 
 using namespace std;

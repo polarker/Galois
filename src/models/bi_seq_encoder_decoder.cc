@@ -2,6 +2,8 @@
 #include "galois/gfilters/path.h"
 #include "galois/filters.h"
 
+#include <chrono>
+
 namespace gs
 {
 
@@ -25,7 +27,7 @@ namespace gs
                 h2hraw.push_back(make_shared<Linear<T>>(hsize, hsize));
             }
             auto x2hraw = vector<SP_Filter<T>>();
-            for (int i = 0; i < hidden_sizes.size(); i++) {
+            for (size_t i = 0; i < hidden_sizes.size(); i++) {
                 if (i == 0) {
                     x2hraw.push_back(make_shared<Embedding<T>>(input_size, hidden_sizes[i]));
                 } else {
@@ -33,14 +35,14 @@ namespace gs
                 }
             }
             for (int i = 0; i < max_len; i++) {
-                for (int j = 0; j < hidden_sizes.size(); j++) {
+                for (size_t j = 0; j < hidden_sizes.size(); j++) {
                     string hraw = bi_seq_generate_id("hraw", i, j);
                     string left_h = bi_seq_generate_id("h", i-1, j);
                     if (i > 0) {
                         BaseNet<T>::add_link(left_h, hraw, h2hraw[j]->share());
                     }
                 }
-                for (int j = 0; j < hidden_sizes.size(); j++) {
+                for (size_t j = 0; j < hidden_sizes.size(); j++) {
                     string hraw = bi_seq_generate_id("hraw", i, j);
                     string down_h;
                     if (j == 0) {
@@ -58,7 +60,7 @@ namespace gs
             for (int i = 0; i < max_len; i++) {
                 x_ids.push_back(bi_seq_generate_id("x", i));
             }
-            for (int j = 0; j < hidden_sizes.size(); j++) {
+            for (size_t j = 0; j < hidden_sizes.size(); j++) {
                 y_ids.push_back(bi_seq_generate_id("h", max_len-1, j));
             }
             this->add_input_ids(x_ids);
@@ -91,7 +93,7 @@ namespace gs
                 h2hraw.push_back(make_shared<Linear<T>>(hsize, hsize));
             }
             auto x2hraw = vector<SP_Filter<T>>();
-            for (int i = 0; i < hidden_sizes.size(); i++) {
+            for (size_t i = 0; i < hidden_sizes.size(); i++) {
                 if (i == 0) {
                     x2hraw.push_back(make_shared<Embedding<T>>(input_size, hidden_sizes[i]));
                 } else {
@@ -101,12 +103,12 @@ namespace gs
             auto h2yraw = make_shared<Linear<T>>(hidden_sizes.back(), input_size);
 
             for (int i = 0; i < max_len; i++) {
-                for (int j = 0; j < hidden_sizes.size(); j++) {
+                for (size_t j = 0; j < hidden_sizes.size(); j++) {
                     string hraw = bi_seq_generate_id("hraw", i, j);
                     string left_h = bi_seq_generate_id("h", i-1, j);
                     BaseNet<T>::add_link(left_h, hraw, h2hraw[j]->share());
                 }
-                for (int j = 0; j < hidden_sizes.size(); j++) {
+                for (size_t j = 0; j < hidden_sizes.size(); j++) {
                     string hraw = bi_seq_generate_id("hraw", i, j);
                     string down_h;
                     if (j == 0) {
@@ -131,7 +133,7 @@ namespace gs
                 x_ids.push_back(bi_seq_generate_id("x", i));
                 y_ids.push_back(bi_seq_generate_id("y", i));
             }
-            for (int i = 0; i < hidden_sizes.size(); i++) {
+            for (size_t i = 0; i < hidden_sizes.size(); i++) {
                 x_ids.push_back(bi_seq_generate_id("h", -1, i));
             }
             this->add_input_ids(x_ids);
@@ -196,7 +198,7 @@ namespace gs
             y_ids_one2one.push_back(bi_seq_generate_id("y_one2one", i));
             y_ids_another2one.push_back(bi_seq_generate_id("y_another2one", i));
         }
-        for (int j = 0; j < hidden_sizes.size(); j++) {
+        for (size_t j = 0; j < hidden_sizes.size(); j++) {
             h_ids_one.push_back(bi_seq_generate_id("h_one", max_len_one-1, j));
             h_ids_another.push_back(bi_seq_generate_id("h_another", max_len_another-1, j));
         }

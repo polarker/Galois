@@ -52,7 +52,7 @@ namespace gs
         CHECK(links.size() == inner_signals.size()+1, "The number of filters and inner signals does not match");
         auto in_signal = in_signals[0];
         auto out_signal = out_signals[0];
-        for (int i = 0; i < links.size(); i++) {
+        for (size_t i = 0; i < links.size(); i++) {
             SP_Signal<T> in = nullptr;
             SP_Signal<T> out = nullptr;
             if (i == 0) {

@@ -1,8 +1,15 @@
 #ifndef _GALOIS_NARRAY_FUNCTORS_H_
 #define _GALOIS_NARRAY_FUNCTORS_H_
 
+#include <cassert>
 #include <vector>
+#if defined __APPLE__ && __MACH__
 #include <Accelerate/Accelerate.h>
+#elif defined __linux__
+#include <cblas.h>
+#else
+// system not supported
+#endif
 
 namespace gs
 {
@@ -196,8 +203,8 @@ namespace gs
         }
     }
 
-    inline void _GEMM(const enum CBLAS_ORDER _order,
-                      const enum CBLAS_TRANSPOSE _tranA, const enum CBLAS_TRANSPOSE _tranB,
+    inline void _GEMM(const CBLAS_ORDER _order,
+                      const CBLAS_TRANSPOSE _tranA, const CBLAS_TRANSPOSE _tranB,
                       const int _M, const int _N, const int _K,
                       const float _alpha,
                       const float *_A, const int _lda,
@@ -207,8 +214,8 @@ namespace gs
         cblas_sgemm(_order, _tranA, _tranB, _M, _N, _K, _alpha, _A, _lda, _B, _ldb, _beta, _C, _ldc);
     }
 
-    inline void _GEMM(const enum CBLAS_ORDER _order,
-                      const enum CBLAS_TRANSPOSE _tranA, const enum CBLAS_TRANSPOSE _tranB,
+    inline void _GEMM(const CBLAS_ORDER _order,
+                      const CBLAS_TRANSPOSE _tranA, const CBLAS_TRANSPOSE _tranB,
                       const int _M, const int _N, const int _K,
                       const double _alpha,
                       const double *_A, const int _lda,

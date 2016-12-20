@@ -86,7 +86,7 @@ namespace gs
         auto dataset_dims = dataset->get_dims();
         CHECK(idx0s.size() == this->dims[0], "first dimension should be equal to batch size");
         CHECK(dataset_dims.size() == this->dims.size()+1, "number of dimensions should be equal");
-        for (int i = 2; i < this->dims.size(); i++) {
+        for (size_t i = 2; i < this->dims.size(); i++) {
             CHECK(dataset_dims[i] == this->dims[i-1], "dimensions should be equal");
         }
         CHECK(idx1 >= 0 && idx1 < this->dims[1], "invalid index");
@@ -109,7 +109,7 @@ namespace gs
         auto dataset_dims = dataset->get_dims();
         CHECK(copy_size == this->dims[0], "the size of copy should be equal to batch size");
         CHECK(dataset_dims.size() == this->dims.size(), "number of dimensions should be equal");
-        for (int i = 1; i < this->dims.size(); i++) {
+        for (size_t i = 1; i < this->dims.size(); i++) {
             CHECK(dataset_dims[i] == this->dims[i], "dimensions should be equal");
         }
         CHECK(start_from >= 0 && start_from+copy_size-1 < dataset_dims[0], "offset is not valid");
@@ -156,7 +156,6 @@ namespace gs
         }
     }
 
-    template class NArray<int>;
     template class NArray<float>;
     template class NArray<double>;
 
