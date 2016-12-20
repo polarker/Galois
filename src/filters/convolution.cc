@@ -52,12 +52,12 @@ namespace gs {
 
     template<typename T>
     Convolution<T>::Convolution(
-        int num_rows,
-        int num_columns,
-        int in_channels,
-        int out_channels,
-        int kernel_rows,
-        int kernel_columns):
+        size_t num_rows,
+        size_t num_columns,
+        size_t in_channels,
+        size_t out_channels,
+        size_t kernel_rows,
+        size_t kernel_columns):
         num_rows(num_rows),
         num_columns(num_columns),
         in_channels(in_channels),
@@ -96,14 +96,14 @@ namespace gs {
     }
 
     template<typename T>
-    void Convolution<T>::set_dims(int batch_size) {
-        auto expected_in_sizes = vector<int>{batch_size, num_rows, num_columns, in_channels};
+    void Convolution<T>::set_dims(size_t batch_size) {
+        auto expected_in_sizes = vector<size_t>{batch_size, num_rows, num_columns, in_channels};
         if (in_signal->empty()) {
             in_signal->set_data_dims(expected_in_sizes);
         } else {
             CHECK(in_signal->get_data_dims() == expected_in_sizes, "the dimensions of in signal are wrong");
         }
-        auto expected_out_sizes = vector<int>{batch_size, num_rows - kernel_rows + 1, num_columns - kernel_columns + 1, out_channels};
+        auto expected_out_sizes = vector<size_t>{batch_size, num_rows - kernel_rows + 1, num_columns - kernel_columns + 1, out_channels};
         if (out_signal->empty()) {
             out_signal->set_data_dims(expected_out_sizes);
         } else {
@@ -137,31 +137,31 @@ namespace gs {
         // TODO: abstract the following as functionality of narray without performance overhead
         auto in_data_ptr = in_data->get_data(); // batch_size x num_rows x num_columns x in_channels
         auto in_size = in_data->get_dims();
-        int in_s1 = in_size[3];
-        int in_s2 = in_s1 * in_size[2];
-        int in_s3 = in_s2 * in_size[1];
+        auto in_s1 = in_size[3];
+        auto in_s2 = in_s1 * in_size[2];
+        auto in_s3 = in_s2 * in_size[1];
         auto out_data_ptr = out_data->get_data(); // batch_size x num_rows` x num_columns` x out_channels
         auto out_size = out_data->get_dims();
-        int out_s1 = out_size[3];
-        int out_s2 = out_s1 * out_size[2];
-        int out_s3 = out_s2 * out_size[1];
+        auto out_s1 = out_size[3];
+        auto out_s2 = out_s1 * out_size[2];
+        auto out_s3 = out_s2 * out_size[1];
         auto w_ptr = this->w->get_data(); // kernel_rows x kernel_columns x in_channels x out_channels
         auto w_size = this->w->get_dims();
-        int w_s1 = w_size[3];
-        int w_s2 = w_s1 * w_size[2];
-        int w_s3 = w_s2 * w_size[1];
+        auto w_s1 = w_size[3];
+        auto w_s2 = w_s1 * w_size[2];
+        auto w_s3 = w_s2 * w_size[1];
         auto b_ptr = this->b->get_data();
         // Y[i, j, oc] = sum(m, n, ic)(w[m, n, ic, oc]*X[i+m, j+m, ic]) + b[oc]
-        int batch_size = in_data->get_dims()[0];
+        auto batch_size = in_data->get_dims()[0];
         bool overwrite = out_data->opaque(); // if opaque, then overwrite
-        for (int batch = 0; batch < batch_size; batch++) {
-            for (int i = 0; i < out_size[1]; i++) {
-                for (int j = 0; j < out_size[2]; j++) {
-                    for (int oc = 0; oc < out_channels; oc++) {
+        for (size_t batch = 0; batch < batch_size; batch++) {
+            for (size_t i = 0; i < out_size[1]; i++) {
+                for (size_t j = 0; j < out_size[2]; j++) {
+                    for (size_t oc = 0; oc < out_channels; oc++) {
                         T sum = 0;
-                        for (int m = 0; m < kernel_rows; m++) {
-                            for (int n = 0; n < kernel_columns; n++) {
-                                for (int ic = 0; ic < in_channels; ic++) {
+                        for (size_t m = 0; m < kernel_rows; m++) {
+                            for (size_t n = 0; n < kernel_columns; n++) {
+                                for (size_t ic = 0; ic < in_channels; ic++) {
                                     sum += w_ptr[m*w_s3 + n*w_s2 + ic*w_s1 + oc] *
                                            in_data_ptr[batch*in_s3 + (i+m)*in_s2 + (j+n)*in_s1 + ic];
                                 }
@@ -189,20 +189,20 @@ namespace gs {
 
         auto in_data_ptr = in_data->get_data(); // batch_size x num_rows x num_columns x in_channels
         auto in_size = in_data->get_dims();
-        int in_s1 = in_size[3];
-        int in_s2 = in_s1 * in_size[2];
-        int in_s3 = in_s2 * in_size[1];
+        auto in_s1 = in_size[3];
+        auto in_s2 = in_s1 * in_size[2];
+        auto in_s3 = in_s2 * in_size[1];
         auto out_grad_ptr = out_grad->get_data(); // batch_size x num_rows` x num_columns` x in_channels
         auto out_size = out_grad->get_dims();
-        int out_s1 = out_size[3];
-        int out_s2 = out_s1 * out_size[2];
-        int out_s3 = out_s2 * out_size[1];
+        auto out_s1 = out_size[3];
+        auto out_s2 = out_s1 * out_size[2];
+        auto out_s3 = out_s2 * out_size[1];
         auto dw_ptr = this->dw->get_data(); // num_rows x num_columns x in_channels x out_channels
         auto dw_size = this->dw->get_dims();
-        int dw_s1 = dw_size[3];
-        int dw_s2 = dw_s1 * dw_size[2];
-        int dw_s3 = dw_s2 * dw_size[1];
-        int batch_size = in_data->get_dims()[0];
+        auto dw_s1 = dw_size[3];
+        auto dw_s2 = dw_s1 * dw_size[2];
+        auto dw_s3 = dw_s2 * dw_size[1];
+        auto batch_size = in_data->get_dims()[0];
 
         if (in_signal->get_type() == InnerSignal) {
             auto in_grad = in_signal->get_grad();
@@ -210,14 +210,14 @@ namespace gs {
             auto w_ptr = this->w->get_data();
             bool dx_overwrite = in_grad->opaque();
             // D(X)[s, t, ic] = sum(m, n, oc)(D(Y)[s-m, t-n, oc] * w[m, n, ic, oc])
-            for (int batch = 0; batch < batch_size; batch++) {
-                for (int s = 0; s < num_rows; s++) {
-                    for (int t = 0; t < num_columns; t++) {
-                        for (int ic = 0; ic < in_channels; ic++) {
+            for (size_t batch = 0; batch < batch_size; batch++) {
+                for (size_t s = 0; s < num_rows; s++) {
+                    for (size_t t = 0; t < num_columns; t++) {
+                        for (size_t ic = 0; ic < in_channels; ic++) {
                             T sum = 0;
-                            for (int m = 0; m < kernel_rows; m++) {
-                                for (int n = 0; n < kernel_rows; n++) {
-                                    for (int oc = 0; oc < out_channels; oc++) {
+                            for (size_t m = 0; m < kernel_rows; m++) {
+                                for (size_t n = 0; n < kernel_rows; n++) {
+                                    for (size_t oc = 0; oc < out_channels; oc++) {
                                         if ((s - m) >= 0 && (s - m) < out_size[1] && (t - n) >= 0 && (t - n) < out_size[2]) {
                                             sum += out_grad_ptr[batch*out_s3 + (s-m)*out_s2 + (t-n)*out_s1 + oc] *
                                                 w_ptr[m*dw_s3 + n*dw_s2 + ic*dw_s1 + oc];
@@ -239,14 +239,14 @@ namespace gs {
 
         // D(w)[m, n, ic, oc] = sum(i, j)(D(Y)[i, j, oc] * X[i+m, j+n, ic])
         bool dw_overwrite = this->dw->opaque();
-        for (int m = 0; m < kernel_rows; m++) {
-            for (int n = 0; n < kernel_columns; n++) {
-                for (int ic = 0; ic < in_channels; ic++) {
-                    for (int oc = 0; oc < out_channels; oc++) {
+        for (size_t m = 0; m < kernel_rows; m++) {
+            for (size_t n = 0; n < kernel_columns; n++) {
+                for (size_t ic = 0; ic < in_channels; ic++) {
+                    for (size_t oc = 0; oc < out_channels; oc++) {
                         T sum = 0;
-                        for (int batch = 0; batch < batch_size; batch++) {
-                            for (int i = 0; i < out_size[1]; i++) {
-                                for (int j = 0; j < out_size[2]; j++) {
+                        for (size_t batch = 0; batch < batch_size; batch++) {
+                            for (size_t i = 0; i < out_size[1]; i++) {
+                                for (size_t j = 0; j < out_size[2]; j++) {
                                     sum += out_grad_ptr[batch*out_s3 + i*out_s2 + j*out_s1 + oc] *
                                            in_data_ptr[batch*in_s3 + (i+m)*in_s2 + (j+n)*in_s1 + ic];
                                 }
@@ -265,11 +265,11 @@ namespace gs {
         auto db_ptr = this->db->get_data();
         // D(b)[oc] = sum(i, j)(D(Y)[i, j, oc])
         bool db_overwrite = this->db->opaque();
-        for (int oc = 0; oc < out_channels; oc++) {
+        for (size_t oc = 0; oc < out_channels; oc++) {
             T sum = 0;
-            for (int batch = 0; batch < batch_size; batch++) {
-                for (int i = 0; i < out_size[1]; i++) {
-                    for (int j = 0; j < out_size[2]; j++) {
+            for (size_t batch = 0; batch < batch_size; batch++) {
+                for (size_t i = 0; i < out_size[1]; i++) {
+                    for (size_t j = 0; j < out_size[2]; j++) {
                         sum += out_grad_ptr[batch*out_s3 + i*out_s2 + j*out_s1 + oc];
                     }
                 }

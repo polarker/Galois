@@ -53,7 +53,7 @@ namespace gs
         set<SP_PFilter<T>> get_pfilters() override;
 
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
-        void set_dims(int batch_size) override;
+        void set_dims(size_t batch_size) override;
         void reopaque() override;
 
         void forward() override;
@@ -148,7 +148,7 @@ namespace gs
     }
 
     template<typename T>
-    void BaseNet<T>::set_dims(int batch_size) {
+    void BaseNet<T>::set_dims(size_t batch_size) {
         CHECK(fixed, "network should be fixed");
         CHECK(!fp_filters.empty(), "fp filters should have been set");
         for (auto filter : fp_filters) {

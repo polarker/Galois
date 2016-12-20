@@ -16,11 +16,11 @@ namespace gs
     }
 
     template<typename T>
-    RNN<T>::RNN(int _max_len,
-                int _input_size,
-                int _output_size,
-                initializer_list<int> _hidden_sizes,
-                int _batch_size,
+    RNN<T>::RNN(size_t _max_len,
+                size_t _input_size,
+                size_t _output_size,
+                initializer_list<size_t> _hidden_sizes,
+                size_t _batch_size,
                 int _num_epoch,
                 T _learning_rate,
                 string _optimizer_name,
@@ -48,7 +48,7 @@ namespace gs
             }
         }
         auto h2yraw = make_shared<Linear<T>>(hidden_sizes.back(), output_size);
-        for (int i = 0; i < max_len; i++) {
+        for (size_t i = 0; i < max_len; i++) {
             for (size_t j = 0; j < hidden_sizes.size(); j++) {
                 string hraw = generate_id("hraw", i, j);
                 string left_h = generate_id("h", i-1, j);
@@ -74,7 +74,7 @@ namespace gs
 
         auto x_ids = vector<string>();
         auto y_ids = vector<string>();
-        for (int i = 0; i < max_len; i++) {
+        for (size_t i = 0; i < max_len; i++) {
             x_ids.push_back(generate_id("x", i));
             y_ids.push_back(generate_id("y", i));
         }

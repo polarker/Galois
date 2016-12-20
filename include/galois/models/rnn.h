@@ -14,25 +14,25 @@ namespace gs
     class RNN : protected Model<T>
     {
     protected:
-        int max_len; // length of rnn
-        int input_size;
-        int output_size;
-        vector<int> hidden_sizes;
+        size_t max_len; // length of rnn
+        size_t input_size;
+        size_t output_size;
+        vector<size_t> hidden_sizes;
 
         bool use_embedding = false;
 
-        int train_seq_len = 0;
+        size_t train_seq_len = 0;
         SP_NArray<T> train_X = nullptr;
         SP_NArray<T> train_Y = nullptr;
-        int test_seq_len = 0;
+        size_t test_seq_len = 0;
         SP_NArray<T> test_X = nullptr;
         SP_NArray<T> test_Y = nullptr;
     public:
-        RNN(int max_len,
-            int input_size,
-            int output_size,
-            initializer_list<int> hidden_sizes,
-            int batch_size,
+        RNN(size_t max_len,
+            size_t input_size,
+            size_t output_size,
+            initializer_list<size_t> hidden_sizes,
+            size_t batch_size,
             int num_epoch,
             T learning_rate,
             string optimizer_name,

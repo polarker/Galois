@@ -21,7 +21,7 @@ namespace gs {
     }
 
     template<typename T>
-    void CrossEntropy<T>::set_dims(int batch_size) {
+    void CrossEntropy<T>::set_dims(size_t batch_size) {
         CHECK(!in_signal->empty(), "in signal should be empty");
         auto in_dims = in_signal->get_data_dims();
 

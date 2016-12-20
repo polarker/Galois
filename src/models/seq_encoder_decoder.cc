@@ -16,12 +16,13 @@ namespace gs
     }
 
     template<typename T>
-    SeqEncoderDecoder<T>::SeqEncoderDecoder(int _max_len_encoder,
-                int _max_len_decoder,
-                int _input_size,
-                int _output_size,
-                initializer_list<int> _hidden_sizes,
-                int _batch_size,
+    SeqEncoderDecoder<T>::SeqEncoderDecoder(
+                size_t _max_len_encoder,
+                size_t _max_len_decoder,
+                size_t _input_size,
+                size_t _output_size,
+                initializer_list<size_t> _hidden_sizes,
+                size_t _batch_size,
                 int _num_epoch,
                 T _learning_rate,
                 string _optimizer_name)
@@ -57,7 +58,7 @@ namespace gs
         }
         auto h2yraw_decoder = make_shared<Linear<T>>(hidden_sizes.back(), output_size);
 
-        for (int i = 0; i < max_len_encoder; i++) {
+        for (size_t i = 0; i < max_len_encoder; i++) {
             for (size_t j = 0; j < hidden_sizes.size(); j++) {
                 string hraw = seq_generate_id("hraw_encoder", i, j);
                 string left_h = seq_generate_id("h_encoder", i-1, j);
@@ -78,7 +79,7 @@ namespace gs
                 this->add_link(hraw, h, make_shared<Tanh<T>>());
             }
         }
-        for (int i = 0; i < max_len_decoder; i++) {
+        for (size_t i = 0; i < max_len_decoder; i++) {
             for (size_t j = 0; j < hidden_sizes.size(); j++) {
                 string hraw = seq_generate_id("hraw_decoder", i, j);
                 string left_h;
@@ -110,10 +111,10 @@ namespace gs
 
         auto x_ids = vector<string>();
         auto y_ids = vector<string>();
-        for (int i = 0; i < max_len_encoder; i++) {
+        for (size_t i = 0; i < max_len_encoder; i++) {
             x_ids.push_back(seq_generate_id("x_encoder", i));
         }
-        for (int i = 0; i < max_len_decoder; i++) {
+        for (size_t i = 0; i < max_len_decoder; i++) {
             x_ids.push_back(seq_generate_id("x_decoder", i));
             y_ids.push_back(seq_generate_id("y_decoder", i));
         }
@@ -154,14 +155,14 @@ namespace gs
     template<typename T>
     T SeqEncoderDecoder<T>::train_one_batch(bool update) {
         uniform_int_distribution<> distribution(0, train_seq_count-1);
-        vector<int> batch_ids(this->batch_size);
-        for (int i = 0; i < this->batch_size; i++) {
+        vector<size_t> batch_ids(this->batch_size);
+        for (size_t i = 0; i < this->batch_size; i++) {
             batch_ids[i] = distribution(galois_rn_generator);
         }
 
         this->net.reopaque();
 
-        for (int i = 0; i < max_len_encoder; i++) {
+        for (size_t i = 0; i < max_len_encoder; i++) {
             this->input_signals[i]->get_data()->copy_from(batch_ids, i, train_X);
         }
         this->input_signals[max_len_encoder]->get_data()->fill(0); // <EOS> characters
@@ -171,7 +172,7 @@ namespace gs
         for (int i = 0; i < num1; i++) {
             this->net.forward(i);
         }
-        for (int i = 0; i < max_len_decoder; i++) {
+        for (size_t i = 0; i < max_len_decoder; i++) {
             if (i > 0) {
                 auto input_data = this->input_signals[max_len_encoder+i]->get_data();
                 auto prev_output_data = this->output_signals[i-1]->get_data();

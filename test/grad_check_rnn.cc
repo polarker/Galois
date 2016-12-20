@@ -13,11 +13,11 @@ int main()
 
     chartxt::Article<T> article("./data/tinyshakespeare.txt");
 
-    int seq_length = 3;
-    int input_size = article.get_num_diff_chars();
-    int output_size = article.get_num_diff_chars();
-    auto hidden_sizes = {128, 128};
-    int batch_size = 100;
+    size_t seq_length = 3;
+    size_t input_size = article.get_num_diff_chars();
+    size_t output_size = article.get_num_diff_chars();
+    initializer_list<size_t> hidden_sizes {128, 128};
+    size_t batch_size = 100;
     int num_epoch = 10;
     T learning_rate = 0.01;
     bool use_embedding = true;

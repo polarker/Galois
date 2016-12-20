@@ -30,7 +30,7 @@ namespace gs {
     }
 
     template<typename T>
-    Embedding<T>::Embedding(int in_size, int out_size) : in_size(in_size), out_size(out_size) {
+    Embedding<T>::Embedding(size_t in_size, size_t out_size) : in_size(in_size), out_size(out_size) {
         CHECK(in_size > 0 && out_size > 0, "both size should be positive");
         T s = sqrt(6. / (in_size + out_size));
         this->w  = make_shared<NArray<T>>(in_size, out_size);
@@ -48,13 +48,13 @@ namespace gs {
     }
 
     template<typename T>
-    void Embedding<T>::set_dims(int batch_size) {
+    void Embedding<T>::set_dims(size_t batch_size) {
         CHECK(in_signal->empty(), "in signal should be empty");
         in_signal->set_data_dims(batch_size);
         if (out_signal->empty()) {
             out_signal->set_data_dims(batch_size, out_size);
         } else {
-            CHECK(out_signal->get_data_dims() == vector<int>({batch_size, out_size}), "the dimension of out signal is wrong");
+            CHECK(out_signal->get_data_dims() == vector<size_t>({batch_size, out_size}), "the dimension of out signal is wrong");
         }
     }
 

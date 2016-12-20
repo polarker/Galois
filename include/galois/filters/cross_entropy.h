@@ -22,7 +22,7 @@ namespace gs {
         void reopaque() override { softmax_output->reopaque(); }
 
         void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) override;
-        void set_dims(int batch_size) override;
+        void set_dims(size_t batch_size) override;
 
         void forward() override;
         void backward() override;

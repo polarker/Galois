@@ -26,20 +26,20 @@ namespace gs
         vector<SP_NArray<T>>  params = {};
         vector<SP_NArray<T>>  grads = {};
 
-        int batch_size;
+        size_t batch_size;
         int num_epoch;
         T learning_rate;
         SP_Optimizer<T> optimizer;
 
-        int train_count = 0;
+        size_t train_count = 0;
         SP_NArray<T> train_data = nullptr;
         SP_NArray<T> train_target = nullptr;
-        int test_count = 0;
+        size_t test_count = 0;
         SP_NArray<T> test_data = nullptr;
         SP_NArray<T> test_target = nullptr;
 
     public:
-        MLPModel(int batch_size, int num_epoch, T learning_rate, string optimizer_name);
+        MLPModel(size_t batch_size, int num_epoch, T learning_rate, string optimizer_name);
         MLPModel(const MLPModel& other) = delete;
         MLPModel& operator=(const MLPModel&) = delete;
 

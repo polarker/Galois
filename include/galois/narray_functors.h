@@ -25,7 +25,7 @@ namespace gs
         int equal = 0;
         auto X_ptr = X->get_data();
         auto Y_ptr = Y->get_data();
-        for (int i = 0; i < X->get_size(); i++) {
+        for (size_t i = 0; i < X->get_size(); i++) {
             if (X_ptr[i] == Y_ptr[i]) {
                 equal += 1;
             }
@@ -59,15 +59,15 @@ namespace gs
         auto Y_ptr = Y->get_data();
         auto b_ptr = b->get_data();
         if (Y->opaque()) {
-            for (int i = 0; i < m; i++) {
-                for (int j = 0; j < n; j++) {
+            for (size_t i = 0; i < m; i++) {
+                for (size_t j = 0; j < n; j++) {
                     Y_ptr[i*n+j] = b_ptr[j];
                 }
             }
             Y->setclear();
         } else {
-            for (int i = 0; i < m; i++) {
-                for (int j = 0; j < n; j++) {
+            for (size_t i = 0; i < m; i++) {
+                for (size_t j = 0; j < n; j++) {
                     Y_ptr[i*n+j] += b_ptr[j];
                 }
             }
@@ -89,17 +89,17 @@ namespace gs
         auto X_ptr = X->get_data();
         auto b_ptr = b->get_data();
         if (b->opaque()) {
-            for (int j = 0; j < n; j++) {
+            for (size_t j = 0; j < n; j++) {
                 b_ptr[j] = X_ptr[j];
             }
             b->setclear();
         } else {
-            for (int j = 0; j < n; j++) {
+            for (size_t j = 0; j < n; j++) {
                 b_ptr[j] += X_ptr[j];
             }
         }
-        for (int i = 1; i < m; i++) {
-            for (int j = 0; j < n; j++) {
+        for (size_t i = 1; i < m; i++) {
+            for (size_t j = 0; j < n; j++) {
                 b_ptr[j] += X_ptr[i*n + j];
             }
         }
@@ -114,15 +114,15 @@ namespace gs
         auto Y_dims = Y->get_dims();
         assert(X_dims.size() == 2 && Y_dims.size() == 1);
 
-        int m = X_dims[0];
-        int n = X_dims[1];
+        auto m = X_dims[0];
+        auto n = X_dims[1];
         assert(m == Y_dims[0]);
         auto X_ptr = X->get_data();
         auto Y_ptr = Y->get_data();
-        for (int i = 0; i < m; i++) {
+        for (size_t i = 0; i < m; i++) {
             int maxidx = 0;
             T maxval = X_ptr[i*n+0];
-            for (int j = 1; j < n; j++) {
+            for (size_t j = 1; j < n; j++) {
                 auto val = X_ptr[i*n+j];
                 if (val > maxval) {
                     maxidx = j;
@@ -143,29 +143,29 @@ namespace gs
         auto indexs_dims = indexs->get_dims();
         assert(X_dims.size() == 2 && Y_dims.size() == 2 && indexs_dims.size() == 1);
 
-        int m = X_dims[0];
-        int n = X_dims[1];
+        auto m = X_dims[0];
+        auto n = X_dims[1];
         assert(n == Y_dims[1]);
-        int k = indexs_dims[0];
+        auto k = indexs_dims[0];
         assert(k == Y_dims[0]);
         auto X_ptr = X->get_data();
         auto Y_ptr = Y->get_data();
         auto indexs_ptr = indexs->get_data();
 
         if (Y->opaque()) {
-            for (int i = 0; i < k; i++) {
-                int idx = int(indexs_ptr[i]);
+            for (size_t i = 0; i < k; i++) {
+                size_t idx = size_t(indexs_ptr[i]);
                 assert(idx >= 0 && idx < m);
-                for (int j = 0; j < n; j++) {
+                for (size_t j = 0; j < n; j++) {
                     Y_ptr[i*n+j] = X_ptr[idx*n+j];
                 }
             }
             Y->setclear();
         } else {
-            for (int i = 0; i < k; i++) {
-                int idx = int(indexs_ptr[i]);
+            for (size_t i = 0; i < k; i++) {
+                size_t idx = size_t(indexs_ptr[i]);
                 assert(idx >= 0 && idx < m);
-                for (int j = 0; j < n; j++) {
+                for (size_t j = 0; j < n; j++) {
                     Y_ptr[i*n+j] += X_ptr[idx*n+j];
                 }
             }
@@ -181,10 +181,10 @@ namespace gs
         auto indexs_dims = indexs->get_dims();
         assert(X_dims.size() == 2 && Y_dims.size() == 2 && indexs_dims.size() == 1);
 
-        int m = X_dims[0];
-        int n = X_dims[1];
+        auto m = X_dims[0];
+        auto n = X_dims[1];
         assert(n == Y_dims[1]);
-        int k = indexs_dims[0];
+        auto k = indexs_dims[0];
         assert(k == Y_dims[0]);
         auto X_ptr = X->get_data();
         auto Y_ptr = Y->get_data();
@@ -194,10 +194,10 @@ namespace gs
             X->fill(T(0.0));
             X->setclear();
         }
-        for (int i = 0; i < k; i++) {
-            int idx = int(indexs_ptr[i]);
+        for (size_t i = 0; i < k; i++) {
+            size_t idx = size_t(indexs_ptr[i]);
             assert(idx >= 0 && idx < m);
-            for (int j = 0; j < n; j++) {
+            for (size_t j = 0; j < n; j++) {
                 X_ptr[idx*n+j] += Y_ptr[i*n+j];
             }
         }
@@ -280,11 +280,11 @@ namespace gs
         auto Y_ptr = Y->get_data();
         auto X_ptr = X->get_data();
         if (overwrite) {
-            for (int i = 0; i < Y->get_size(); i++) {
+            for (size_t i = 0; i < Y->get_size(); i++) {
                 Y_ptr[i] = f(X_ptr[i]);
             }
         } else {
-            for (int i = 0; i < Y->get_size(); i++) {
+            for (size_t i = 0; i < Y->get_size(); i++) {
                 Y_ptr[i] += f(X_ptr[i]);
             }
         }
@@ -301,11 +301,11 @@ namespace gs
         auto X_ptr = X->get_data();
         auto Z_ptr = Z->get_data();
         if (overwrite) {
-            for (int i = 0; i < Y->get_size(); i++) {
+            for (size_t i = 0; i < Y->get_size(); i++) {
                 Y_ptr[i] = f(X_ptr[i], Z_ptr[i]);
             }
         } else {
-            for (int i = 0; i < Y->get_size(); i++) {
+            for (size_t i = 0; i < Y->get_size(); i++) {
                 Y_ptr[i] += f(X_ptr[i], Z_ptr[i]);
             }
         }
@@ -390,16 +390,16 @@ namespace gs
                        const SP_NArray<T> X,
                        const SP_NArray<T> idx) {
         assert(X->get_dims().size() == 2);
-        int m = X->get_dims()[0];
-        int n = X->get_dims()[1];
+        auto m = X->get_dims()[0];
+        auto n = X->get_dims()[1];
         assert(idx->get_dims().size() == 1);
         assert(m == idx->get_dims()[0]);
 
         T sum = 0;
         auto X_ptr = X->get_data();
         auto idx_ptr = idx->get_data();
-        for (int i = 0; i < m; i++) {
-            int j = idx_ptr[i];
+        for (size_t i = 0; i < m; i++) {
+            size_t j = idx_ptr[i];
             assert(j < n);
             sum += f(X_ptr[i*n + j]);
         }
@@ -425,11 +425,11 @@ namespace gs
             if (b == nullptr) {
                 assert(m == n);
                 if (overwrite) {
-                    for (int i = 0; i < m; i++) {
+                    for (size_t i = 0; i < m; i++) {
                         Y_ptr[i*n + i] = f(X_ptr[i*n + i]);
                     }
                 } else {
-                    for (int i = 0; i < m; i++) {
+                    for (size_t i = 0; i < m; i++) {
                         Y_ptr[i*n + i] += f(X_ptr[i*n + i]);
                     }
                 }
@@ -438,12 +438,12 @@ namespace gs
                 assert(b->get_size() == m);
                 auto b_ptr = b->get_data();
                 if (overwrite) {
-                    for (int i = 0; i < m; i++) {
+                    for (size_t i = 0; i < m; i++) {
                         auto j = static_cast<int>(b_ptr[i]);
                         Y_ptr[i*n + j] = f(X_ptr[i*n + j]);
                     }
                 } else {
-                    for (int i = 0; i < m; i++) {
+                    for (size_t i = 0; i < m; i++) {
                         auto j = static_cast<int>(b_ptr[i]);
                         Y_ptr[i*n + j] += f(X_ptr[i*n + j]);
                     }
@@ -455,12 +455,12 @@ namespace gs
             if (b == nullptr) {
                 assert(a->get_size() == n);
                 if (overwrite) {
-                    for (int j = 0; j < n; j++) {
+                    for (size_t j = 0; j < n; j++) {
                         auto i = static_cast<int>(a_ptr[j]);
                         Y_ptr[i*n + j] = f(X_ptr[i*n + j]);
                     }
                 } else {
-                    for (int j = 0; j < n; j++) {
+                    for (size_t j = 0; j < n; j++) {
                         auto i = static_cast<int>(a_ptr[j]);
                         Y_ptr[i*n + j] += f(X_ptr[i*n + j]);
                     }
@@ -471,13 +471,13 @@ namespace gs
                 auto size = a->get_size();
                 auto b_ptr = b->get_data();
                 if (overwrite) {
-                    for (int k = 0; k < size; k++) {
+                    for (size_t k = 0; k < size; k++) {
                         auto i = static_cast<int>(a_ptr[k]);
                         auto j = static_cast<int>(b_ptr[k]);
                         Y_ptr[i*n + j] = f(X_ptr[i*n + j]);
                     }
                 } else {
-                    for (int k = 0; k < size; k++) {
+                    for (size_t k = 0; k < size; k++) {
                         auto i = static_cast<int>(a_ptr[k]);
                         auto j = static_cast<int>(b_ptr[k]);
                         Y_ptr[i*n + j] += f(X_ptr[i*n + j]);

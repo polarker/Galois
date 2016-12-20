@@ -10,7 +10,7 @@ namespace gs
 {
 
     template<typename T>
-    MLPModel<T>::MLPModel(int batch_size, int num_epoch, T learning_rate, string optimizer_name)
+    MLPModel<T>::MLPModel(size_t batch_size, int num_epoch, T learning_rate, string optimizer_name)
                : path()
                , batch_size(batch_size)
                , num_epoch(num_epoch)
@@ -85,8 +85,8 @@ namespace gs
     template<typename T>
     T MLPModel<T>::train_one_batch(const bool update) {
         uniform_int_distribution<int> distribution(0, train_count-1);
-        vector<int> batch_ids(batch_size);
-        for (int i = 0; i < batch_size; i++) {
+        vector<size_t> batch_ids(batch_size);
+        for (size_t i = 0; i < batch_size; i++) {
             batch_ids[i] = distribution(galois_rn_generator);
         }
 
@@ -116,10 +116,10 @@ namespace gs
     template<typename T>
     double MLPModel<T>::test() {
         double correctness = 0;
-        
-        for (int i = 0; i + batch_size <= test_count; i += batch_size) {
-            vector<int> batch_ids(batch_size);
-            for (int j = 0; j < batch_size; j++) {
+
+        for (size_t i = 0; i + batch_size <= test_count; i += batch_size) {
+            vector<size_t> batch_ids(batch_size);
+            for (size_t j = 0; j < batch_size; j++) {
                 batch_ids[j] = i+j;
             }
 
@@ -159,7 +159,7 @@ namespace gs
             auto start = chrono::system_clock::now();
 
             T loss = 0;
-            for (int i = 0; i < train_count/batch_size; i++) {
+            for (size_t i = 0; i < train_count/batch_size; i++) {
                 loss += train_one_batch();
             }
             loss /= T(train_count/batch_size);

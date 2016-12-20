@@ -71,7 +71,7 @@ namespace gs
     }
 
     template<typename T>
-    void Path<T>::set_dims(int batch_size) {
+    void Path<T>::set_dims(size_t batch_size) {
         CHECK(links.size() == inner_signals.size()+1, "The number of filters and inner signals does not match");
         for (auto const& filter : links) {
             filter->set_dims(batch_size);

@@ -16,22 +16,23 @@ namespace gs
         static default_random_engine galois_rn_generator;
 
     protected:
-        int max_len_one;
-        int max_len_another;
-        int input_size_one;
-        int input_size_another;
-        vector<int> hidden_sizes;
+        size_t max_len_one;
+        size_t max_len_another;
+        size_t input_size_one;
+        size_t input_size_another;
+        vector<size_t> hidden_sizes;
 
-        int train_seq_count = 0;
+        size_t train_seq_count = 0;
         SP_NArray<T> train_one = nullptr;
         SP_NArray<T> train_another = nullptr;
     public:
-        BiSeqEncoderDecoder(int max_len_one,
-            int max_len_another,
-            int input_size_one,
-            int input_size_another,
-            initializer_list<int> hidden_sizes,
-            int batch_size,
+        BiSeqEncoderDecoder(
+            size_t max_len_one,
+            size_t max_len_another,
+            size_t input_size_one,
+            size_t input_size_another,
+            initializer_list<size_t> hidden_sizes,
+            size_t batch_size,
             int num_epoch,
             T learning_rate,
             string optimizer_name);

@@ -33,7 +33,7 @@ namespace gs
         set<SP_PFilter<T>> get_pfilters() override;
 
         void install_signals(const vector<SP_Signal<T>>& in_signals, const vector<SP_Signal<T>>& out_signals) override;
-        void set_dims(int batch_size) override;
+        void set_dims(size_t batch_size) override;
         void reopaque() override;
 
         void forward() override;

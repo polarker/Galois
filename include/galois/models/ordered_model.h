@@ -26,15 +26,15 @@ namespace gs
         vector<string>          output_ids = {};
         vector<SP_Signal<T>>    output_signals = {};
 
-        int batch_size;
+        size_t batch_size;
         int num_epoch;
         T learning_rate;
         SP_Optimizer<T> optimizer;
 
-        int train_count = 0;
+        size_t train_count = 0;
         vector<SP_NArray<T>> train_data = {};
         vector<SP_NArray<T>> train_target = {};
-        int test_count = 0;
+        size_t test_count = 0;
         vector<SP_NArray<T>> test_data = {};
         vector<SP_NArray<T>> test_target = {};
 

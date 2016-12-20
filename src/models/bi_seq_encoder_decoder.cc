@@ -21,7 +21,7 @@ namespace gs
     public:
         Encoder(const Encoder& other) = delete;
         Encoder& operator=(const Encoder&) = delete;
-        Encoder(int max_len, int input_size, vector<int> hidden_sizes) {
+        Encoder(size_t max_len, size_t input_size, vector<size_t> hidden_sizes) {
             auto h2hraw = vector<SP_Filter<T>>();
             for (auto hsize : hidden_sizes) {
                 h2hraw.push_back(make_shared<Linear<T>>(hsize, hsize));
@@ -34,7 +34,7 @@ namespace gs
                     x2hraw.push_back(make_shared<Linear<T>>(hidden_sizes[i-1], hidden_sizes[i]));
                 }
             }
-            for (int i = 0; i < max_len; i++) {
+            for (size_t i = 0; i < max_len; i++) {
                 for (size_t j = 0; j < hidden_sizes.size(); j++) {
                     string hraw = bi_seq_generate_id("hraw", i, j);
                     string left_h = bi_seq_generate_id("h", i-1, j);
@@ -57,7 +57,7 @@ namespace gs
             }
             auto x_ids = vector<string>();
             auto y_ids = vector<string>();
-            for (int i = 0; i < max_len; i++) {
+            for (size_t i = 0; i < max_len; i++) {
                 x_ids.push_back(bi_seq_generate_id("x", i));
             }
             for (size_t j = 0; j < hidden_sizes.size(); j++) {
@@ -77,15 +77,15 @@ namespace gs
     class Decoder : public OrderedNet<T>
     {
     private:
-        int max_len;
-        int num_hidden_layer;
+        size_t max_len;
+        size_t num_hidden_layer;
 
         SP_Signal<T> initial_input_signal;
 
     public:
         Decoder(const Decoder& other) = delete;
         Decoder& operator=(const Decoder&) = delete;
-        Decoder(int max_len, int input_size, vector<int> hidden_sizes)
+        Decoder(size_t max_len, size_t input_size, vector<size_t> hidden_sizes)
                 : max_len(max_len)
                 , num_hidden_layer(hidden_sizes.size()) {
             auto h2hraw = vector<SP_Filter<T>>();
@@ -102,7 +102,7 @@ namespace gs
             }
             auto h2yraw = make_shared<Linear<T>>(hidden_sizes.back(), input_size);
 
-            for (int i = 0; i < max_len; i++) {
+            for (size_t i = 0; i < max_len; i++) {
                 for (size_t j = 0; j < hidden_sizes.size(); j++) {
                     string hraw = bi_seq_generate_id("hraw", i, j);
                     string left_h = bi_seq_generate_id("h", i-1, j);
@@ -129,7 +129,7 @@ namespace gs
 
             auto x_ids = vector<string>();
             auto y_ids = vector<string>();
-            for (int i = 0; i < max_len; i++) {
+            for (size_t i = 0; i < max_len; i++) {
                 x_ids.push_back(bi_seq_generate_id("x", i));
                 y_ids.push_back(bi_seq_generate_id("y", i));
             }
@@ -165,12 +165,13 @@ namespace gs
     };
 
     template<typename T>
-    BiSeqEncoderDecoder<T>::BiSeqEncoderDecoder(int _max_len_one,
-                int _max_len_another,
-                int _input_size_one,
-                int _input_size_another,
-                initializer_list<int> _hidden_sizes,
-                int _batch_size,
+    BiSeqEncoderDecoder<T>::BiSeqEncoderDecoder(
+                size_t _max_len_one,
+                size_t _max_len_another,
+                size_t _input_size_one,
+                size_t _input_size_another,
+                initializer_list<size_t> _hidden_sizes,
+                size_t _batch_size,
                 int _num_epoch,
                 T _learning_rate,
                 string _optimizer_name)
@@ -193,7 +194,7 @@ namespace gs
         auto y_ids_one2another = vector<string>();
         auto y_ids_another2one = vector<string>();
         auto y_ids_another2another = vector<string>();
-        for (int i = 0; i < max_len_one; i++) {
+        for (size_t i = 0; i < max_len_one; i++) {
             x_ids_one.push_back(bi_seq_generate_id("x_one", i));
             y_ids_one2one.push_back(bi_seq_generate_id("y_one2one", i));
             y_ids_another2one.push_back(bi_seq_generate_id("y_another2one", i));
@@ -202,7 +203,7 @@ namespace gs
             h_ids_one.push_back(bi_seq_generate_id("h_one", max_len_one-1, j));
             h_ids_another.push_back(bi_seq_generate_id("h_another", max_len_another-1, j));
         }
-        for (int i = 0; i < max_len_another; i++) {
+        for (size_t i = 0; i < max_len_another; i++) {
             x_ids_another.push_back(bi_seq_generate_id("x_another", i));
             y_ids_one2another.push_back(bi_seq_generate_id("y_one2another", i));
             y_ids_another2another.push_back(bi_seq_generate_id("y_another2another", i));
@@ -242,17 +243,17 @@ namespace gs
     template<typename T>
     T BiSeqEncoderDecoder<T>::train_one_batch(bool update) {
         uniform_int_distribution<> distribution(0, train_seq_count-1);
-        vector<int> batch_ids(this->batch_size);
-        for (int i = 0; i < this->batch_size; i++) {
+        vector<size_t> batch_ids(this->batch_size);
+        for (size_t i = 0; i < this->batch_size; i++) {
             batch_ids[i] = distribution(galois_rn_generator);
         }
 
         this->net.reopaque();
 
-        for (int i = 0; i < max_len_one; i++) {
+        for (size_t i = 0; i < max_len_one; i++) {
             this->input_signals[i]->get_data()->copy_from(batch_ids, i, train_one);
         }
-        for (int i = max_len_one; i < max_len_one+max_len_another; i++) {
+        for (size_t i = max_len_one; i < max_len_one+max_len_another; i++) {
             this->input_signals[i]->get_data()->copy_from(batch_ids, i, train_another);
         }
 

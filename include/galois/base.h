@@ -55,14 +55,14 @@ namespace gs
         }
 
         // set dims for data (and grad)
-        void set_data_dims(int m)                        { set_data_dims({m}); }
-        void set_data_dims(int m, int n)                 { set_data_dims({m,n}); }
-        void set_data_dims(int m, int n, int o)          { set_data_dims({m,n,o}); }
-        void set_data_dims(int m, int n, int o, int k)   { set_data_dims({m,n,o,k}); }
-        void set_data_dims(initializer_list<int> nums) {
-            set_data_dims(vector<int>(nums));
+        void set_data_dims(size_t m)                                { set_data_dims({m}); }
+        void set_data_dims(size_t m, size_t n)                      { set_data_dims({m,n}); }
+        void set_data_dims(size_t m, size_t n, size_t o)            { set_data_dims({m,n,o}); }
+        void set_data_dims(size_t m, size_t n, size_t o, size_t k)  { set_data_dims({m,n,o,k}); }
+        void set_data_dims(initializer_list<size_t> nums) {
+            set_data_dims(vector<size_t>(nums));
         }
-        void set_data_dims(vector<int> nums) {
+        void set_data_dims(vector<size_t> nums) {
             CHECK(!data, "data should be nullptr before initialization");
             data = make_shared<NArray<T>>(nums);
             if (type == InnerSignal) {
@@ -70,24 +70,24 @@ namespace gs
                 grad = make_shared<NArray<T>>(nums);
             }
         }
-        vector<int> get_data_dims() {
+        vector<size_t> get_data_dims() {
             CHECK(data, "data should be non-empty");
             return data->get_dims();
         }
         // set dims for target
-        void set_target_dims(int m)                         { set_target_dims({m}); }
-        void set_target_dims(int m, int n)                  { set_target_dims({m,n}); }
-        void set_target_dims(int m, int n, int o)           { set_target_dims({m,n,o}); }
-        void set_target_dims(int m, int n, int o, int k)    { set_target_dims({m,n,o,k}); }
-        void set_target_dims(initializer_list<int> nums) {
-            set_target_dims(vector<int>(nums));
+        void set_target_dims(size_t m)                         { set_target_dims({m}); }
+        void set_target_dims(size_t m, size_t n)                  { set_target_dims({m,n}); }
+        void set_target_dims(size_t m, size_t n, size_t o)           { set_target_dims({m,n,o}); }
+        void set_target_dims(size_t m, size_t n, size_t o, size_t k)    { set_target_dims({m,n,o,k}); }
+        void set_target_dims(initializer_list<size_t> nums) {
+            set_target_dims(vector<size_t>(nums));
         }
-        void set_target_dims(vector<int> nums) {
+        void set_target_dims(vector<size_t> nums) {
             CHECK(type == OutputSignal, "only OutputSignal could set target");
             CHECK(!target, "target should be nullptr before initialization");
             target = make_shared<NArray<T>>(nums);
         }
-        vector<int> get_target_dims() {
+        vector<size_t> get_target_dims() {
             CHECK(target, "target should be non-empty");
             return target->get_dims();
         }
@@ -110,7 +110,7 @@ namespace gs
         virtual void forward() = 0;
         virtual void backward() = 0;
         virtual void install_signals(const vector<SP_Signal<T>> &in_signals, const vector<SP_Signal<T>> &out_signals) = 0;
-        virtual void set_dims(int batch_size) = 0;
+        virtual void set_dims(size_t batch_size) = 0;
         virtual void reopaque() = 0;    // each filter only opaques its inner signal
         virtual shared_ptr<Filter<T>> share() = 0;  // return a SP_Filter<T>
         virtual shared_ptr<Filter<T>> clone() = 0;  // return a SP_Filter<T>

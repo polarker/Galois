@@ -20,7 +20,7 @@ namespace gs {
     }
 
     template<typename T>
-    void GeneralTanh<T>::set_dims(int batch_size) {
+    void GeneralTanh<T>::set_dims(size_t batch_size) {
         CHECK(!in_signal->empty(), "in signal should be initialized");
         auto in_dims = in_signal->get_data_dims();
         if (out_signal->empty()) {

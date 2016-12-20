@@ -35,7 +35,7 @@ namespace gs {
     }
 
     template<typename T>
-    Linear<T>::Linear(int in_size, int out_size) : in_size(in_size), out_size(out_size) {
+    Linear<T>::Linear(size_t in_size, size_t out_size) : in_size(in_size), out_size(out_size) {
         CHECK(in_size > 0 && out_size > 0, "both size should be positive");
         T s = sqrt(6. / (in_size + out_size));
         this->w  = make_shared<NArray<T>>(in_size, out_size);
@@ -56,19 +56,19 @@ namespace gs {
     }
 
     template<typename T>
-    void Linear<T>::set_dims(int batch_size) {
+    void Linear<T>::set_dims(size_t batch_size) {
         if (in_signal->empty()) {
             in_signal->set_data_dims(batch_size, in_size);
         } else {
             auto in_dims = in_signal->get_data_dims();
-            int in_batch_size = in_dims[0];
-            int in_rest_dim = in_signal->get_data()->get_size() / in_batch_size;
+            auto in_batch_size = in_dims[0];
+            auto in_rest_dim = in_signal->get_data()->get_size() / in_batch_size;
             CHECK(in_dims.size() >= 2 && in_batch_size == batch_size && in_rest_dim == in_size, "the dimension of in signal is wrong");
         }
         if (out_signal->empty()) {
             out_signal->set_data_dims(batch_size, out_size);
         } else {
-            CHECK(out_signal->get_data_dims() == vector<int>({batch_size, out_size}), "the dimension of out signal is wrong");
+            CHECK(out_signal->get_data_dims() == vector<size_t>({batch_size, out_size}), "the dimension of out signal is wrong");
         }
     }
 
